@@ -8,13 +8,14 @@ import android.support.annotation.ColorInt;
 import android.support.annotation.ColorRes;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.StringRes;
-import android.support.multidex.MultiDex;
 
+import com.crashlytics.android.Crashlytics;
 import com.facebook.stetho.Stetho;
 import com.squareup.leakcanary.LeakCanary;
 
 import org.polaric.colorful.Colorful;
 
+import io.fabric.sdk.android.Fabric;
 import me.shouheng.notepal.model.Model;
 
 /**
@@ -66,8 +67,6 @@ public class PalmApp extends Application {
 
         mInstance = this;
 
-        MultiDex.install(this);
-
         Colorful.init(this);
 
         /*
@@ -77,6 +76,13 @@ public class PalmApp extends Application {
         }
 
         LeakCanary.install(this);
+
+        Fabric.with(this, new Crashlytics());
+        Fabric fabric = new Fabric.Builder(this)
+                .kits(new Crashlytics())
+                .debuggable(BuildConfig.DEBUG)
+                .build();
+        Fabric.with(fabric);
     }
 
     public static boolean isPasswordChecked() {

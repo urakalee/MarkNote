@@ -104,7 +104,7 @@
 
         <meta-data
             android:name="io.fabric.ApiKey"
-            android:value="aa14224ea2102fef301d211dac552635f37b1f9e" />
+            android:value="7570ca383cf0a5252c0e8613853842492adc316b" />
 
         <!-- ================Baidu Map API START================ -->
         <service
@@ -119,7 +119,7 @@
 
         <provider
             android:name="android.support.v4.content.FileProvider"
-            android:authorities="me.shouheng.notepal.provider"
+            android:authorities="me.urakalee.next2.provider"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data
