@@ -22,7 +22,7 @@ public class TrashedActivity extends BaseListActivity {
 
     @Override
     protected Fragment getNotesFragment() {
-        return NotesFragment.newInstance(Status.TRASHED);
+        return NotesFragment.Companion.newInstance(Status.TRASHED);
     }
 
     @Override
@@ -32,13 +32,13 @@ public class TrashedActivity extends BaseListActivity {
 
     @Override
     public void onCategorySelected(Category category) {
-        NotesFragment notesFragment = NotesFragment.newInstance(category, Status.TRASHED);
+        NotesFragment notesFragment = NotesFragment.Companion.newInstance(category, Status.TRASHED);
         FragmentHelper.replaceWithCallback(this, notesFragment, R.id.fragment_container);
     }
 
     @Override
     public void onNotebookSelected(Notebook notebook) {
-        NotesFragment notesFragment = NotesFragment.newInstance(notebook, Status.TRASHED);
+        NotesFragment notesFragment = NotesFragment.Companion.newInstance(notebook, Status.TRASHED);
         FragmentHelper.replaceWithCallback(this, notesFragment, R.id.fragment_container);
     }
 }

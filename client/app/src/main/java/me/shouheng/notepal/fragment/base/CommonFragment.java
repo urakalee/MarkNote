@@ -23,7 +23,7 @@ public abstract class CommonFragment<T extends ViewDataBinding> extends Fragment
 
     protected abstract int getLayoutResId();
 
-    protected abstract void doCreateView(Bundle savedInstanceState);
+    protected abstract void doCreateView(@Nullable Bundle savedInstanceState);
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {

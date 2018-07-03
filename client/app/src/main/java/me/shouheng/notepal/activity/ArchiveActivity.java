@@ -20,7 +20,7 @@ public class ArchiveActivity extends BaseListActivity {
 
     @Override
     protected Fragment getNotesFragment() {
-        return NotesFragment.newInstance(Status.ARCHIVED);
+        return NotesFragment.Companion.newInstance(Status.ARCHIVED);
     }
 
     @Override
@@ -30,13 +30,13 @@ public class ArchiveActivity extends BaseListActivity {
 
     @Override
     public void onCategorySelected(Category category) {
-        NotesFragment notesFragment = NotesFragment.newInstance(category, Status.ARCHIVED);
+        NotesFragment notesFragment = NotesFragment.Companion.newInstance(category, Status.ARCHIVED);
         FragmentHelper.replaceWithCallback(this, notesFragment, R.id.fragment_container);
     }
 
     @Override
     public void onNotebookSelected(Notebook notebook) {
-        NotesFragment notesFragment = NotesFragment.newInstance(notebook, Status.ARCHIVED);
+        NotesFragment notesFragment = NotesFragment.Companion.newInstance(notebook, Status.ARCHIVED);
         FragmentHelper.replaceWithCallback(this, notesFragment, R.id.fragment_container);
     }
 }
