@@ -68,7 +68,7 @@ public class DirectoriesFragment extends BaseFragment<FragmentDirectoriesBinding
                 getContext(), DividerItemDecoration.VERTICAL_LIST, isDarkTheme()));
         getBinding().rvDirectories.setItemAnimator(new CustomItemAnimator());
         getBinding().rvDirectories.setLayoutManager(new LinearLayoutManager(getContext()));
-        getBinding().rvDirectories.setEmptyView(getBinding().ivEmpty);
+        getBinding().rvDirectories.setEmptyView(getBinding().emptyView);
         getBinding().rvDirectories.setAdapter(adapter);
 
         fetchDirectories();

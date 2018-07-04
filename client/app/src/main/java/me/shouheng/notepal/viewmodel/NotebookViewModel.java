@@ -4,7 +4,7 @@ import android.arch.lifecycle.LiveData;
 
 import me.shouheng.notepal.model.Notebook;
 import me.shouheng.notepal.model.data.Resource;
-import me.shouheng.notepal.model.enums.Status;
+import me.shouheng.notepal.model.enums.ItemStatus;
 import me.shouheng.notepal.repository.BaseRepository;
 import me.shouheng.notepal.repository.NotebookRepository;
 
@@ -17,7 +17,7 @@ public class NotebookViewModel extends BaseViewModel<Notebook> {
         return new NotebookRepository();
     }
 
-    public LiveData<Resource<Notebook>> update(Notebook notebook, Status fromStatus, Status toStatus) {
+    public LiveData<Resource<Notebook>> update(Notebook notebook, ItemStatus fromStatus, ItemStatus toStatus) {
         return ((NotebookRepository) getRepository()).update(notebook, fromStatus, toStatus);
     }
 

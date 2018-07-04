@@ -32,14 +32,6 @@ public abstract class BaseFragment<V extends ViewDataBinding> extends CommonFrag
         implements OnAttachingFileListener  {
 
     // region Capture
-    protected void createScreenCapture(final RecyclerView recyclerView) {
-        if (recyclerView.getAdapter() == null || recyclerView.getAdapter().getItemCount() == 0) {
-            ToastUtils.makeToast(R.string.empty_list_to_capture);
-            return;
-        }
-        if (getActivity() == null) return;
-        PermissionUtils.checkStoragePermission((BaseActivity) getActivity(), () -> doCapture(recyclerView));
-    }
 
     protected void createScreenCapture(final RecyclerView recyclerView, final int itemHeight) {
         if (recyclerView.getAdapter() == null || recyclerView.getAdapter().getItemCount() == 0) {
@@ -134,6 +126,7 @@ public abstract class BaseFragment<V extends ViewDataBinding> extends CommonFrag
             pd.dismiss();
         }
     }
+
     // endregion
 
     // region Attachment

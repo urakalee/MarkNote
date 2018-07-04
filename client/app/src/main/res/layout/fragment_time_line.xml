@@ -11,7 +11,7 @@
             android:layout_height="match_parent" >
 
             <me.shouheng.notepal.widget.EmptyView
-                android:id="@+id/iv_empty"
+                android:id="@+id/emptyView"
                 android:layout_centerInParent="true"
                 app:empty_image="@drawable/ic_timeline_large"
                 app:tint_drawable="true"

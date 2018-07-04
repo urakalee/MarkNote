@@ -3,7 +3,7 @@ package me.shouheng.notepal.model;
 import java.io.Serializable;
 import java.util.Date;
 
-import me.shouheng.notepal.model.enums.Status;
+import me.shouheng.notepal.model.enums.ItemStatus;
 import me.shouheng.notepal.provider.annotation.Column;
 import me.shouheng.notepal.provider.schema.BaseSchema;
 import me.shouheng.notepal.util.TimeUtils;
@@ -32,7 +32,7 @@ public class Model implements Serializable {
     protected Date lastSyncTime;
 
     @Column(name = BaseSchema.STATUS)
-    protected Status status;
+    protected ItemStatus status;
 
     public long getId() {
         return id;
@@ -82,11 +82,11 @@ public class Model implements Serializable {
         this.lastSyncTime = lastSyncTime;
     }
 
-    public Status getStatus() {
+    public ItemStatus getStatus() {
         return status;
     }
 
-    public void setStatus(Status status) {
+    public void setStatus(ItemStatus status) {
         this.status = status;
     }
 

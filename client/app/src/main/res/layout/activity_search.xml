@@ -13,7 +13,7 @@
             layout="@layout/layout_toolbar"/>
 
         <me.shouheng.notepal.widget.EmptyView
-            android:id="@+id/iv_empty"
+            android:id="@+id/emptyView"
             app:empty_image="@drawable/ic_large_search"
             app:title="@string/no_search_result_found"
             app:sub_title="@string/try_other_conditions"

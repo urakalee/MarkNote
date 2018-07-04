@@ -7,7 +7,7 @@ import java.util.List;
 
 import me.shouheng.notepal.model.Model;
 import me.shouheng.notepal.model.data.Resource;
-import me.shouheng.notepal.model.enums.Status;
+import me.shouheng.notepal.model.enums.ItemStatus;
 import me.shouheng.notepal.repository.BaseRepository;
 
 /**
@@ -20,7 +20,7 @@ public abstract class BaseViewModel<T extends Model> extends ViewModel {
         return getRepository().get(code);
     }
 
-    public LiveData<Resource<T>> get(long code, Status status, boolean exclude) {
+    public LiveData<Resource<T>> get(long code, ItemStatus status, boolean exclude) {
         return getRepository().get(code, status, exclude);
     }
 
@@ -28,7 +28,7 @@ public abstract class BaseViewModel<T extends Model> extends ViewModel {
         return getRepository().get(whereSQL, orderSQL);
     }
 
-    public LiveData<Resource<List<T>>> get(String whereSQL, String orderSQL, Status status, boolean exclude) {
+    public LiveData<Resource<List<T>>> get(String whereSQL, String orderSQL, ItemStatus status, boolean exclude) {
         return getRepository().get(whereSQL, orderSQL, status, exclude);
     }
 
@@ -44,7 +44,7 @@ public abstract class BaseViewModel<T extends Model> extends ViewModel {
         return getRepository().getTrashed(whereSQL, orderSQL);
     }
 
-    public LiveData<Resource<Integer>> getCount(String whereSQL, Status status, boolean exclude) {
+    public LiveData<Resource<Integer>> getCount(String whereSQL, ItemStatus status, boolean exclude) {
         return getRepository().getCount(whereSQL, status, exclude);
     }
 
@@ -52,7 +52,7 @@ public abstract class BaseViewModel<T extends Model> extends ViewModel {
         return getRepository().isNewModel(code);
     }
 
-    public LiveData<Resource<List<T>>> getPage(int index, int pageCount, String orderSQL, Status status, boolean exclude) {
+    public LiveData<Resource<List<T>>> getPage(int index, int pageCount, String orderSQL, ItemStatus status, boolean exclude) {
         return getRepository().getPage(index, pageCount, orderSQL, status, exclude);
     }
 
@@ -64,7 +64,7 @@ public abstract class BaseViewModel<T extends Model> extends ViewModel {
         return getRepository().update(model);
     }
 
-    public LiveData<Resource<T>> update(T model, Status toStatus) {
+    public LiveData<Resource<T>> update(T model, ItemStatus toStatus) {
         return getRepository().update(model, toStatus);
     }
 
@@ -72,7 +72,7 @@ public abstract class BaseViewModel<T extends Model> extends ViewModel {
         return getRepository().saveOrUpdate(model);
     }
 
-    public LiveData<Resource<List<T>>> batchUpdate(List<T> models, Status toStatus) {
+    public LiveData<Resource<List<T>>> batchUpdate(List<T> models, ItemStatus toStatus) {
         return getRepository().batchUpdate(models, toStatus);
     }
 }

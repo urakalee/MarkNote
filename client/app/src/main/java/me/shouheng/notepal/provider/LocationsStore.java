@@ -11,7 +11,7 @@ import java.util.List;
 import me.shouheng.notepal.model.Location;
 import me.shouheng.notepal.model.Note;
 import me.shouheng.notepal.model.enums.ModelType;
-import me.shouheng.notepal.model.enums.Status;
+import me.shouheng.notepal.model.enums.ItemStatus;
 import me.shouheng.notepal.provider.helper.StoreHelper;
 import me.shouheng.notepal.provider.schema.BaseSchema;
 import me.shouheng.notepal.provider.schema.LocationSchema;
@@ -75,7 +75,7 @@ public class LocationsStore extends BaseStore<Location> {
             cursor = database.rawQuery(" SELECT * FROM " + tableName +
                             " WHERE " + LocationSchema.USER_ID + " = ? "
                             + (TextUtils.isEmpty(whereSQL) ? "" : " AND " + whereSQL)
-                            + " AND " + LocationSchema.STATUS + " = " + Status.NORMAL.id
+                            + " AND " + LocationSchema.STATUS + " = " + ItemStatus.NORMAL.id
                             + (TextUtils.isEmpty(orderSQL) ? "" : " ORDER BY " + orderSQL),
                     new String[]{String.valueOf(userId)});
             location = get(cursor);

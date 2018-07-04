@@ -13,7 +13,7 @@ import me.shouheng.notepal.model.Location;
 import me.shouheng.notepal.model.Model;
 import me.shouheng.notepal.model.TimeLine;
 import me.shouheng.notepal.model.enums.Operation;
-import me.shouheng.notepal.model.enums.Status;
+import me.shouheng.notepal.model.enums.ItemStatus;
 import me.shouheng.notepal.provider.annotation.Column;
 import me.shouheng.notepal.provider.schema.BaseSchema;
 import me.shouheng.notepal.provider.schema.LocationSchema;
@@ -69,18 +69,18 @@ public class StoreHelper {
         values.put(BaseSchema.USER_ID, model.getUserId());
         values.put(BaseSchema.ADDED_TIME, model.getAddedTime() == null ? 0 : model.getAddedTime().getTime());
         values.put(BaseSchema.LAST_MODIFIED_TIME, model.getLastModifiedTime() == null ? 0 : model.getLastModifiedTime().getTime());
-        values.put(BaseSchema.STATUS, model.getStatus() == null ? Status.NORMAL.id : model.getStatus().id);
+        values.put(BaseSchema.STATUS, model.getStatus() == null ? ItemStatus.NORMAL.id : model.getStatus().id);
         values.put(BaseSchema.LAST_SYNC_TIME, model.getLastSyncTime() == null ? 0 : model.getLastSyncTime().getTime());
         return values;
     }
 
     /**
-     * try to get the {@link Operation} name from given {@link Status} type
+     * try to get the {@link Operation} name from given {@link ItemStatus} type
      *
      * @param toStatus status that we want to transfer to
      * @return the operation type
      */
-    public static Operation getStatusOperation(Status toStatus) {
+    public static Operation getStatusOperation(ItemStatus toStatus) {
         switch (toStatus) {
             case ARCHIVED:
                 return Operation.ARCHIVE;
@@ -121,7 +121,7 @@ public class StoreHelper {
         model.setUserId(cursor.getLong(cursor.getColumnIndex(BaseSchema.USER_ID)));
         model.setAddedTime(new Date(cursor.getLong(cursor.getColumnIndex(BaseSchema.ADDED_TIME))));
         model.setLastModifiedTime(new Date(cursor.getLong(cursor.getColumnIndex(BaseSchema.LAST_MODIFIED_TIME))));
-        model.setStatus(Status.getStatusById(cursor.getInt(cursor.getColumnIndex(BaseSchema.STATUS))));
+        model.setStatus(ItemStatus.getStatusById(cursor.getInt(cursor.getColumnIndex(BaseSchema.STATUS))));
         model.setLastSyncTime(new Date(cursor.getLong(cursor.getColumnIndex(BaseSchema.LAST_SYNC_TIME))));
     }
 

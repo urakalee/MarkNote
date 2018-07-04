@@ -1,18 +1,18 @@
 package me.shouheng.notepal.model.data;
 
+import static me.shouheng.notepal.model.data.LoadStatus.FAILED;
+import static me.shouheng.notepal.model.data.LoadStatus.LOADING;
+import static me.shouheng.notepal.model.data.LoadStatus.SUCCESS;
+
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-
-import static me.shouheng.notepal.model.data.Status.FAILED;
-import static me.shouheng.notepal.model.data.Status.LOADING;
-import static me.shouheng.notepal.model.data.Status.SUCCESS;
 
 /**
  * Created by wang shouheng on 2018/3/13. */
 public class Resource<T> {
 
     @NonNull
-    public Status status;
+    public LoadStatus status;
 
     @Nullable
     public T data;
@@ -24,7 +24,7 @@ public class Resource<T> {
      * reserved field */
     private Long udf1;
 
-    private Resource(@NonNull Status status, @Nullable T data, @Nullable String message) {
+    private Resource(@NonNull LoadStatus status, @Nullable T data, @Nullable String message) {
         this.status = status;
         this.data = data;
         this.message = message;

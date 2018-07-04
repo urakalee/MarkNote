@@ -7,7 +7,7 @@ import me.shouheng.notepal.PalmApp;
 import me.shouheng.notepal.async.NormalAsyncTask;
 import me.shouheng.notepal.model.Notebook;
 import me.shouheng.notepal.model.data.Resource;
-import me.shouheng.notepal.model.enums.Status;
+import me.shouheng.notepal.model.enums.ItemStatus;
 import me.shouheng.notepal.provider.BaseStore;
 import me.shouheng.notepal.provider.NotebookStore;
 
@@ -20,7 +20,7 @@ public class NotebookRepository extends BaseRepository<Notebook> {
         return NotebookStore.getInstance(PalmApp.getContext());
     }
 
-    public LiveData<Resource<Notebook>> update(Notebook model, Status fromStatus, Status toStatus) {
+    public LiveData<Resource<Notebook>> update(Notebook model, ItemStatus fromStatus, ItemStatus toStatus) {
         MutableLiveData<Resource<Notebook>> result = new MutableLiveData<>();
         new NormalAsyncTask<>(result, () -> {
             ((NotebookStore) getStore()).update(model, fromStatus, toStatus);

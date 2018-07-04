@@ -8,7 +8,7 @@ import me.shouheng.notepal.fragment.CategoriesFragment;
 import me.shouheng.notepal.fragment.NotesFragment;
 import me.shouheng.notepal.model.Category;
 import me.shouheng.notepal.model.Notebook;
-import me.shouheng.notepal.model.enums.Status;
+import me.shouheng.notepal.model.enums.ItemStatus;
 import me.shouheng.notepal.util.FragmentHelper;
 
 public class ArchiveActivity extends BaseListActivity {
@@ -20,23 +20,23 @@ public class ArchiveActivity extends BaseListActivity {
 
     @Override
     protected Fragment getNotesFragment() {
-        return NotesFragment.Companion.newInstance(Status.ARCHIVED);
+        return NotesFragment.Companion.newInstance(ItemStatus.ARCHIVED);
     }
 
     @Override
     protected Fragment getCategoryFragment() {
-        return CategoriesFragment.newInstance(Status.ARCHIVED);
+        return CategoriesFragment.newInstance(ItemStatus.ARCHIVED);
     }
 
     @Override
     public void onCategorySelected(Category category) {
-        NotesFragment notesFragment = NotesFragment.Companion.newInstance(category, Status.ARCHIVED);
+        NotesFragment notesFragment = NotesFragment.Companion.newInstance(category, ItemStatus.ARCHIVED);
         FragmentHelper.replaceWithCallback(this, notesFragment, R.id.fragment_container);
     }
 
     @Override
     public void onNotebookSelected(Notebook notebook) {
-        NotesFragment notesFragment = NotesFragment.Companion.newInstance(notebook, Status.ARCHIVED);
+        NotesFragment notesFragment = NotesFragment.Companion.newInstance(notebook, ItemStatus.ARCHIVED);
         FragmentHelper.replaceWithCallback(this, notesFragment, R.id.fragment_container);
     }
 }

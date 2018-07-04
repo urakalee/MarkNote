@@ -43,7 +43,7 @@ public abstract class BasePickerDialog<T extends Model & Selectable> extends Dia
         dialogView = LayoutInflater.from(getContext()).inflate(
                 R.layout.dialog_models_picker_layout, null, false);
 
-        EmptyView emptyView = dialogView.findViewById(R.id.iv_empty);
+        EmptyView emptyView = dialogView.findViewById(R.id.emptyView);
 
         mRecyclerView = dialogView.findViewById(R.id.rv_models);
         mRecyclerView.setEmptyView(emptyView);

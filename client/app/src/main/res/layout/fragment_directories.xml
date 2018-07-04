@@ -8,7 +8,7 @@
         android:layout_height="match_parent">
 
         <me.shouheng.notepal.widget.EmptyView
-            android:id="@+id/iv_empty"
+            android:id="@+id/emptyView"
             app:empty_image="@drawable/ic_large_folder"
             app:title="@string/text_no_more_folders"
             app:tint_drawable="true"

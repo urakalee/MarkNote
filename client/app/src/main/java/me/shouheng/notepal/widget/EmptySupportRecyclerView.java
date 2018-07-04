@@ -5,8 +5,11 @@ import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.view.View;
 
+import me.urakalee.ranger.extension.ViewExtensions;
+
 /**
- * Created by wangshouheng on 2017/3/31.*/
+ * Created by wangshouheng on 2017/3/31.
+ */
 public class EmptySupportRecyclerView extends RecyclerView {
 
     private View emptyView;
@@ -43,29 +46,25 @@ public class EmptySupportRecyclerView extends RecyclerView {
         }
     };
 
-    public void showEmptyView(){
+    public void showEmptyView() {
         RecyclerView.Adapter<?> adapter = getAdapter();
-        if(adapter!=null && emptyView!=null){
-            if(adapter.getItemCount()==0){
-                emptyView.setVisibility(View.VISIBLE);
-                EmptySupportRecyclerView.this.setVisibility(View.GONE);
-            } else{
-                emptyView.setVisibility(View.GONE);
-                EmptySupportRecyclerView.this.setVisibility(View.VISIBLE);
-            }
+        if (adapter != null && emptyView != null) {
+            boolean isEmpty = adapter.getItemCount() == 0;
+            ViewExtensions.setVisible(emptyView, isEmpty);
+            ViewExtensions.setVisible(EmptySupportRecyclerView.this, !isEmpty);
         }
     }
 
     @Override
     public void setAdapter(RecyclerView.Adapter adapter) {
         super.setAdapter(adapter);
-        if(adapter != null){
+        if (adapter != null) {
             adapter.registerAdapterDataObserver(observer);
             observer.onChanged();
         }
     }
 
-    public void setEmptyView(View v){
-        emptyView = v;
+    public void setEmptyView(View view) {
+        emptyView = view;
     }
 }

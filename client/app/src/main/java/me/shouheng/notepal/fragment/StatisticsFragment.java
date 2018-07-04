@@ -16,7 +16,7 @@ import me.shouheng.notepal.R;
 import me.shouheng.notepal.databinding.FragmentStatisticsBinding;
 import me.shouheng.notepal.fragment.base.BaseFragment;
 import me.shouheng.notepal.model.Stats;
-import me.shouheng.notepal.model.data.Status;
+import me.shouheng.notepal.model.data.LoadStatus;
 import me.shouheng.notepal.util.LogUtils;
 import me.shouheng.notepal.util.ToastUtils;
 import me.shouheng.notepal.viewmodel.StatisticViewModel;
@@ -68,7 +68,7 @@ public class StatisticsFragment extends BaseFragment<FragmentStatisticsBinding> 
 
     private void outputStats() {
         if (getActivity() instanceof OnStatisticInteractListener) {
-            ((OnStatisticInteractListener) getActivity()).onStatisticLoadStateChanged(Status.LOADING);
+            ((OnStatisticInteractListener) getActivity()).onStatisticLoadStateChanged(LoadStatus.LOADING);
         }
         statisticViewModel.getStats().observe(this, statsResource -> {
             LogUtils.d(statsResource);
@@ -145,6 +145,6 @@ public class StatisticsFragment extends BaseFragment<FragmentStatisticsBinding> 
     }
 
     public interface OnStatisticInteractListener {
-        void onStatisticLoadStateChanged(Status status);
+        void onStatisticLoadStateChanged(LoadStatus status);
     }
 }

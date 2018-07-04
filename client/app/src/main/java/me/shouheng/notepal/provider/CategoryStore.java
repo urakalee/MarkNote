@@ -12,7 +12,7 @@ import java.util.List;
 import me.shouheng.notepal.model.Category;
 import me.shouheng.notepal.model.Note;
 import me.shouheng.notepal.model.enums.Portrait;
-import me.shouheng.notepal.model.enums.Status;
+import me.shouheng.notepal.model.enums.ItemStatus;
 import me.shouheng.notepal.provider.schema.BaseSchema;
 import me.shouheng.notepal.provider.schema.CategorySchema;
 import me.shouheng.notepal.provider.schema.NoteSchema;
@@ -66,7 +66,7 @@ public class CategoryStore extends BaseStore<Category> {
     }
 
     @Override
-    public synchronized List<Category> get(String whereSQL, String orderSQL, Status status, boolean exclude) {
+    public synchronized List<Category> get(String whereSQL, String orderSQL, ItemStatus status, boolean exclude) {
         Cursor cursor = null;
         List<Category> models;
         SQLiteDatabase database = getWritableDatabase();
@@ -75,7 +75,7 @@ public class CategoryStore extends BaseStore<Category> {
                             + " FROM " + tableName
                             + " WHERE " + BaseSchema.USER_ID + " = " + userId
                             + (TextUtils.isEmpty(whereSQL) ? "" : " AND " + whereSQL)
-                            + " AND " + BaseSchema.STATUS + " != " + Status.DELETED.id
+                            + " AND " + BaseSchema.STATUS + " != " + ItemStatus.DELETED.id
                             + (TextUtils.isEmpty(orderSQL) ? "" : " ORDER BY " + orderSQL),
                     new String[]{});
             models = getList(cursor);
@@ -133,7 +133,7 @@ public class CategoryStore extends BaseStore<Category> {
                             + " FROM " + tableName
                             + " WHERE " + CategorySchema.USER_ID + " = ? "
                             + " AND " + CategorySchema.CODE + " IN " + sb.toString()
-                            + " AND " + CategorySchema.STATUS + " = " + Status.NORMAL.id,
+                            + " AND " + CategorySchema.STATUS + " = " + ItemStatus.NORMAL.id,
                     new String[]{String.valueOf(userId)});
             categories = getList(cursor);
         } finally {
@@ -150,11 +150,11 @@ public class CategoryStore extends BaseStore<Category> {
      * @param status the status of category
      * @return the count sql of getting notes
      */
-    private String getNotesCount(Status status) {
+    private String getNotesCount(ItemStatus status) {
         return " (SELECT COUNT(*) FROM " + NoteSchema.TABLE_NAME + " AS t1 "
                 + " WHERE t1." + NoteSchema.TAGS + " LIKE '%'||" + tableName + "." + CategorySchema.CODE + "||'%'"
                 + " AND t1." + CategorySchema.USER_ID + " = " + userId
-                + " AND t1." + CategorySchema.STATUS + " = " + (status == null ? Status.NORMAL.id : status.id) + " ) "
+                + " AND t1." + CategorySchema.STATUS + " = " + (status == null ? ItemStatus.NORMAL.id : status.id) + " ) "
                 + " AS " + CategorySchema.COUNT;
     }
 }

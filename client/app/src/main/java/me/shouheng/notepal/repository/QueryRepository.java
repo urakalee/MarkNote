@@ -6,7 +6,7 @@ import java.util.List;
 
 import me.shouheng.notepal.PalmApp;
 import me.shouheng.notepal.model.Note;
-import me.shouheng.notepal.model.enums.Status;
+import me.shouheng.notepal.model.enums.ItemStatus;
 import me.shouheng.notepal.provider.NotesStore;
 import me.shouheng.notepal.provider.schema.BaseSchema;
 import me.shouheng.notepal.provider.schema.NoteSchema;
@@ -43,9 +43,9 @@ public class QueryRepository {
 
     private String getQueryConditions() {
         // should not query the deleted item out
-        return (conditions.isIncludeArchived() ? "" : " AND " + BaseSchema.STATUS + " != " + Status.ARCHIVED.id)
-                + (conditions.isIncludeTrashed() ? "" : " AND " + BaseSchema.STATUS + " != " + Status.TRASHED.id)
-                + " AND " + BaseSchema.STATUS + " != " + Status.DELETED.id;
+        return (conditions.isIncludeArchived() ? "" : " AND " + BaseSchema.STATUS + " != " + ItemStatus.ARCHIVED.id)
+                + (conditions.isIncludeTrashed() ? "" : " AND " + BaseSchema.STATUS + " != " + ItemStatus.TRASHED.id)
+                + " AND " + BaseSchema.STATUS + " != " + ItemStatus.DELETED.id;
     }
 
     public void setConditions(SearchConditions conditions) {

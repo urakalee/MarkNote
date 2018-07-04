@@ -17,7 +17,7 @@ import me.shouheng.notepal.R;
 import me.shouheng.notepal.databinding.ActivityListBaseWithDrawerBinding;
 import me.shouheng.notepal.fragment.CategoriesFragment;
 import me.shouheng.notepal.fragment.NotesFragment;
-import me.shouheng.notepal.model.data.Status;
+import me.shouheng.notepal.model.data.LoadStatus;
 import me.shouheng.notepal.util.FragmentHelper;
 
 
@@ -136,7 +136,7 @@ public abstract class BaseListActivity extends CommonActivity<ActivityListBaseWi
     }
 
     @Override
-    public void onNoteDataChanged() {
+    public void markNoteDataChanged() {
         isListChanged = true;
     }
 
@@ -151,16 +151,16 @@ public abstract class BaseListActivity extends CommonActivity<ActivityListBaseWi
     }
 
     @Override
-    public void onCategoryLoadStateChanged(Status status) {
+    public void onCategoryLoadStateChanged(LoadStatus status) {
         onLoadStateChanged(status);
     }
 
     @Override
-    public void onNoteLoadStateChanged(Status status) {
+    public void onNoteLoadStateChanged(LoadStatus status) {
         onLoadStateChanged(status);
     }
 
-    private void onLoadStateChanged(Status status) {
+    private void onLoadStateChanged(LoadStatus status) {
         switch (status) {
             case SUCCESS:
             case FAILED:

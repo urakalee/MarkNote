@@ -112,7 +112,7 @@ public abstract class BaseModelFragment<T extends Model, V extends ViewDataBindi
     }
 
     protected void afterSaveOrUpdate() {
-        AppWidgetUtils.notifyAppWidgets(getContext());
+        AppWidgetUtils.notifyAppWidgets();
     }
 
     protected LiveData<Resource<Boolean>> isNewModel() {

@@ -3,7 +3,7 @@ package me.shouheng.notepal.repository;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.os.AsyncTask;
-import android.support.annotation.MainThread;
+import android.support.annotation.WorkerThread;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -15,7 +15,7 @@ import me.shouheng.notepal.model.Category;
 import me.shouheng.notepal.model.Note;
 import me.shouheng.notepal.model.Notebook;
 import me.shouheng.notepal.model.data.Resource;
-import me.shouheng.notepal.model.enums.Status;
+import me.shouheng.notepal.model.enums.ItemStatus;
 import me.shouheng.notepal.provider.BaseStore;
 import me.shouheng.notepal.provider.NotesStore;
 import me.shouheng.notepal.provider.helper.ArchiveHelper;
@@ -23,7 +23,8 @@ import me.shouheng.notepal.provider.helper.NotebookHelper;
 import me.shouheng.notepal.provider.helper.TrashHelper;
 
 /**
- * Created by wang shouheng on 2018/3/13.*/
+ * Created by wang shouheng on 2018/3/13.
+ */
 public class NoteRepository extends BaseRepository<Note> {
 
     @Override
@@ -31,7 +32,7 @@ public class NoteRepository extends BaseRepository<Note> {
         return NotesStore.getInstance(PalmApp.getContext());
     }
 
-    public LiveData<Resource<List<MultiItem>>> getMultiItems(Category category, Status status, Notebook notebook) {
+    public LiveData<Resource<List<MultiItem>>> getMultiItems(Category category, ItemStatus status, Notebook notebook) {
         MutableLiveData<Resource<List<MultiItem>>> result = new MutableLiveData<>();
         new NoteLoadTask(result, category, status, notebook).execute();
         return result;
@@ -41,13 +42,13 @@ public class NoteRepository extends BaseRepository<Note> {
 
         private MutableLiveData<Resource<List<MultiItem>>> result;
         private Category category;
-        private me.shouheng.notepal.model.enums.Status status;
+        private ItemStatus status;
         private Notebook notebook;
 
         NoteLoadTask(MutableLiveData<Resource<List<MultiItem>>> result,
-                     Category category,
-                     me.shouheng.notepal.model.enums.Status status,
-                     Notebook notebook) {
+                Category category,
+                ItemStatus status,
+                Notebook notebook) {
             this.result = result;
             this.category = category;
             this.status = status;
@@ -73,18 +74,18 @@ public class NoteRepository extends BaseRepository<Note> {
         }
     }
 
-    @MainThread
-    private static List getNotesAndNotebooks(Category category, Status status, Notebook notebook) {
+    @WorkerThread
+    private static List getNotesAndNotebooks(Category category, ItemStatus status, Notebook notebook) {
         if (category != null) {
-            return status == Status.ARCHIVED ?
+            return status == ItemStatus.ARCHIVED ?
                     ArchiveHelper.getNotebooksAndNotes(PalmApp.getContext(), category) :
-                    status == Status.TRASHED ?
+                    status == ItemStatus.TRASHED ?
                             TrashHelper.getNotebooksAndNotes(PalmApp.getContext(), category) :
                             NotebookHelper.getNotesAndNotebooks(PalmApp.getContext(), category);
         } else {
-            return status == Status.ARCHIVED ?
+            return status == ItemStatus.ARCHIVED ?
                     ArchiveHelper.getNotebooksAndNotes(PalmApp.getContext(), notebook) :
-                    status == Status.TRASHED ?
+                    status == ItemStatus.TRASHED ?
                             TrashHelper.getNotebooksAndNotes(PalmApp.getContext(), notebook) :
                             NotebookHelper.getNotesAndNotebooks(PalmApp.getContext(), notebook);
         }

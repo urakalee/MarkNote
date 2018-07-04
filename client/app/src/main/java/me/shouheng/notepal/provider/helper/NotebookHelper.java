@@ -10,6 +10,7 @@ import javax.annotation.Nonnull;
 import me.shouheng.notepal.model.Category;
 import me.shouheng.notepal.model.Note;
 import me.shouheng.notepal.model.Notebook;
+import me.shouheng.notepal.model.enums.ItemStatus;
 import me.shouheng.notepal.provider.NotebookStore;
 import me.shouheng.notepal.provider.NotesStore;
 import me.shouheng.notepal.provider.schema.NoteSchema;
@@ -22,12 +23,12 @@ public class NotebookHelper {
 
     /**
      * Get the notebooks of given notebook. Note that this method can only get the information
-     * of {@link me.shouheng.notepal.model.enums.Status#NORMAL} status.
-     * If you want to get the notebooks of status {@link me.shouheng.notepal.model.enums.Status#ARCHIVED}
-     * or status {@link me.shouheng.notepal.model.enums.Status#TRASHED},
+     * of {@link ItemStatus#NORMAL} status.
+     * If you want to get the notebooks of status {@link ItemStatus#ARCHIVED}
+     * or status {@link ItemStatus#TRASHED},
      * call {@link ArchiveHelper#getNotebooks(Context, Notebook)}.
      * call {@link TrashHelper#getNotebooks(Context, Notebook)} to get the notebooks of
-     * {@link me.shouheng.notepal.model.enums.Status#TRASHED}
+     * {@link ItemStatus#TRASHED}
      *
      * @param context context
      * @param notebook notebook, may be null,means get the notebooks of top level
@@ -41,11 +42,11 @@ public class NotebookHelper {
     }
 
     /**
-     * Get notes of notebook of status {@link me.shouheng.notepal.model.enums.Status#NORMAL}
+     * Get notes of notebook of status {@link ItemStatus#NORMAL}
      * Call {@link ArchiveHelper#getNotes(Context, Notebook)} to get the notes of notebook of status
-     * {@link me.shouheng.notepal.model.enums.Status#ARCHIVED}.
+     * {@link ItemStatus#ARCHIVED}.
      * Call {@link TrashHelper#getNotes(Context, Notebook)} to get the notes of notebook of status
-     * {@link me.shouheng.notepal.model.enums.Status#TRASHED}.
+     * {@link ItemStatus#TRASHED}.
      *
      * @param context context
      * @param notebook notebook

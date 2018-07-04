@@ -16,7 +16,7 @@ import me.shouheng.notepal.model.DaysOfWeek;
 import me.shouheng.notepal.model.Model;
 import me.shouheng.notepal.model.enums.AlarmType;
 import me.shouheng.notepal.model.enums.ModelType;
-import me.shouheng.notepal.model.enums.Status;
+import me.shouheng.notepal.model.enums.ItemStatus;
 import me.shouheng.notepal.provider.schema.AlarmSchema;
 
 
@@ -84,7 +84,7 @@ public class AlarmsStore extends BaseStore<Alarm> {
     public synchronized <T extends Model> Alarm getAlarm(T model, String orderSQL){
         List<Alarm> alarms = get(AlarmSchema.MODEL_TYPE + " = ? "
                         + " AND " + AlarmSchema.MODEL_CODE + " = " + model.getCode()
-                        + " AND " + AlarmSchema.STATUS + " = " + Status.NORMAL.id,
+                        + " AND " + AlarmSchema.STATUS + " = " + ItemStatus.NORMAL.id,
                 new String[]{String.valueOf(ModelType.getTypeByName(model.getClass()).id)},
                 orderSQL);
         return alarms.size() > 0 ? alarms.get(0) : null;

@@ -24,7 +24,7 @@ import me.shouheng.notepal.model.Note;
 import me.shouheng.notepal.model.Notebook;
 import me.shouheng.notepal.model.data.Resource;
 import me.shouheng.notepal.model.enums.ModelType;
-import me.shouheng.notepal.model.enums.Status;
+import me.shouheng.notepal.model.enums.ItemStatus;
 import me.shouheng.notepal.provider.AttachmentsStore;
 import me.shouheng.notepal.provider.NotesStore;
 import me.shouheng.notepal.repository.BaseRepository;
@@ -43,15 +43,15 @@ public class NoteViewModel extends BaseViewModel<Note> {
         return new NoteRepository();
     }
 
-    public LiveData<Resource<List<MultiItem>>> getMultiItems(Category category, Status status, Notebook notebook) {
+    public LiveData<Resource<List<MultiItem>>> getMultiItems(Category category, ItemStatus status, Notebook notebook) {
         return ((NoteRepository) getRepository()).getMultiItems(category, status, notebook);
     }
 
-    public String getEmptySubTitle(Status status) {
+    public String getEmptySubTitle(ItemStatus status) {
         return PalmApp.getContext().getString(
-                status == Status.NORMAL ? R.string.notes_list_empty_sub_normal :
-                        status == Status.TRASHED ? R.string.notes_list_empty_sub_trashed :
-                                status == Status.ARCHIVED ? R.string.notes_list_empty_sub_archived :
+                status == ItemStatus.NORMAL ? R.string.notes_list_empty_sub_normal :
+                        status == ItemStatus.TRASHED ? R.string.notes_list_empty_sub_trashed :
+                                status == ItemStatus.ARCHIVED ? R.string.notes_list_empty_sub_archived :
                                         R.string.notes_list_empty_sub_normal);
     }
 

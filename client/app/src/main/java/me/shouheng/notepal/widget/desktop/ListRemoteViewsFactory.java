@@ -127,7 +127,7 @@ public class ListRemoteViewsFactory implements RemoteViewsFactory, SharedPrefere
             editor.putLong(Constants.PREF_WIDGET_NOTEBOOK_CODE_PREFIX + String.valueOf(mAppWidgetId), notebook.getCode());
         }
         editor.putString(Constants.PREF_WIDGET_SQL_PREFIX + String.valueOf(mAppWidgetId), sqlCondition).apply();
-        AppWidgetUtils.notifyAppWidgets(mContext);
+        AppWidgetUtils.notifyAppWidgets();
     }
 
     @Override

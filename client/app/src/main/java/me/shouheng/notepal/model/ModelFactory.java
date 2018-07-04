@@ -13,7 +13,7 @@ import me.shouheng.notepal.model.enums.ModelType;
 import me.shouheng.notepal.model.enums.NoteType;
 import me.shouheng.notepal.model.enums.Operation;
 import me.shouheng.notepal.model.enums.Portrait;
-import me.shouheng.notepal.model.enums.Status;
+import me.shouheng.notepal.model.enums.ItemStatus;
 import me.shouheng.notepal.model.enums.WeatherType;
 import me.shouheng.notepal.util.ColorUtils;
 import me.shouheng.notepal.util.TimeUtils;
@@ -46,7 +46,7 @@ public class ModelFactory {
             newItem.setAddedTime(new Date());
             newItem.setLastModifiedTime(new Date());
             newItem.setLastSyncTime(new Date(0));
-            newItem.setStatus(Status.NORMAL);
+            newItem.setStatus(ItemStatus.NORMAL);
             return newItem;
         } catch (InstantiationException e) {
             e.printStackTrace();
@@ -139,7 +139,7 @@ public class ModelFactory {
         timeLine.setAddedTime(new Date());
         timeLine.setLastModifiedTime(new Date());
         timeLine.setLastSyncTime(new Date(0));
-        timeLine.setStatus(Status.NORMAL);
+        timeLine.setStatus(ItemStatus.NORMAL);
 
         timeLine.setOperation(operation);
         timeLine.setModelName(getModelName(model));

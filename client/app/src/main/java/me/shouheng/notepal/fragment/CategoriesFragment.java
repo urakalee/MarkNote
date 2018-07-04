@@ -29,7 +29,8 @@ import me.shouheng.notepal.dialog.CategoryEditDialog;
 import me.shouheng.notepal.fragment.base.BaseFragment;
 import me.shouheng.notepal.listener.OnMainActivityInteraction;
 import me.shouheng.notepal.model.Category;
-import me.shouheng.notepal.model.enums.Status;
+import me.shouheng.notepal.model.data.LoadStatus;
+import me.shouheng.notepal.model.enums.ItemStatus;
 import me.shouheng.notepal.util.LogUtils;
 import me.shouheng.notepal.util.ToastUtils;
 import me.shouheng.notepal.util.ViewUtils;
@@ -50,18 +51,18 @@ public class CategoriesFragment extends BaseFragment<FragmentCategoriesBinding> 
 
     private CategoryEditDialog categoryEditDialog;
 
-    private Status status;
+    private ItemStatus status;
     private CategoryViewModel categoryViewModel;
 
     public static CategoriesFragment newInstance() {
         Bundle args = new Bundle();
         CategoriesFragment fragment = new CategoriesFragment();
-        args.putSerializable(ARG_STATUS, Status.NORMAL);
+        args.putSerializable(ARG_STATUS, ItemStatus.NORMAL);
         fragment.setArguments(args);
         return fragment;
     }
 
-    public static CategoriesFragment newInstance(@Nonnull Status status) {
+    public static CategoriesFragment newInstance(@Nonnull ItemStatus status) {
         Bundle args = new Bundle();
         CategoriesFragment fragment = new CategoriesFragment();
         args.putSerializable(ARG_STATUS, status);
@@ -77,7 +78,7 @@ public class CategoriesFragment extends BaseFragment<FragmentCategoriesBinding> 
     @Override
     protected void doCreateView(Bundle savedInstanceState) {
         if (getArguments() != null && getArguments().containsKey(ARG_STATUS))
-            status = (Status) getArguments().get(ARG_STATUS);
+            status = (ItemStatus) getArguments().get(ARG_STATUS);
 
         categoryViewModel = ViewModelProviders.of(this).get(CategoryViewModel.class);
 
@@ -99,7 +100,7 @@ public class CategoriesFragment extends BaseFragment<FragmentCategoriesBinding> 
     }
 
     private void configCategories() {
-        status = getArguments() == null || !getArguments().containsKey(ARG_STATUS) ? Status.NORMAL : (Status) getArguments().get(ARG_STATUS);
+        status = getArguments() == null || !getArguments().containsKey(ARG_STATUS) ? ItemStatus.NORMAL : (ItemStatus) getArguments().get(ARG_STATUS);
 
         mAdapter = new CategoriesAdapter(getContext(), Collections.emptyList());
         mAdapter.setOnItemChildClickListener((adapter, view, position) -> {
@@ -111,9 +112,9 @@ public class CategoriesFragment extends BaseFragment<FragmentCategoriesBinding> 
         });
         mAdapter.setOnItemClickListener(this);
 
-        getBinding().ivEmpty.setSubTitle(categoryViewModel.getEmptySubTitle(status));
+        getBinding().emptyView.setSubTitle(categoryViewModel.getEmptySubTitle(status));
 
-        getBinding().rvCategories.setEmptyView(getBinding().ivEmpty);
+        getBinding().rvCategories.setEmptyView(getBinding().emptyView);
         getBinding().rvCategories.setHasFixedSize(true);
         getBinding().rvCategories.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL_LIST, isDarkTheme()));
         getBinding().rvCategories.setItemAnimator(new CustomItemAnimator());
@@ -132,7 +133,7 @@ public class CategoriesFragment extends BaseFragment<FragmentCategoriesBinding> 
     public void reload() {
         if (getActivity() instanceof OnCategoriesInteractListener) {
             ((OnCategoriesInteractListener) getActivity()).onCategoryLoadStateChanged(
-                    me.shouheng.notepal.model.data.Status.LOADING);
+                    LoadStatus.LOADING);
         }
 
         categoryViewModel.getCategories(status).observe(this, listResource -> {
@@ -178,7 +179,7 @@ public class CategoriesFragment extends BaseFragment<FragmentCategoriesBinding> 
         });
     }
 
-    private void update(int position, Category category, Status toStatus) {
+    private void update(int position, Category category, ItemStatus toStatus) {
         categoryViewModel.update(category, toStatus).observe(this, categoryResource -> {
             if (categoryResource == null) {
                 ToastUtils.makeToast(R.string.text_failed_to_modify_data);
@@ -254,7 +255,7 @@ public class CategoriesFragment extends BaseFragment<FragmentCategoriesBinding> 
                 .title(R.string.text_warning)
                 .content(R.string.tag_delete_message)
                 .positiveText(R.string.text_confirm)
-                .onPositive((materialDialog, dialogAction) -> update(position, param, Status.DELETED))
+                .onPositive((materialDialog, dialogAction) -> update(position, param, ItemStatus.DELETED))
                 .negativeText(R.string.text_cancel)
                 .onNegative((materialDialog, dialogAction) -> materialDialog.dismiss())
                 .show();
@@ -321,16 +322,16 @@ public class CategoriesFragment extends BaseFragment<FragmentCategoriesBinding> 
 
         /**
          * This method will be called, when the snagging list is changed. Do not try to call {@link #reload()}
-         * This method as well as {@link NotesFragment.OnNotesInteractListener#onNoteDataChanged()} is only used
+         * This method as well as {@link NotesFragment.OnNotesInteractListener#markNoteDataChanged()} is only used
          * to record the list change message and handle in future.
          *
-         * @see NotesFragment.OnNotesInteractListener#onNoteDataChanged() */
+         * @see NotesFragment.OnNotesInteractListener#markNoteDataChanged() */
         default void onCategoryDataChanged(){}
 
         default void onResumeToCategory() {}
 
         default void onCategorySelected(Category category) {}
 
-        default void onCategoryLoadStateChanged(me.shouheng.notepal.model.data.Status status) {}
+        default void onCategoryLoadStateChanged(LoadStatus status) {}
     }
 }

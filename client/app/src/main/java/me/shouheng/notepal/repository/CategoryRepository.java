@@ -10,7 +10,7 @@ import me.shouheng.notepal.async.NormalAsyncTask;
 import me.shouheng.notepal.model.Category;
 import me.shouheng.notepal.model.Note;
 import me.shouheng.notepal.model.data.Resource;
-import me.shouheng.notepal.model.enums.Status;
+import me.shouheng.notepal.model.enums.ItemStatus;
 import me.shouheng.notepal.provider.BaseStore;
 import me.shouheng.notepal.provider.CategoryStore;
 import me.shouheng.notepal.provider.schema.CategorySchema;
@@ -30,12 +30,12 @@ public class CategoryRepository extends BaseRepository<Category> {
         return result;
     }
 
-    public LiveData<Resource<List<Category>>> getCategories(Status status) {
+    public LiveData<Resource<List<Category>>> getCategories(ItemStatus status) {
         MutableLiveData<Resource<List<Category>>> result = new MutableLiveData<>();
         new NormalAsyncTask<>(result, () -> {
-            if (status == Status.ARCHIVED) {
+            if (status == ItemStatus.ARCHIVED) {
                 return getStore().getArchived(null, CategorySchema.CATEGORY_ORDER);
-            } else if (status == Status.TRASHED) {
+            } else if (status == ItemStatus.TRASHED) {
                 return getStore().getTrashed(null, CategorySchema.CATEGORY_ORDER);
             } else {
                 return getStore().get(null, CategorySchema.CATEGORY_ORDER);

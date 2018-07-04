@@ -8,7 +8,7 @@ import java.util.List;
 import me.shouheng.notepal.async.NormalAsyncTask;
 import me.shouheng.notepal.model.Model;
 import me.shouheng.notepal.model.data.Resource;
-import me.shouheng.notepal.model.enums.Status;
+import me.shouheng.notepal.model.enums.ItemStatus;
 import me.shouheng.notepal.provider.BaseStore;
 
 /**
@@ -23,7 +23,7 @@ public abstract class BaseRepository<T extends Model> {
         return result;
     }
 
-    public LiveData<Resource<T>> get(long code, Status status, boolean exclude) {
+    public LiveData<Resource<T>> get(long code, ItemStatus status, boolean exclude) {
         MutableLiveData<Resource<T>> result = new MutableLiveData<>();
         new NormalAsyncTask<>(result, () -> getStore().get(code, status, exclude)).execute();
         return result;
@@ -35,7 +35,7 @@ public abstract class BaseRepository<T extends Model> {
         return result;
     }
 
-    public LiveData<Resource<List<T>>> get(String whereSQL, String orderSQL, Status status, boolean exclude) {
+    public LiveData<Resource<List<T>>> get(String whereSQL, String orderSQL, ItemStatus status, boolean exclude) {
         MutableLiveData<Resource<List<T>>> result = new MutableLiveData<>();
         new NormalAsyncTask<>(result, () -> getStore().get(whereSQL, orderSQL, status, exclude)).execute();
         return result;
@@ -59,7 +59,7 @@ public abstract class BaseRepository<T extends Model> {
         return result;
     }
 
-    public LiveData<Resource<Integer>> getCount(String whereSQL, Status status, boolean exclude) {
+    public LiveData<Resource<Integer>> getCount(String whereSQL, ItemStatus status, boolean exclude) {
         MutableLiveData<Resource<Integer>> result = new MutableLiveData<>();
         new NormalAsyncTask<>(result, () -> getStore().getCount(whereSQL, status, exclude)).execute();
         return result;
@@ -71,7 +71,7 @@ public abstract class BaseRepository<T extends Model> {
         return result;
     }
 
-    public LiveData<Resource<List<T>>> getPage(int index, int pageCount, String orderSQL, Status status, boolean exclude) {
+    public LiveData<Resource<List<T>>> getPage(int index, int pageCount, String orderSQL, ItemStatus status, boolean exclude) {
         MutableLiveData<Resource<List<T>>> result = new MutableLiveData<>();
         new NormalAsyncTask<>(result, () -> getStore().getPage(index, pageCount, orderSQL, status, exclude)).execute();
         return result;
@@ -95,7 +95,7 @@ public abstract class BaseRepository<T extends Model> {
         return result;
     }
 
-    public LiveData<Resource<T>> update(T model, Status toStatus) {
+    public LiveData<Resource<T>> update(T model, ItemStatus toStatus) {
         MutableLiveData<Resource<T>> result = new MutableLiveData<>();
         new NormalAsyncTask<>(result, () -> {
             getStore().update(model, toStatus);
@@ -113,7 +113,7 @@ public abstract class BaseRepository<T extends Model> {
         return result;
     }
 
-    public LiveData<Resource<List<T>>> batchUpdate(List<T> models, Status toStatus) {
+    public LiveData<Resource<List<T>>> batchUpdate(List<T> models, ItemStatus toStatus) {
         MutableLiveData<Resource<List<T>>> result = new MutableLiveData<>();
         new NormalAsyncTask<>(result, () -> {
             getStore().batchUpdate(models, toStatus);

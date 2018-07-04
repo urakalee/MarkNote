@@ -7,7 +7,7 @@ import android.os.Parcelable;
 import java.util.Date;
 
 import me.shouheng.notepal.model.enums.ModelType;
-import me.shouheng.notepal.model.enums.Status;
+import me.shouheng.notepal.model.enums.ItemStatus;
 import me.shouheng.notepal.provider.annotation.Column;
 import me.shouheng.notepal.provider.annotation.Table;
 import me.shouheng.notepal.provider.schema.AttachmentSchema;
@@ -95,7 +95,7 @@ public class Attachment extends Model implements Parcelable {
         setAddedTime(new Date(in.readLong()));
         setLastModifiedTime(new Date(in.readLong()));
         setLastSyncTime(new Date(in.readLong()));
-        setStatus(Status.getStatusById(in.readInt()));
+        setStatus(ItemStatus.getStatusById(in.readInt()));
 
         setId(in.readLong());
         setUri(Uri.parse(in.readString()));

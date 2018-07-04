@@ -8,7 +8,7 @@ import me.shouheng.notepal.fragment.CategoriesFragment;
 import me.shouheng.notepal.fragment.NotesFragment;
 import me.shouheng.notepal.model.Category;
 import me.shouheng.notepal.model.Notebook;
-import me.shouheng.notepal.model.enums.Status;
+import me.shouheng.notepal.model.enums.ItemStatus;
 import me.shouheng.notepal.util.FragmentHelper;
 
 /**
@@ -22,23 +22,23 @@ public class TrashedActivity extends BaseListActivity {
 
     @Override
     protected Fragment getNotesFragment() {
-        return NotesFragment.Companion.newInstance(Status.TRASHED);
+        return NotesFragment.Companion.newInstance(ItemStatus.TRASHED);
     }
 
     @Override
     protected Fragment getCategoryFragment() {
-        return CategoriesFragment.newInstance(Status.TRASHED);
+        return CategoriesFragment.newInstance(ItemStatus.TRASHED);
     }
 
     @Override
     public void onCategorySelected(Category category) {
-        NotesFragment notesFragment = NotesFragment.Companion.newInstance(category, Status.TRASHED);
+        NotesFragment notesFragment = NotesFragment.Companion.newInstance(category, ItemStatus.TRASHED);
         FragmentHelper.replaceWithCallback(this, notesFragment, R.id.fragment_container);
     }
 
     @Override
     public void onNotebookSelected(Notebook notebook) {
-        NotesFragment notesFragment = NotesFragment.Companion.newInstance(notebook, Status.TRASHED);
+        NotesFragment notesFragment = NotesFragment.Companion.newInstance(notebook, ItemStatus.TRASHED);
         FragmentHelper.replaceWithCallback(this, notesFragment, R.id.fragment_container);
     }
 }

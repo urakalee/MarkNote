@@ -128,7 +128,7 @@ public class QuickNoteActivity extends BaseActivity implements OnAttachingFileLi
                 switch (noteResource.status) {
                     case SUCCESS:
                         ToastUtils.makeToast(R.string.text_save_successfully);
-                        AppWidgetUtils.notifyAppWidgets(QuickNoteActivity.this);
+                        AppWidgetUtils.notifyAppWidgets();
                         break;
                     case FAILED:
                         ToastUtils.makeToast(R.string.text_failed_to_modify_data);

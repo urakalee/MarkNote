@@ -72,7 +72,7 @@ public class SearchActivity extends CommonActivity<ActivitySearchBinding> implem
 
         adapter = new SearchItemsAdapter(this, this);
 
-        getBinding().recyclerview.setEmptyView(findViewById(R.id.iv_empty));
+        getBinding().recyclerview.setEmptyView(findViewById(R.id.emptyView));
         getBinding().recyclerview.addItemDecoration(new DividerItemDecoration(
                 this, DividerItemDecoration.VERTICAL_LIST, isDarkTheme()));
         getBinding().recyclerview.setItemAnimator(new CustomItemAnimator());

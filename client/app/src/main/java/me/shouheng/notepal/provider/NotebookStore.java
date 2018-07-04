@@ -11,7 +11,7 @@ import java.util.List;
 
 import me.shouheng.notepal.model.Notebook;
 import me.shouheng.notepal.model.enums.Operation;
-import me.shouheng.notepal.model.enums.Status;
+import me.shouheng.notepal.model.enums.ItemStatus;
 import me.shouheng.notepal.provider.helper.StoreHelper;
 import me.shouheng.notepal.provider.helper.TimelineHelper;
 import me.shouheng.notepal.provider.schema.BaseSchema;
@@ -68,22 +68,22 @@ public class NotebookStore extends BaseStore<Notebook> {
     }
 
     public synchronized List<Notebook> getNotebooks(String whereSQL, String orderSQL){
-        return getNotebooks(whereSQL, orderSQL, Status.NORMAL);
+        return getNotebooks(whereSQL, orderSQL, ItemStatus.NORMAL);
     }
 
     @Override
     public synchronized List<Notebook> getArchived(String whereSQL, String orderSQL) {
-        return getNotebooks(whereSQL, orderSQL, Status.ARCHIVED);
+        return getNotebooks(whereSQL, orderSQL, ItemStatus.ARCHIVED);
     }
 
     @Override
     public synchronized List<Notebook> getTrashed(String whereSQL, String orderSQL) {
-        return getNotebooks(whereSQL, orderSQL, Status.TRASHED);
+        return getNotebooks(whereSQL, orderSQL, ItemStatus.TRASHED);
     }
 
     /**
      * Try not to use this method to update notebook`s status. Since it only update the notebook
-     * itself. To update the notebook, you should use {@link #update(Notebook, Status, Status)}
+     * itself. To update the notebook, you should use {@link #update(Notebook, ItemStatus, ItemStatus)}
      * method which will update the notebooks and notes associated as well.
      *
      * @param model the notebook to update
@@ -91,7 +91,7 @@ public class NotebookStore extends BaseStore<Notebook> {
      */
     @Deprecated
     @Override
-    public synchronized void update(Notebook model, Status toStatus) {
+    public synchronized void update(Notebook model, ItemStatus toStatus) {
         super.update(model, toStatus);
     }
 
@@ -99,11 +99,11 @@ public class NotebookStore extends BaseStore<Notebook> {
      * @param model notebook to update
      * @param fromStatus the status of the notebook list, Note: this status differs from the status
      *                   of given notebook. Because, for example, the notebook in archive that showed
-     *                   to the user may not in {@link Status#ARCHIVED} state. The list may include
-     *                   the notebook of status {@link Status#NORMAL} too.
+     *                   to the user may not in {@link ItemStatus#ARCHIVED} state. The list may include
+     *                   the notebook of status {@link ItemStatus#NORMAL} too.
      * @param toStatus the status to update to
      */
-    public synchronized void update(Notebook model, Status fromStatus, Status toStatus) {
+    public synchronized void update(Notebook model, ItemStatus fromStatus, ItemStatus toStatus) {
         if (model == null || toStatus == null) return;
         TimelineHelper.addTimeLine(model, StoreHelper.getStatusOperation(toStatus));
         SQLiteDatabase database = getWritableDatabase();
@@ -196,7 +196,7 @@ public class NotebookStore extends BaseStore<Notebook> {
      * @param orderSQL order SQL
      * @return the notebooks
      */
-    private List<Notebook> getNotebooks(String whereSQL, String orderSQL, Status status) {
+    private List<Notebook> getNotebooks(String whereSQL, String orderSQL, ItemStatus status) {
         Cursor cursor = null;
         List<Notebook> notebooks;
         SQLiteDatabase database = getWritableDatabase();
@@ -217,7 +217,7 @@ public class NotebookStore extends BaseStore<Notebook> {
         return notebooks;
     }
 
-    private void setupSubNotebooks(SQLiteDatabase database, List<Notebook> notebooks, Status status) {
+    private void setupSubNotebooks(SQLiteDatabase database, List<Notebook> notebooks, ItemStatus status) {
         LongSparseArray<Notebook> array = new LongSparseArray<>();
 
         StringBuilder sb = new StringBuilder(" ( ");
@@ -247,11 +247,11 @@ public class NotebookStore extends BaseStore<Notebook> {
         closeCursor(cursor);
     }
 
-    private String getNotesCount(Status status) {
+    private String getNotesCount(ItemStatus status) {
         return " (SELECT COUNT(*) FROM " + NoteSchema.TABLE_NAME + " AS t1 "
                 + " WHERE t1." + NoteSchema.TREE_PATH + " LIKE " + tableName + "." + NotebookSchema.TREE_PATH + "||'%'"
                 + " AND t1." + NoteSchema.USER_ID + " = " + userId
-                + " AND t1." + NoteSchema.STATUS + " = " + (status == null ? Status.NORMAL.id : status.id) + " ) "
+                + " AND t1." + NoteSchema.STATUS + " = " + (status == null ? ItemStatus.NORMAL.id : status.id) + " ) "
                 + " AS " + NotebookSchema.COUNT;
     }
 }

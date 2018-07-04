@@ -7,7 +7,7 @@ import android.os.Parcelable;
 import java.util.Date;
 
 import me.shouheng.notepal.model.enums.NoteType;
-import me.shouheng.notepal.model.enums.Status;
+import me.shouheng.notepal.model.enums.ItemStatus;
 import me.shouheng.notepal.provider.annotation.Column;
 import me.shouheng.notepal.provider.annotation.Table;
 import me.shouheng.notepal.provider.schema.NoteSchema;
@@ -74,7 +74,7 @@ public class Note extends Model implements Parcelable {
         setAddedTime(new Date(in.readLong()));
         setLastModifiedTime(new Date(in.readLong()));
         setLastSyncTime(new Date(in.readLong()));
-        setStatus(Status.getStatusById(in.readInt()));
+        setStatus(ItemStatus.getStatusById(in.readInt()));
 
         setParentCode(in.readLong());
         setTreePath(in.readString());

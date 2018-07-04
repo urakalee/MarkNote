@@ -14,7 +14,7 @@ import me.shouheng.notepal.model.Location;
 import me.shouheng.notepal.model.Stats;
 import me.shouheng.notepal.model.enums.ModelType;
 import me.shouheng.notepal.model.enums.Operation;
-import me.shouheng.notepal.model.enums.Status;
+import me.shouheng.notepal.model.enums.ItemStatus;
 import me.shouheng.notepal.provider.AttachmentsStore;
 import me.shouheng.notepal.provider.CategoryStore;
 import me.shouheng.notepal.provider.LocationsStore;
@@ -40,23 +40,23 @@ public class StatisticsHelper {
         Stats stats = new Stats();
 
         NotesStore notesStore = NotesStore.getInstance(context);
-        stats.setTotalNotes(notesStore.getCount(null, Status.DELETED, true));
-        stats.setArchivedNotes(notesStore.getCount(null, Status.ARCHIVED, false));
-        stats.setTrashedNotes(notesStore.getCount(null, Status.TRASHED, false));
+        stats.setTotalNotes(notesStore.getCount(null, ItemStatus.DELETED, true));
+        stats.setArchivedNotes(notesStore.getCount(null, ItemStatus.ARCHIVED, false));
+        stats.setTrashedNotes(notesStore.getCount(null, ItemStatus.TRASHED, false));
 
         CategoryStore categoryStore = CategoryStore.getInstance(context);
-        stats.setTotalMinds(categoryStore.getCount(null, Status.DELETED, true));
-        stats.setArchivedMinds(categoryStore.getCount(null, Status.ARCHIVED, false));
-        stats.setTrashedMinds(categoryStore.getCount(null, Status.TRASHED, false));
+        stats.setTotalMinds(categoryStore.getCount(null, ItemStatus.DELETED, true));
+        stats.setArchivedMinds(categoryStore.getCount(null, ItemStatus.ARCHIVED, false));
+        stats.setTrashedMinds(categoryStore.getCount(null, ItemStatus.TRASHED, false));
 
         LocationsStore locationsStore = LocationsStore.getInstance(context);
         List<Location> locations = locationsStore.getDistinct(null, null);
         stats.setLocCnt(locations.size());
         stats.setLocations(locations);
-        stats.setTotalLocations(locationsStore.getCount(null, Status.DELETED, true));
+        stats.setTotalLocations(locationsStore.getCount(null, ItemStatus.DELETED, true));
 
         NotebookStore notebookStore = NotebookStore.getInstance(context);
-        stats.setTotalNotebooks(notebookStore.getCount(null, Status.TRASHED, false));
+        stats.setTotalNotebooks(notebookStore.getCount(null, ItemStatus.TRASHED, false));
 
         AttachmentsStore attachmentsStore = AttachmentsStore.getInstance(context);
         List<Attachment> attachments = attachmentsStore.get(null, null);
@@ -104,7 +104,7 @@ public class StatisticsHelper {
                     + " AND " + TimelineSchema.ADDED_TIME + " < " + endMillis
                     + " AND " + TimelineSchema.MODEL_TYPE + " = " + modelType.id
                     + " AND " + TimelineSchema.OPERATION + " = " + Operation.ADD.id;
-            int count = TimelineStore.getInstance(PalmApp.getContext()).getCount(whereSQL, Status.DELETED, true);
+            int count = TimelineStore.getInstance(PalmApp.getContext()).getCount(whereSQL, ItemStatus.DELETED, true);
             states.add(count);
         }
         return states;

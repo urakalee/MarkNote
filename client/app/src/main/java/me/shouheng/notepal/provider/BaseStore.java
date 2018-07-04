@@ -12,7 +12,7 @@ import java.util.List;
 
 import me.shouheng.notepal.model.Model;
 import me.shouheng.notepal.model.enums.Operation;
-import me.shouheng.notepal.model.enums.Status;
+import me.shouheng.notepal.model.enums.ItemStatus;
 import me.shouheng.notepal.provider.annotation.Table;
 import me.shouheng.notepal.provider.base.OpenHelperManager;
 import me.shouheng.notepal.provider.helper.StoreHelper;
@@ -78,10 +78,10 @@ public abstract class BaseStore<T extends Model> {
 
 
     public synchronized T get(long code) {
-        return get(code, Status.NORMAL, false);
+        return get(code, ItemStatus.NORMAL, false);
     }
 
-    public synchronized T get(long code, Status status, boolean exclude) {
+    public synchronized T get(long code, ItemStatus status, boolean exclude) {
         Cursor cursor = null;
         T model = null;
         SQLiteDatabase database = getWritableDatabase();
@@ -100,7 +100,7 @@ public abstract class BaseStore<T extends Model> {
     }
 
     public synchronized List<T> get(String whereSQL, String orderSQL) {
-        return get(whereSQL, orderSQL, Status.NORMAL, false);
+        return get(whereSQL, orderSQL, ItemStatus.NORMAL, false);
     }
 
     /**
@@ -115,7 +115,7 @@ public abstract class BaseStore<T extends Model> {
      * @param exclude whether exclude or include
      * @return the models list
      */
-    public synchronized List<T> get(String whereSQL, String orderSQL, Status status, boolean exclude) {
+    public synchronized List<T> get(String whereSQL, String orderSQL, ItemStatus status, boolean exclude) {
         Cursor cursor = null;
         List<T> models = null;
         SQLiteDatabase database = getWritableDatabase();
@@ -161,14 +161,14 @@ public abstract class BaseStore<T extends Model> {
     }
 
     public synchronized List<T> getArchived(String whereSQL, String orderSQL) {
-        return get(whereSQL, orderSQL, Status.ARCHIVED, false);
+        return get(whereSQL, orderSQL, ItemStatus.ARCHIVED, false);
     }
 
     public synchronized List<T> getTrashed(String whereSQL, String orderSQL) {
-        return get(whereSQL, orderSQL, Status.TRASHED, false);
+        return get(whereSQL, orderSQL, ItemStatus.TRASHED, false);
     }
 
-    public synchronized int getCount(String whereSQL, Status status, boolean exclude) {
+    public synchronized int getCount(String whereSQL, ItemStatus status, boolean exclude) {
         Cursor cursor = null;
         int count = 0;
         SQLiteDatabase database = getWritableDatabase();
@@ -211,7 +211,7 @@ public abstract class BaseStore<T extends Model> {
         return count == 0;
     }
 
-    public synchronized List<T> getPage(int index, int pageCount, String orderSQL, Status status, boolean exclude) {
+    public synchronized List<T> getPage(int index, int pageCount, String orderSQL, ItemStatus status, boolean exclude) {
         Cursor cursor = null;
         List<T> models;
         final SQLiteDatabase database = getWritableDatabase();
@@ -272,7 +272,7 @@ public abstract class BaseStore<T extends Model> {
         }
     }
 
-    public synchronized void update(T model, Status toStatus) {
+    public synchronized void update(T model, ItemStatus toStatus) {
         if (model == null || toStatus == null) return;
         TimelineHelper.addTimeLine(model, StoreHelper.getStatusOperation(toStatus));
         SQLiteDatabase database = getWritableDatabase();
@@ -290,7 +290,7 @@ public abstract class BaseStore<T extends Model> {
         }
     }
 
-    public synchronized void batchUpdate(List<T> models, Status toStatus) {
+    public synchronized void batchUpdate(List<T> models, ItemStatus toStatus) {
         if (models == null || models.isEmpty() || toStatus == null) return;
 
         StringBuilder sb = new StringBuilder();

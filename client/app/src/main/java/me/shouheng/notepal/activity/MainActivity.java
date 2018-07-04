@@ -58,8 +58,9 @@ import me.shouheng.notepal.model.Model;
 import me.shouheng.notepal.model.ModelFactory;
 import me.shouheng.notepal.model.Note;
 import me.shouheng.notepal.model.Notebook;
+import me.shouheng.notepal.model.data.LoadStatus;
 import me.shouheng.notepal.model.enums.FabSortItem;
-import me.shouheng.notepal.model.enums.Status;
+import me.shouheng.notepal.model.enums.ItemStatus;
 import me.shouheng.notepal.util.AttachmentHelper;
 import me.shouheng.notepal.util.ColorUtils;
 import me.shouheng.notepal.util.FragmentHelper;
@@ -585,7 +586,7 @@ public class MainActivity extends CommonActivity<ActivityMainBinding> implements
 
     private void toNotesFragment(boolean checkDuplicate) {
         if (checkDuplicate && isNotesFragment()) return;
-        NotesFragment notesFragment = NotesFragment.Companion.newInstance(Status.NORMAL);
+        NotesFragment notesFragment = NotesFragment.Companion.newInstance(ItemStatus.NORMAL);
         notesFragment.setScrollListener(onScrollListener);
         FragmentHelper.replace(this, notesFragment, R.id.fragment_container);
         new Handler().postDelayed(() -> getBinding().nav.getMenu().findItem(R.id.nav_notes).setChecked(true), 300);
@@ -799,14 +800,14 @@ public class MainActivity extends CommonActivity<ActivityMainBinding> implements
 
     @Override
     public void onNotebookSelected(Notebook notebook) {
-        NotesFragment notesFragment = NotesFragment.Companion.newInstance(notebook, Status.NORMAL);
+        NotesFragment notesFragment = NotesFragment.Companion.newInstance(notebook, ItemStatus.NORMAL);
         notesFragment.setScrollListener(onScrollListener);
         FragmentHelper.replaceWithCallback(this, notesFragment, R.id.fragment_container);
     }
 
     @Override
     public void onCategorySelected(Category category) {
-        NotesFragment notesFragment = NotesFragment.Companion.newInstance(category, Status.NORMAL);
+        NotesFragment notesFragment = NotesFragment.Companion.newInstance(category, ItemStatus.NORMAL);
         notesFragment.setScrollListener(onScrollListener);
         FragmentHelper.replaceWithCallback(this, notesFragment, R.id.fragment_container);
     }
@@ -838,16 +839,16 @@ public class MainActivity extends CommonActivity<ActivityMainBinding> implements
     }
 
     @Override
-    public void onCategoryLoadStateChanged(me.shouheng.notepal.model.data.Status status) {
+    public void onCategoryLoadStateChanged(LoadStatus status) {
         onLoadStateChanged(status);
     }
 
     @Override
-    public void onNoteLoadStateChanged(me.shouheng.notepal.model.data.Status status) {
+    public void onNoteLoadStateChanged(LoadStatus status) {
         onLoadStateChanged(status);
     }
 
-    private void onLoadStateChanged(me.shouheng.notepal.model.data.Status status) {
+    private void onLoadStateChanged(LoadStatus status) {
         switch (status) {
             case SUCCESS:
             case FAILED:

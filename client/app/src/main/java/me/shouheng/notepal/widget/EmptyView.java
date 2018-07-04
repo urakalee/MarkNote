@@ -72,12 +72,12 @@ public class EmptyView extends LinearLayout {
         }
     }
 
-    public void setTitle(String title) {
+    public void setTitle(@Nullable String title) {
         binding.tvBottomTitle.setText(title);
         binding.tvBottomTitle.setVisibility(TextUtils.isEmpty(title) ? GONE : VISIBLE);
     }
 
-    public void setSubTitle(String subTitle) {
+    public void setSubTitle(@Nullable String subTitle) {
         binding.tvBottomSubTitle.setText(subTitle);
         binding.tvBottomSubTitle.setVisibility(TextUtils.isEmpty(subTitle) ? GONE : VISIBLE);
     }

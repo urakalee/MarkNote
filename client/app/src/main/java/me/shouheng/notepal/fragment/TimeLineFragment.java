@@ -14,7 +14,7 @@ import me.shouheng.notepal.adapter.TimeLinesAdapter;
 import me.shouheng.notepal.databinding.FragmentTimeLineBinding;
 import me.shouheng.notepal.fragment.base.CommonFragment;
 import me.shouheng.notepal.model.TimeLine;
-import me.shouheng.notepal.model.enums.Status;
+import me.shouheng.notepal.model.enums.ItemStatus;
 import me.shouheng.notepal.provider.TimelineStore;
 import me.shouheng.notepal.provider.schema.TimelineSchema;
 import me.shouheng.notepal.util.LogUtils;
@@ -61,14 +61,14 @@ public class TimeLineFragment extends CommonFragment<FragmentTimeLineBinding> {
         List<TimeLine> timeLines = TimelineStore.getInstance(getContext()).getPage(startIndex,
                 pageNumber,
                 TimelineSchema.ADDED_TIME + " DESC ",
-                Status.NORMAL,
+                ItemStatus.NORMAL,
                 false);
 
         adapter = new TimeLinesAdapter(getContext(), timeLines);
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
 
-        getBinding().rv.setEmptyView(getBinding().ivEmpty);
+        getBinding().rv.setEmptyView(getBinding().emptyView);
         getBinding().rv.setLayoutManager(layoutManager);
         getBinding().rv.setAdapter(adapter);
         getBinding().rv.addOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -98,7 +98,7 @@ public class TimeLineFragment extends CommonFragment<FragmentTimeLineBinding> {
             List<TimeLine> list = TimelineStore.getInstance(getContext()).getPage(startIndex,
                     pageNumber,
                     TimelineSchema.ADDED_TIME + " DESC ",
-                    Status.NORMAL,
+                    ItemStatus.NORMAL,
                     false);
             adapter.addData(list);
             adapter.notifyDataSetChanged();

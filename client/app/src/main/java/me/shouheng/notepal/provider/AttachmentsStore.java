@@ -13,7 +13,7 @@ import java.util.List;
 import me.shouheng.notepal.PalmApp;
 import me.shouheng.notepal.model.Attachment;
 import me.shouheng.notepal.model.enums.ModelType;
-import me.shouheng.notepal.model.enums.Status;
+import me.shouheng.notepal.model.enums.ItemStatus;
 import me.shouheng.notepal.provider.schema.AttachmentSchema;
 import me.shouheng.notepal.provider.schema.BaseSchema;
 
@@ -154,7 +154,7 @@ public class AttachmentsStore extends BaseStore<Attachment> {
                     " WHERE " + AttachmentSchema.USER_ID + " = " + userId
                     + " AND " + AttachmentSchema.MODEL_TYPE + " = " + modelType.id
                     + " AND " + AttachmentSchema.MODEL_CODE + " = " + modelCode
-                    + " AND " + AttachmentSchema.STATUS + " = " + Status.NORMAL.id
+                    + " AND " + AttachmentSchema.STATUS + " = " + ItemStatus.NORMAL.id
                     + (TextUtils.isEmpty(orderSQL) ? "" : " ORDER BY " + orderSQL), new String[]{});
             models = getList(cursor);
         } finally {

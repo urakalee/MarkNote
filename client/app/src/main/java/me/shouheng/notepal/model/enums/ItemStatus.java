@@ -2,7 +2,7 @@ package me.shouheng.notepal.model.enums;
 
 /**
  * Created by WngShhng on 2017/12/9.*/
-public enum Status {
+public enum ItemStatus {
     NORMAL(0),
     ARCHIVED(1),
     TRASHED(2),
@@ -10,12 +10,12 @@ public enum Status {
 
     public final int id;
 
-    Status(int id) {
+    ItemStatus(int id) {
         this.id = id;
     }
 
-    public static Status getStatusById(int id) {
-        for (Status status : values()) {
+    public static ItemStatus getStatusById(int id) {
+        for (ItemStatus status : values()) {
             if (status.id == id) {
                 return status;
             }
