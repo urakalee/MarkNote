@@ -4,8 +4,9 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.text.TextUtils;
 
+import java.io.File;
+import java.util.LinkedList;
 import java.util.List;
 
 import me.shouheng.notepal.model.Notebook;
@@ -15,16 +16,17 @@ import me.shouheng.notepal.provider.helper.TimelineHelper;
 import me.shouheng.notepal.provider.schema.BaseSchema;
 import me.shouheng.notepal.provider.schema.NoteSchema;
 import me.shouheng.notepal.provider.schema.NotebookSchema;
-
+import me.urakalee.next2.storage.FileStorage;
 
 /**
- * Created by wangshouheng on 2017/8/19. */
+ * Created by wangshouheng on 2017/8/19.
+ */
 public class NotebookStore extends BaseStore<Notebook> {
 
     private static NotebookStore sInstance = null;
 
-    public static NotebookStore getInstance(Context context){
-        if (sInstance == null){
+    public static NotebookStore getInstance(Context context) {
+        if (sInstance == null) {
             synchronized (NotebookStore.class) {
                 if (sInstance == null) {
                     sInstance = new NotebookStore(context.getApplicationContext());
@@ -39,10 +41,12 @@ public class NotebookStore extends BaseStore<Notebook> {
     }
 
     @Override
-    protected void afterDBCreated(SQLiteDatabase db) {}
+    protected void afterDBCreated(SQLiteDatabase db) {
+    }
 
     @Override
-    protected void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {}
+    protected void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+    }
 
     @Override
     public void fillModel(Notebook model, Cursor cursor) {
@@ -51,10 +55,12 @@ public class NotebookStore extends BaseStore<Notebook> {
         model.setParentCode(cursor.getLong(cursor.getColumnIndex(NotebookSchema.PARENT_CODE)));
         model.setTreePath(cursor.getString(cursor.getColumnIndex(NotebookSchema.TREE_PATH)));
         int nbCnt, nCnt;
-        if ((nCnt = cursor.getColumnIndex(NotebookSchema.COUNT)) != -1)
+        if ((nCnt = cursor.getColumnIndex(NotebookSchema.COUNT)) != -1) {
             model.setCount(cursor.getInt(nCnt));
-        if ((nbCnt = cursor.getColumnIndex(NotebookSchema.NOTEBOOK_COUNT)) != -1)
+        }
+        if ((nbCnt = cursor.getColumnIndex(NotebookSchema.NOTEBOOK_COUNT)) != -1) {
             model.setNotebookCount(cursor.getInt(nbCnt));
+        }
     }
 
     @Override
@@ -65,7 +71,7 @@ public class NotebookStore extends BaseStore<Notebook> {
         values.put(NotebookSchema.TREE_PATH, model.getTreePath());
     }
 
-    public synchronized List<Notebook> getNotebooks(String whereSQL, String orderSQL){
+    public synchronized List<Notebook> getNotebooks(String whereSQL, String orderSQL) {
         return getNotebooks(whereSQL, orderSQL, ItemStatus.NORMAL);
     }
 
@@ -84,7 +90,7 @@ public class NotebookStore extends BaseStore<Notebook> {
      * itself. To update the notebook, you should use {@link #update(Notebook, ItemStatus, ItemStatus)}
      * method which will update the notebooks and notes associated as well.
      *
-     * @param model the notebook to update
+     * @param model    the notebook to update
      * @param toStatus the given status to update to
      */
     @Deprecated
@@ -94,12 +100,12 @@ public class NotebookStore extends BaseStore<Notebook> {
     }
 
     /**
-     * @param model notebook to update
+     * @param model      notebook to update
      * @param fromStatus the status of the notebook list, Note: this status differs from the status
      *                   of given notebook. Because, for example, the notebook in archive that showed
      *                   to the user may not in {@link ItemStatus#ARCHIVED} state. The list may include
      *                   the notebook of status {@link ItemStatus#NORMAL} too.
-     * @param toStatus the status to update to
+     * @param toStatus   the status to update to
      */
     public synchronized void update(Notebook model, ItemStatus fromStatus, ItemStatus toStatus) {
         if (model == null || toStatus == null) return;
@@ -111,7 +117,8 @@ public class NotebookStore extends BaseStore<Notebook> {
             /*
              * Update current notebook itself OF GIVEN STATUS. */
             database.execSQL(" UPDATE " + tableName
-                            + " SET " + BaseSchema.STATUS + " = " + toStatus.id + " , " + BaseSchema.LAST_MODIFIED_TIME + " = ? "
+                            + " SET " + BaseSchema.STATUS + " = " + toStatus.id + " , " + BaseSchema.LAST_MODIFIED_TIME
+                            + " = ? "
                             + " WHERE " + BaseSchema.CODE + " = " + model.getCode()
                             + " AND " + BaseSchema.USER_ID + " = " + userId,
                     new String[]{String.valueOf(System.currentTimeMillis())});
@@ -119,7 +126,8 @@ public class NotebookStore extends BaseStore<Notebook> {
             /*
              * Update the status of all associated notebooks OF GIVEN STATUS. */
             database.execSQL(" UPDATE " + tableName
-                            + " SET " + BaseSchema.STATUS + " = " + toStatus.id + " , " + BaseSchema.LAST_MODIFIED_TIME + " = ? "
+                            + " SET " + BaseSchema.STATUS + " = " + toStatus.id + " , " + BaseSchema.LAST_MODIFIED_TIME
+                            + " = ? "
                             + " WHERE " + NotebookSchema.TREE_PATH + " LIKE '" + model.getTreePath() + "'||'%'"
                             + " AND " + BaseSchema.USER_ID + " = " + userId
                             + " AND " + BaseSchema.STATUS + " = " + fromStatus.id,
@@ -128,7 +136,8 @@ public class NotebookStore extends BaseStore<Notebook> {
             /*
              * Update the status of all associated notes OF GIVEN STATUS. */
             database.execSQL(" UPDATE " + NoteSchema.TABLE_NAME
-                            + " SET " + BaseSchema.STATUS + " = " + toStatus.id + " , " + BaseSchema.LAST_MODIFIED_TIME + " = ? "
+                            + " SET " + BaseSchema.STATUS + " = " + toStatus.id + " , " + BaseSchema.LAST_MODIFIED_TIME
+                            + " = ? "
                             + " WHERE " + NoteSchema.TREE_PATH + " LIKE '" + model.getTreePath() + "'||'%'"
                             + " AND " + BaseSchema.USER_ID + " = " + userId
                             + " AND " + BaseSchema.STATUS + " = " + fromStatus.id,
@@ -141,6 +150,21 @@ public class NotebookStore extends BaseStore<Notebook> {
         }
     }
 
+    @Override
+    public synchronized List<Notebook> get(String whereSQL, String orderSQL) {
+        return getNotebooks(null, null, null);
+    }
+
+    @Override
+    public synchronized List<Notebook> get(String whereSQL, String orderSQL, ItemStatus status, boolean exclude) {
+        return getNotebooks(null, null, null);
+    }
+
+    @Override
+    public synchronized List<Notebook> get(String whereSQL, String[] whereArgs, String orderSQL) {
+        return getNotebooks(null, null, null);
+    }
+
     /**
      * Get notebooks of given status. Here are mainly two cases match:
      * 1).Notes count of given notebook > 0;
@@ -151,6 +175,17 @@ public class NotebookStore extends BaseStore<Notebook> {
      * @return the notebooks
      */
     private List<Notebook> getNotebooks(String whereSQL, String orderSQL, ItemStatus status) {
+        File notebookRoot = FileStorage.storageRoot();
+        List<Notebook> notebooks = new LinkedList<>();
+        if (!notebookRoot.isDirectory()) {
+            return notebooks;
+        }
+        for (File file : FileStorage.listDirs(notebookRoot, false)) {
+            Notebook notebook = new Notebook();
+            notebook.setTitle(file.getName());
+            notebooks.add(notebook);
+        }
+        /*
         Cursor cursor = null;
         List<Notebook> notebooks;
         SQLiteDatabase database = getWritableDatabase();
@@ -158,7 +193,8 @@ public class NotebookStore extends BaseStore<Notebook> {
             cursor = database.rawQuery(" SELECT *, " + getNotesCount(status)
                             + " FROM " + tableName
                             + " WHERE " + NotebookSchema.USER_ID + " = ? "
-                            + " AND ( " + NotebookSchema.STATUS + " = " + status.id + " OR " + NotebookSchema.COUNT + " > 0 ) "
+                            + " AND ( " + NotebookSchema.STATUS + " = " + status.id + " OR " + NotebookSchema.COUNT +
+                             " > 0 ) "
                             + (TextUtils.isEmpty(whereSQL) ? "" : " AND " + whereSQL)
                             + " GROUP BY " + NotebookSchema.CODE
                             + (TextUtils.isEmpty(orderSQL) ? "" : " ORDER BY " + orderSQL),
@@ -168,6 +204,7 @@ public class NotebookStore extends BaseStore<Notebook> {
             closeCursor(cursor);
             closeDatabase(database);
         }
+        */
         return notebooks;
     }
 

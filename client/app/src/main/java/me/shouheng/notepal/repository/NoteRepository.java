@@ -3,6 +3,7 @@ package me.shouheng.notepal.repository;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.os.AsyncTask;
+import android.support.annotation.Nullable;
 import android.support.annotation.WorkerThread;
 
 import java.util.LinkedList;
@@ -32,33 +33,32 @@ public class NoteRepository extends BaseRepository<Note> {
         return NotesStore.getInstance(PalmApp.getContext());
     }
 
-    public LiveData<Resource<List<MultiItem>>> getMultiItems(Category category, ItemStatus status, Notebook notebook) {
+    public LiveData<Resource<List<MultiItem>>> getMultiItems(
+            ItemStatus status, @Nullable Notebook notebook, @Nullable Category category) {
         MutableLiveData<Resource<List<MultiItem>>> result = new MutableLiveData<>();
-        new NoteLoadTask(result, category, status, notebook).execute();
+        new NoteLoadTask(result, status, notebook, category).execute();
         return result;
     }
 
     public static class NoteLoadTask extends AsyncTask<Void, Integer, List<NotesAdapter.MultiItem>> {
 
         private MutableLiveData<Resource<List<MultiItem>>> result;
-        private Category category;
         private ItemStatus status;
         private Notebook notebook;
+        private Category category;
 
         NoteLoadTask(MutableLiveData<Resource<List<MultiItem>>> result,
-                Category category,
-                ItemStatus status,
-                Notebook notebook) {
+                ItemStatus status, Notebook notebook, Category category) {
             this.result = result;
-            this.category = category;
             this.status = status;
             this.notebook = notebook;
+            this.category = category;
         }
 
         @Override
         protected List<NotesAdapter.MultiItem> doInBackground(Void... voids) {
             List<NotesAdapter.MultiItem> dataList = new LinkedList<>();
-            for (Object obj : getNotesAndNotebooks(category, status, notebook)) {
+            for (Object obj : getNotesAndNotebooks(status, notebook, category)) {
                 if (obj instanceof Note) {
                     dataList.add(new NotesAdapter.MultiItem((Note) obj));
                 } else if (obj instanceof Notebook) {
@@ -75,7 +75,8 @@ public class NoteRepository extends BaseRepository<Note> {
     }
 
     @WorkerThread
-    private static List getNotesAndNotebooks(Category category, ItemStatus status, Notebook notebook) {
+    private static List getNotesAndNotebooks(
+            ItemStatus status, @Nullable Notebook notebook, @Nullable Category category) {
         if (category != null) {
             return status == ItemStatus.ARCHIVED ?
                     ArchiveHelper.getNotebooksAndNotes(PalmApp.getContext(), category) :

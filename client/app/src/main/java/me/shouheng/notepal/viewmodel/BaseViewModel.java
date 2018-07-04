@@ -11,7 +11,8 @@ import me.shouheng.notepal.model.enums.ItemStatus;
 import me.shouheng.notepal.repository.BaseRepository;
 
 /**
- * Created by shouh on 2018/3/17.*/
+ * Created by shouh on 2018/3/17.
+ */
 public abstract class BaseViewModel<T extends Model> extends ViewModel {
 
     protected abstract BaseRepository<T> getRepository();
@@ -36,24 +37,12 @@ public abstract class BaseViewModel<T extends Model> extends ViewModel {
         return getRepository().get(whereSQL, whereArgs, orderSQL);
     }
 
-    public LiveData<Resource<List<T>>> getArchived(String whereSQL, String orderSQL) {
-        return getRepository().getArchived(whereSQL, orderSQL);
-    }
-
-    public LiveData<Resource<List<T>>> getTrashed(String whereSQL, String orderSQL) {
-        return getRepository().getTrashed(whereSQL, orderSQL);
-    }
-
     public LiveData<Resource<Integer>> getCount(String whereSQL, ItemStatus status, boolean exclude) {
         return getRepository().getCount(whereSQL, status, exclude);
     }
 
     public LiveData<Resource<Boolean>> isNewModel(Long code) {
         return getRepository().isNewModel(code);
-    }
-
-    public LiveData<Resource<List<T>>> getPage(int index, int pageCount, String orderSQL, ItemStatus status, boolean exclude) {
-        return getRepository().getPage(index, pageCount, orderSQL, status, exclude);
     }
 
     public LiveData<Resource<T>> saveModel(T model) {
@@ -70,9 +59,5 @@ public abstract class BaseViewModel<T extends Model> extends ViewModel {
 
     public LiveData<Resource<T>> saveOrUpdate(T model) {
         return getRepository().saveOrUpdate(model);
-    }
-
-    public LiveData<Resource<List<T>>> batchUpdate(List<T> models, ItemStatus toStatus) {
-        return getRepository().batchUpdate(models, toStatus);
     }
 }

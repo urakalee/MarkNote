@@ -1,4 +1,4 @@
-package me.shouheng.notepal.fragment
+package me.urakalee.next2.fragment
 
 import android.app.Activity
 import android.arch.lifecycle.Observer
@@ -30,13 +30,15 @@ import me.shouheng.notepal.util.AppWidgetUtils
 import me.shouheng.notepal.util.LogUtils
 import me.shouheng.notepal.util.ToastUtils
 import me.shouheng.notepal.util.preferences.UserPreferences
-import me.shouheng.notepal.viewmodel.NoteViewModel
-import me.shouheng.notepal.viewmodel.NotebookViewModel
 import me.shouheng.notepal.widget.tools.CustomItemAnimator
 import me.shouheng.notepal.widget.tools.DividerItemDecoration
+import me.urakalee.next2.viewmodel.NoteViewModel
+import me.urakalee.next2.viewmodel.NotebookViewModel
 import me.urakalee.ranger.extension.isVisible
 
-
+/**
+ * @author Uraka.Lee
+ */
 class NotesFragment : BaseFragment<FragmentNotesBinding>(),
         OnMainActivityInteraction {
 
@@ -330,26 +332,59 @@ class NotesFragment : BaseFragment<FragmentNotesBinding>(),
             (activity as OnNotesInteractListener).onNoteLoadStateChanged(LoadStatus.LOADING)
         }
 
-        noteViewModel
-                ?.getMultiItems(category, status, notebook)
-                ?.observe(this, Observer { multiItemResource ->
-                    if (activity == null) {
-                        return@Observer
-                    }
-                    if (multiItemResource == null) {
-                        ToastUtils.makeToast(R.string.text_failed_to_load_data)
-                        return@Observer
-                    }
-                    if (activity is OnNotesInteractListener) {
-                        (activity as OnNotesInteractListener).onNoteLoadStateChanged(multiItemResource.status)
-                    }
-                    when (multiItemResource.status) {
-                        LoadStatus.SUCCESS -> adapter?.setNewData(multiItemResource.data)
-                        LoadStatus.LOADING -> {
+        val statusNonNull = status ?: return
+        if (isTopStack) {
+            notebookViewModel
+                    ?.list()
+                    ?.observe(this, Observer { resource ->
+                        if (activity == null) {
+                            return@Observer
                         }
-                        LoadStatus.FAILED -> ToastUtils.makeToast(R.string.text_failed_to_load_data)
-                    }
-                })
+                        if (resource == null) {
+                            ToastUtils.makeToast(R.string.text_failed_to_load_data)
+                            return@Observer
+                        }
+                        if (activity is OnNotesInteractListener) {
+                            (activity as OnNotesInteractListener).onNoteLoadStateChanged(resource.status)
+                        }
+                        when (resource.status) {
+                            LoadStatus.SUCCESS -> {
+                                val listOfData: MutableList<NotesAdapter.MultiItem> = mutableListOf()
+                                resource.data?.let { notebooks ->
+                                    listOfData.addAll(notebooks.map { notebook ->
+                                        NotesAdapter.MultiItem(notebook)
+                                    })
+                                }
+                                adapter?.setNewData(listOfData)
+                            }
+                            LoadStatus.LOADING -> {
+                            }
+                            LoadStatus.FAILED -> ToastUtils.makeToast(R.string.text_failed_to_load_data)
+                        }
+                    })
+        } else {
+            noteViewModel
+                    ?.getMultiItems(statusNonNull, notebook, category)
+                    ?.observe(this, Observer { multiItemResource ->
+                        if (activity == null) {
+                            return@Observer
+                        }
+                        if (multiItemResource == null) {
+                            ToastUtils.makeToast(R.string.text_failed_to_load_data)
+                            return@Observer
+                        }
+                        if (activity is OnNotesInteractListener) {
+                            (activity as OnNotesInteractListener).onNoteLoadStateChanged(multiItemResource.status)
+                        }
+                        when (multiItemResource.status) {
+                            LoadStatus.SUCCESS -> adapter?.setNewData(multiItemResource.data)
+                            LoadStatus.LOADING -> {
+                            }
+                            LoadStatus.FAILED -> ToastUtils.makeToast(R.string.text_failed_to_load_data)
+                        }
+                    })
+
+        }
     }
 
     private fun update(note: Note) {

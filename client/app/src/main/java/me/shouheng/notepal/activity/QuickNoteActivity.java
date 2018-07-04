@@ -31,7 +31,7 @@ import me.shouheng.notepal.util.AttachmentHelper;
 import me.shouheng.notepal.util.LogUtils;
 import me.shouheng.notepal.util.ToastUtils;
 import me.shouheng.notepal.util.preferences.LockPreferences;
-import me.shouheng.notepal.viewmodel.NoteViewModel;
+import me.urakalee.next2.viewmodel.NoteViewModel;
 
 public class QuickNoteActivity extends BaseActivity implements OnAttachingFileListener {
 

@@ -5,7 +5,7 @@ import android.support.v4.app.Fragment;
 import me.shouheng.notepal.R;
 import me.shouheng.notepal.activity.base.BaseListActivity;
 import me.shouheng.notepal.fragment.CategoriesFragment;
-import me.shouheng.notepal.fragment.NotesFragment;
+import me.urakalee.next2.fragment.NotesFragment;
 import me.shouheng.notepal.model.Category;
 import me.shouheng.notepal.model.Notebook;
 import me.shouheng.notepal.model.enums.ItemStatus;
