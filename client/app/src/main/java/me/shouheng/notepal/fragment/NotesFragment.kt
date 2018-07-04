@@ -232,6 +232,7 @@ class NotesFragment : BaseFragment<FragmentNotesBinding>(),
         val popupMenu = PopupMenu(contextNonNull, view)
         popupMenu.inflate(R.menu.pop_menu)
         configPopMenu(popupMenu)
+        showMoveItem(popupMenu, true)
         popupMenu.setOnMenuItemClickListener { item ->
             when (item.itemId) {
                 R.id.action_trash -> update(multiItem.note, ItemStatus.TRASHED)
@@ -262,12 +263,12 @@ class NotesFragment : BaseFragment<FragmentNotesBinding>(),
         val popupMenu = PopupMenu(contextNonNull, view)
         popupMenu.inflate(R.menu.pop_menu)
         configPopMenu(popupMenu)
+        showMoveItem(popupMenu, false)
         popupMenu.setOnMenuItemClickListener { item ->
             val statusNonNull = status ?: return@setOnMenuItemClickListener true
             when (item.itemId) {
                 R.id.action_trash -> update(multiItem.notebook, statusNonNull, ItemStatus.TRASHED)
                 R.id.action_archive -> update(multiItem.notebook, statusNonNull, ItemStatus.ARCHIVED)
-                R.id.action_move -> moveNotebook(multiItem.notebook)
                 R.id.action_edit -> editNotebook(position, multiItem.notebook)
                 R.id.action_move_out -> update(multiItem.notebook, statusNonNull, ItemStatus.NORMAL)
                 R.id.action_delete -> deleteNotebook(multiItem.notebook)
@@ -275,15 +276,6 @@ class NotesFragment : BaseFragment<FragmentNotesBinding>(),
             true
         }
         popupMenu.show()
-    }
-
-    private fun moveNotebook(notebook: Notebook) {
-        val fragmentNonNull = fragmentManager ?: return
-        NotebookPickerDialog.newInstance().setOnItemSelectedListener { dialog, targetNotebook, _ ->
-            if (notebook.parentCode == targetNotebook.code) return@setOnItemSelectedListener
-            move(notebook, targetNotebook)
-            dialog.dismiss()
-        }.show(fragmentNonNull, "Notebook picker")
     }
 
     private fun editNotebook(position: Int, notebook: Notebook) {
@@ -324,6 +316,10 @@ class NotesFragment : BaseFragment<FragmentNotesBinding>(),
         popupMenu.menu.findItem(R.id.action_trash).isVisible = status == ItemStatus.NORMAL || status == ItemStatus.ARCHIVED
         popupMenu.menu.findItem(R.id.action_archive).isVisible = status == ItemStatus.NORMAL
         popupMenu.menu.findItem(R.id.action_delete).isVisible = status == ItemStatus.TRASHED
+    }
+
+    private fun showMoveItem(popupMenu: PopupMenu, show: Boolean) {
+        popupMenu.menu.findItem(R.id.action_move).isVisible = show
     }
 
     // endregion
@@ -409,27 +405,6 @@ class NotesFragment : BaseFragment<FragmentNotesBinding>(),
                         LoadStatus.SUCCESS -> {
                             adapter?.notifyItemChanged(position)
                             ToastUtils.makeToast(R.string.moved_successfully)
-                        }
-                        LoadStatus.LOADING -> {
-                        }
-                        LoadStatus.FAILED -> ToastUtils.makeToast(R.string.text_failed_to_modify_data)
-                    }
-                })
-    }
-
-    private fun move(notebook: Notebook, toNotebook: Notebook) {
-        notebookViewModel
-                ?.move(notebook, toNotebook)
-                ?.observe(this, Observer { notebookResource ->
-                    if (notebookResource == null) {
-                        ToastUtils.makeToast(R.string.text_failed_to_modify_data)
-                        return@Observer
-                    }
-                    when (notebookResource.status) {
-                        LoadStatus.SUCCESS -> {
-                            ToastUtils.makeToast(R.string.moved_successfully)
-                            reload()
-                            onDataChanged()
                         }
                         LoadStatus.LOADING -> {
                         }

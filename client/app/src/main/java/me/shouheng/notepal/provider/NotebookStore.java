@@ -5,12 +5,10 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.text.TextUtils;
-import android.util.LongSparseArray;
 
 import java.util.List;
 
 import me.shouheng.notepal.model.Notebook;
-import me.shouheng.notepal.model.enums.Operation;
 import me.shouheng.notepal.model.enums.ItemStatus;
 import me.shouheng.notepal.provider.helper.StoreHelper;
 import me.shouheng.notepal.provider.helper.TimelineHelper;
@@ -144,50 +142,6 @@ public class NotebookStore extends BaseStore<Notebook> {
     }
 
     /**
-     * Move the notebook to another notebook need to modify its children`s tree path at the same time.
-     *
-     * @param notebook the notebook to update
-     */
-    public synchronized void move(Notebook notebook, Notebook toNotebook) {
-        String oldTreePath = notebook.getTreePath();
-
-        notebook.setParentCode(toNotebook.getCode());
-        notebook.setTreePath(toNotebook.getTreePath() + "|" + notebook.getCode());
-
-        TimelineHelper.addTimeLine(notebook, Operation.UPDATE);
-        SQLiteDatabase database = getWritableDatabase();
-        database.beginTransaction();
-        try {
-
-            /*
-             * Update the notebook`s tree path itself. */
-            database.update(tableName, getContentValues(notebook),
-                    BaseSchema.CODE + " = ? " + " AND " + BaseSchema.USER_ID + " = ? ",
-                    new String[]{String.valueOf(notebook.getCode()), String.valueOf(userId)});
-
-            /*
-             * Need to modify the tree path of all notebook children of all status. */
-            database.execSQL(" UPDATE " + tableName
-                    + " SET " + NotebookSchema.TREE_PATH + " = replace(" + NoteSchema.TREE_PATH + ", '" + oldTreePath + "', '" + notebook.getTreePath() + "') "
-                    + " WHERE " + NotebookSchema.TREE_PATH + " LIKE '" + oldTreePath + "'||'%'"
-                    + " AND " + BaseSchema.CODE + " != " + notebook.getCode() // exclude itself
-                    + " AND " + BaseSchema.USER_ID + " = " + userId, new String[]{});
-
-            /*
-             * Need to modify the tree path of all note children of all status. */
-            database.execSQL(" UPDATE " + NoteSchema.TABLE_NAME
-                    + " SET " + NoteSchema.TREE_PATH + " = replace(" + NoteSchema.TREE_PATH + ", '" + oldTreePath + "', '" + notebook.getTreePath() + "') "
-                    + " WHERE " + NoteSchema.TREE_PATH + " LIKE '" + oldTreePath + "'||'%'"
-                    + " AND " + BaseSchema.USER_ID + " = " + userId, new String[]{});
-
-            database.setTransactionSuccessful();
-        } finally {
-            database.endTransaction();
-            closeDatabase(database);
-        }
-    }
-
-    /**
      * Get notebooks of given status. Here are mainly two cases match:
      * 1).Notes count of given notebook > 0;
      * 2).The notebook itself is in given status.
@@ -215,36 +169,6 @@ public class NotebookStore extends BaseStore<Notebook> {
             closeDatabase(database);
         }
         return notebooks;
-    }
-
-    private void setupSubNotebooks(SQLiteDatabase database, List<Notebook> notebooks, ItemStatus status) {
-        LongSparseArray<Notebook> array = new LongSparseArray<>();
-
-        StringBuilder sb = new StringBuilder(" ( ");
-        int len = notebooks.size();
-        for (int i=0;i<len;i++) {
-            sb.append(notebooks.get(i).getCode());
-            array.put(notebooks.get(i).getCode(), notebooks.get(i));
-            if (i != len - 1) sb.append(",");
-        }
-        sb.append(" ) ");
-
-        Cursor cursor = database.rawQuery(" SELECT " + NotebookSchema.PARENT_CODE + ", "
-                + "COUNT(*) AS " + NotebookSchema.NOTEBOOK_COUNT
-                + " FROM " + tableName
-                + " WHERE " + NotebookSchema.USER_ID + " = ? "
-                + " AND " + NotebookSchema.PARENT_CODE + " IN " + sb.toString()
-                + " AND " + NotebookSchema.STATUS + " = " + status.id
-                + " GROUP BY " + NotebookSchema.PARENT_CODE, new String[]{String.valueOf(userId)});
-        if (cursor.moveToFirst()) {
-            do {
-                int nbCnt = cursor.getInt(cursor.getColumnIndex(NotebookSchema.NOTEBOOK_COUNT));
-                long nbCode = cursor.getLong(cursor.getColumnIndex(NotebookSchema.PARENT_CODE));
-                array.get(nbCode).setNotebookCount(nbCnt);
-            } while (cursor.moveToNext());
-        }
-
-        closeCursor(cursor);
     }
 
     private String getNotesCount(ItemStatus status) {

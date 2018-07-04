@@ -9,7 +9,8 @@ import me.shouheng.notepal.repository.BaseRepository;
 import me.shouheng.notepal.repository.NotebookRepository;
 
 /**
- * Created by shouh on 2018/3/17.*/
+ * Created by shouh on 2018/3/17.
+ */
 public class NotebookViewModel extends BaseViewModel<Notebook> {
 
     @Override
@@ -19,9 +20,5 @@ public class NotebookViewModel extends BaseViewModel<Notebook> {
 
     public LiveData<Resource<Notebook>> update(Notebook notebook, ItemStatus fromStatus, ItemStatus toStatus) {
         return ((NotebookRepository) getRepository()).update(notebook, fromStatus, toStatus);
-    }
-
-    public LiveData<Resource<Notebook>> move(Notebook notebook, Notebook toNotebook) {
-        return ((NotebookRepository) getRepository()).move(notebook, toNotebook);
     }
 }

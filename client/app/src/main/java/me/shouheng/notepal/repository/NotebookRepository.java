@@ -28,13 +28,4 @@ public class NotebookRepository extends BaseRepository<Notebook> {
         }).execute();
         return result;
     }
-
-    public LiveData<Resource<Notebook>> move(Notebook notebook, Notebook toNotebook) {
-        MutableLiveData<Resource<Notebook>> result = new MutableLiveData<>();
-        new NormalAsyncTask<>(result, () -> {
-            ((NotebookStore) getStore()).move(notebook, toNotebook);
-            return notebook;
-        }).execute();
-        return result;
-    }
 }
