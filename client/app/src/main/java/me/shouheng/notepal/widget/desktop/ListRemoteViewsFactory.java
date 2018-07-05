@@ -51,7 +51,8 @@ public class ListRemoteViewsFactory implements RemoteViewsFactory, SharedPrefere
     }
 
     private void setupModels() {
-        String condition = sharedPreferences.getString(Constants.PREF_WIDGET_SQL_PREFIX + String.valueOf(appWidgetId), "");
+        String condition = sharedPreferences.getString(
+                Constants.PREF_WIDGET_SQL_PREFIX + String.valueOf(appWidgetId), "");
         NotesStore store = NotesStore.getInstance(app);
         notes = store.get(condition, NoteSchema.LAST_MODIFIED_TIME + " DESC ");
     }
@@ -85,13 +86,14 @@ public class ListRemoteViewsFactory implements RemoteViewsFactory, SharedPrefere
 
         row.setTextViewText(R.id.tv_note_title, note.getTitle());
         row.setTextViewText(R.id.tv_added_time, note.getPreviewContent());
-        row.setTextViewText(R.id.tv_sub_title, TimeUtils.getLongDateTime(app.getApplicationContext(), note.getAddedTime()));
+        row.setTextViewText(R.id.tv_sub_title,
+                TimeUtils.getLongDateTime(app.getApplicationContext(), note.getAddedTime()));
         row.setTextColor(R.id.tv_sub_title, ColorUtils.accentColor(app));
         row.setInt(R.id.root, "setBackgroundColor", app.getResources().getColor(R.color.white_translucent));
         row.setViewVisibility(R.id.iv_icon, View.GONE);
 
         Bundle extras = new Bundle();
-        extras.putParcelable(Constants.EXTRA_MODEL, note);
+        extras.putSerializable(Constants.EXTRA_MODEL, note);
         Intent fillInIntent = new Intent();
         fillInIntent.putExtras(extras);
         row.setOnClickFillInIntent(R.id.root, fillInIntent);
@@ -124,12 +126,14 @@ public class ListRemoteViewsFactory implements RemoteViewsFactory, SharedPrefere
         String sqlCondition = null;
         if (notebook != null) {
             sqlCondition = NoteSchema.TREE_PATH + " LIKE '" + notebook.getTreePath() + "'||'%'";
-            editor.putLong(Constants.PREF_WIDGET_NOTEBOOK_CODE_PREFIX + String.valueOf(mAppWidgetId), notebook.getCode());
+            editor.putLong(
+                    Constants.PREF_WIDGET_NOTEBOOK_CODE_PREFIX + String.valueOf(mAppWidgetId), notebook.getCode());
         }
         editor.putString(Constants.PREF_WIDGET_SQL_PREFIX + String.valueOf(mAppWidgetId), sqlCondition).apply();
         AppWidgetUtils.notifyAppWidgets();
     }
 
     @Override
-    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String s) {}
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String s) {
+    }
 }

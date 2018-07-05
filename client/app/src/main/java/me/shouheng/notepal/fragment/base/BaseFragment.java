@@ -4,16 +4,12 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.databinding.ViewDataBinding;
-import android.graphics.Bitmap;
 import android.os.Handler;
 import android.support.annotation.NonNull;
-import android.support.v7.widget.RecyclerView;
 import android.webkit.WebView;
 
 import org.polaric.colorful.BaseActivity;
 import org.polaric.colorful.PermissionUtils;
-
-import java.io.File;
 
 import me.shouheng.notepal.R;
 import me.shouheng.notepal.listener.OnAttachingFileListener;
@@ -21,26 +17,14 @@ import me.shouheng.notepal.model.Attachment;
 import me.shouheng.notepal.util.AttachmentHelper;
 import me.shouheng.notepal.util.FileHelper;
 import me.shouheng.notepal.util.ScreenShotHelper;
-import me.shouheng.notepal.util.ToastUtils;
-import me.shouheng.notepal.util.tools.Callback;
-import me.shouheng.notepal.util.tools.Invoker;
-import me.shouheng.notepal.util.tools.Message;
 
 /**
- * Created by wang shouheng on 2017/12/29.*/
+ * Created by wang shouheng on 2017/12/29.
+ */
 public abstract class BaseFragment<V extends ViewDataBinding> extends CommonFragment<V>
-        implements OnAttachingFileListener  {
+        implements OnAttachingFileListener {
 
     // region Capture
-
-    protected void createScreenCapture(final RecyclerView recyclerView, final int itemHeight) {
-        if (recyclerView.getAdapter() == null || recyclerView.getAdapter().getItemCount() == 0) {
-            ToastUtils.makeToast(R.string.empty_list_to_capture);
-            return;
-        }
-        if (getActivity() == null) return;
-        PermissionUtils.checkStoragePermission((BaseActivity) getActivity(), () -> doCapture(recyclerView, itemHeight));
-    }
 
     protected void createWebCapture(WebView webView, FileHelper.OnSavedToGalleryListener listener) {
         assert getActivity() != null;
@@ -52,72 +36,6 @@ public abstract class BaseFragment<V extends ViewDataBinding> extends CommonFrag
 
             new Handler().postDelayed(() -> doCapture(webView, pd, listener), 500);
         });
-    }
-
-    protected void onGetScreenCutFile(File file) {}
-
-    private void doCapture(RecyclerView recyclerView) {
-        final ProgressDialog pd = new ProgressDialog(getContext());
-        pd.setMessage(getString(R.string.capturing));
-        new Invoker<>(new Callback<File>() {
-            @Override
-            public void onBefore() {
-                pd.setCancelable(false);
-                pd.show();
-            }
-
-            @Override
-            public Message<File> onRun() {
-                Message<File> message = new Message<>();
-                Bitmap bitmap = ScreenShotHelper.shotRecyclerView(recyclerView);
-                boolean succeed = FileHelper.saveImageToGallery(getContext(), bitmap, true, message::setObj);
-                message.setSucceed(succeed);
-                return message;
-            }
-
-            @Override
-            public void onAfter(Message<File> message) {
-                pd.dismiss();
-                if (message.isSucceed()) {
-                    ToastUtils.makeToast(String.format(getString(R.string.text_file_saved_to), message.getObj().getPath()));
-                    onGetScreenCutFile(message.getObj());
-                } else {
-                    ToastUtils.makeToast(R.string.failed_to_create_file);
-                }
-            }
-        }).start();
-    }
-
-    private void doCapture(RecyclerView recyclerView, int itemHeight) {
-        final ProgressDialog pd = new ProgressDialog(getContext());
-        pd.setTitle(R.string.capturing);
-        new Invoker<>(new Callback<File>() {
-            @Override
-            public void onBefore() {
-                pd.setCancelable(false);
-                pd.show();
-            }
-
-            @Override
-            public Message<File> onRun() {
-                Message<File> message = new Message<>();
-                Bitmap bitmap = ScreenShotHelper.shotRecyclerView(recyclerView, itemHeight);
-                boolean succeed = FileHelper.saveImageToGallery(getContext(), bitmap, true, message::setObj);
-                message.setSucceed(succeed);
-                return message;
-            }
-
-            @Override
-            public void onAfter(Message<File> message) {
-                pd.dismiss();
-                if (message.isSucceed()) {
-                    ToastUtils.makeToast(String.format(getString(R.string.text_file_saved_to), message.getObj().getPath()));
-                    onGetScreenCutFile(message.getObj());
-                } else {
-                    ToastUtils.makeToast(R.string.failed_to_create_file);
-                }
-            }
-        }).start();
     }
 
     private void doCapture(WebView webView, ProgressDialog pd, FileHelper.OnSavedToGalleryListener listener) {
@@ -135,10 +53,13 @@ public abstract class BaseFragment<V extends ViewDataBinding> extends CommonFrag
      * This method will called when the attachment is sure usable. For the check logic, you may refer
      * to {@link BaseFragment#onAttachingFileFinished(Attachment)}
      *
-     * @param attachment the usable attachment */
-    protected void onGetAttachment(@NonNull Attachment attachment) {}
+     * @param attachment the usable attachment
+     */
+    protected void onGetAttachment(@NonNull Attachment attachment) {
+    }
 
-    protected void onFailedGetAttachment(Attachment attachment) {}
+    protected void onFailedGetAttachment(Attachment attachment) {
+    }
 
     @Override
     public void onAttachingFileErrorOccurred(Attachment attachment) {
@@ -159,6 +80,6 @@ public abstract class BaseFragment<V extends ViewDataBinding> extends CommonFrag
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
-    // endregion
 
+    // endregion
 }

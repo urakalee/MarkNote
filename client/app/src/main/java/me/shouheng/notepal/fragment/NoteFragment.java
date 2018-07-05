@@ -34,7 +34,7 @@ import java.util.Objects;
 
 import me.shouheng.notepal.PalmApp;
 import me.shouheng.notepal.R;
-import me.shouheng.notepal.activity.ContentActivity;
+import me.urakalee.next2.activity.ContentActivity;
 import me.shouheng.notepal.activity.MenuSortActivity;
 import me.shouheng.notepal.async.CreateAttachmentTask;
 import me.shouheng.notepal.config.Constants;
@@ -672,7 +672,7 @@ public class NoteFragment extends BaseModelFragment<Note, FragmentNoteBinding> {
                 String content = getBinding().main.etContent.getText().toString();
                 if (TextUtils.isEmpty(content)) content = "  ";
                 note.setContent(content);
-                ContentActivity.viewNote(this, note, true, 0);
+                ContentActivity.Companion.viewNote(this, note, true, 0);
                 break;
         }
         return super.onOptionsItemSelected(item);

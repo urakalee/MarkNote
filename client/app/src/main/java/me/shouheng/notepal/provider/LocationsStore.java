@@ -8,40 +8,44 @@ import android.text.TextUtils;
 
 import java.util.List;
 
+import me.shouheng.notepal.PalmApp;
 import me.shouheng.notepal.model.Location;
 import me.shouheng.notepal.model.Note;
-import me.shouheng.notepal.model.enums.ModelType;
 import me.shouheng.notepal.model.enums.ItemStatus;
+import me.shouheng.notepal.model.enums.ModelType;
 import me.shouheng.notepal.provider.helper.StoreHelper;
 import me.shouheng.notepal.provider.schema.BaseSchema;
 import me.shouheng.notepal.provider.schema.LocationSchema;
 
 /**
- * Created by wangshouheng on 2017/4/6.*/
+ * Created by wangshouheng on 2017/4/6.
+ */
 public class LocationsStore extends BaseStore<Location> {
 
     private static LocationsStore sInstance = null;
 
-    public static LocationsStore getInstance(Context context){
-        if (sInstance == null){
+    public static LocationsStore getInstance() {
+        if (sInstance == null) {
             synchronized (LocationsStore.class) {
                 if (sInstance == null) {
-                    sInstance = new LocationsStore(context.getApplicationContext());
+                    sInstance = new LocationsStore(PalmApp.getContext());
                 }
             }
         }
         return sInstance;
     }
 
-    private LocationsStore(final Context context){
+    private LocationsStore(final Context context) {
         super(context);
     }
 
     @Override
-    protected void afterDBCreated(SQLiteDatabase db) {}
+    protected void afterDBCreated(SQLiteDatabase db) {
+    }
 
     @Override
-    public void onUpgrade(final SQLiteDatabase db, final int oldVersion, final int newVersion){}
+    public void onUpgrade(final SQLiteDatabase db, final int oldVersion, final int newVersion) {
+    }
 
     @Override
     public void fillModel(Location model, Cursor cursor) {
@@ -67,7 +71,7 @@ public class LocationsStore extends BaseStore<Location> {
         values.put(LocationSchema.MODEL_TYPE, model.getModelType().id);
     }
 
-    private synchronized Location getLocation(String whereSQL, String orderSQL){
+    private synchronized Location getLocation(String whereSQL, String orderSQL) {
         Cursor cursor = null;
         Location location = null;
         SQLiteDatabase database = getWritableDatabase();
@@ -88,7 +92,7 @@ public class LocationsStore extends BaseStore<Location> {
 
     public synchronized Location getLocation(Note note) {
         return getLocation(LocationSchema.MODEL_CODE + " = " + note.getCode()
-                + " AND " + LocationSchema.MODEL_TYPE + " = " + ModelType.NOTE.id,
+                        + " AND " + LocationSchema.MODEL_TYPE + " = " + ModelType.NOTE.id,
                 LocationSchema.ADDED_TIME + " DESC ");
     }
 
@@ -98,7 +102,8 @@ public class LocationsStore extends BaseStore<Location> {
         SQLiteDatabase database = getWritableDatabase();
         try {
             cursor = database.rawQuery(" SELECT DISTINCT "
-                    + LocationSchema.COUNTRY + "," + LocationSchema.PROVINCE + "," + LocationSchema.CITY + "," + LocationSchema.DISTRICT
+                    + LocationSchema.COUNTRY + "," + LocationSchema.PROVINCE + ","
+                    + LocationSchema.CITY + "," + LocationSchema.DISTRICT
                     + " FROM " + tableName
                     + " WHERE " + BaseSchema.USER_ID + " = " + userId
                     + (TextUtils.isEmpty(whereSQL) ? "" : " AND " + whereSQL)

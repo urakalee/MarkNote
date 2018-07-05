@@ -4,7 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 
 import me.shouheng.notepal.R;
-import me.shouheng.notepal.activity.ContentActivity;
+import me.urakalee.next2.activity.ContentActivity;
 import me.shouheng.notepal.activity.MainActivity;
 import me.shouheng.notepal.config.Constants;
 import me.shouheng.notepal.model.Model;

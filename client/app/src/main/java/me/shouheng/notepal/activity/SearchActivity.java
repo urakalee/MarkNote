@@ -31,6 +31,7 @@ import me.shouheng.notepal.util.tools.SearchConditions;
 import me.shouheng.notepal.viewmodel.SearchViewModel;
 import me.shouheng.notepal.widget.tools.CustomItemAnimator;
 import me.shouheng.notepal.widget.tools.DividerItemDecoration;
+import me.urakalee.next2.activity.ContentActivity;
 
 public class SearchActivity extends CommonActivity<ActivitySearchBinding> implements
         OnQueryTextListener,
@@ -217,7 +218,7 @@ public class SearchActivity extends CommonActivity<ActivitySearchBinding> implem
 
     @Override
     public void onNoteSelected(Note note, int position) {
-        ContentActivity.viewNote(this, note, REQUEST_FOR_NOTE);
+        ContentActivity.Companion.viewNote(this, note, REQUEST_FOR_NOTE);
     }
 
     @Override

@@ -1,39 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
     <RelativeLayout
-        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
-        <include android:id="@+id/bar" layout="@layout/layout_toolbar" android:visibility="gone"/>
+        <include
+            android:id="@+id/bar"
+            layout="@layout/layout_toolbar"
+            android:visibility="gone" />
 
         <FrameLayout
-            android:layout_below="@id/bar"
             android:id="@+id/fragment_container"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            android:layout_below="@id/bar" />
 
-        <View android:id="@+id/v_shadow"
-            android:visibility="gone"
+        <View
+            android:id="@+id/v_shadow"
             android:layout_width="match_parent"
             android:layout_height="@dimen/toolbar_evaluation"
+            android:layout_below="@id/bar"
             android:background="@drawable/toolbar_dropshadow"
-            android:layout_below="@id/bar"/>
+            android:visibility="gone" />
 
         <me.zhanghai.android.materialprogressbar.MaterialProgressBar
             android:id="@+id/top_mpb"
-            android:layout_below="@id/bar"
-            app:mpb_progressStyle="horizontal"
             style="@style/Widget.MaterialProgressBar.ProgressBar.Horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="5dp"
+            android:layout_below="@id/bar"
             android:indeterminate="true"
             android:visibility="gone"
-            tools:visibility="visible"
+            app:mpb_progressStyle="horizontal"
             app:mpb_useIntrinsicPadding="false"
-            android:layout_width="match_parent"
-            android:layout_height="5dp" />
+            tools:visibility="visible" />
 
     </RelativeLayout>
 

@@ -3,6 +3,7 @@ package me.shouheng.notepal.repository;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.os.AsyncTask;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.WorkerThread;
 
@@ -33,22 +34,52 @@ public class NoteRepository extends BaseRepository<Note> {
         return NotesStore.getInstance(PalmApp.getContext());
     }
 
-    public LiveData<Resource<List<MultiItem>>> getMultiItems(
-            ItemStatus status, @Nullable Notebook notebook, @Nullable Category category) {
-        MutableLiveData<Resource<List<MultiItem>>> result = new MutableLiveData<>();
-        new NoteLoadTask(result, status, notebook, category).execute();
+    public LiveData<Resource<List<Note>>> get(@NonNull Notebook notebook) {
+        MutableLiveData<Resource<List<Note>>> result = new MutableLiveData<>();
+        new NoteLoadTask(result, notebook, null).execute();
         return result;
     }
 
-    public static class NoteLoadTask extends AsyncTask<Void, Integer, List<NotesAdapter.MultiItem>> {
+    private static class NoteLoadTask extends AsyncTask<Void, Integer, List<Note>> {
+
+        private MutableLiveData<Resource<List<Note>>> result;
+        private Notebook notebook;
+        private Category category;
+
+        NoteLoadTask(MutableLiveData<Resource<List<Note>>> result,
+                @NonNull Notebook notebook, @Nullable Category category) {
+            this.result = result;
+            this.notebook = notebook;
+            this.category = category;
+        }
+
+        @Override
+        protected List<Note> doInBackground(Void... voids) {
+            return NotesStore.getInstance(PalmApp.getContext()).getNotes(notebook);
+        }
+
+        @Override
+        protected void onPostExecute(List<Note> dataList) {
+            result.setValue(Resource.success(dataList));
+        }
+    }
+
+    public LiveData<Resource<List<MultiItem>>> getMultiItems(
+            ItemStatus status, @Nullable Notebook notebook, @Nullable Category category) {
+        MutableLiveData<Resource<List<MultiItem>>> result = new MutableLiveData<>();
+        new MultiItemLoadTask(result, status, notebook, category).execute();
+        return result;
+    }
+
+    private static class MultiItemLoadTask extends AsyncTask<Void, Integer, List<NotesAdapter.MultiItem>> {
 
         private MutableLiveData<Resource<List<MultiItem>>> result;
         private ItemStatus status;
         private Notebook notebook;
         private Category category;
 
-        NoteLoadTask(MutableLiveData<Resource<List<MultiItem>>> result,
-                ItemStatus status, Notebook notebook, Category category) {
+        MultiItemLoadTask(MutableLiveData<Resource<List<MultiItem>>> result,
+                ItemStatus status, @Nullable Notebook notebook, @Nullable Category category) {
             this.result = result;
             this.status = status;
             this.notebook = notebook;

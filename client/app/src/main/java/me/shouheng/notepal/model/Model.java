@@ -10,7 +10,8 @@ import me.shouheng.notepal.util.TimeUtils;
 
 
 /**
- * Created by wangshouheng on 2017/3/13. */
+ * Created by wangshouheng on 2017/3/13.
+ */
 public class Model implements Serializable {
 
     @Column(name = BaseSchema.ID)
@@ -59,7 +60,7 @@ public class Model implements Serializable {
     }
 
     public Date getAddedTime() {
-        return addedTime;
+        return addedTime == null ? new Date() : addedTime;
     }
 
     public void setAddedTime(Date addedTime) {
@@ -67,7 +68,7 @@ public class Model implements Serializable {
     }
 
     public Date getLastModifiedTime() {
-        return lastModifiedTime;
+        return lastModifiedTime == null ? new Date() : lastModifiedTime;
     }
 
     public void setLastModifiedTime(Date lastModifiedTime) {
@@ -75,7 +76,7 @@ public class Model implements Serializable {
     }
 
     public Date getLastSyncTime() {
-        return lastSyncTime;
+        return lastSyncTime == null ? new Date() : lastSyncTime;
     }
 
     public void setLastSyncTime(Date lastSyncTime) {
@@ -83,7 +84,7 @@ public class Model implements Serializable {
     }
 
     public ItemStatus getStatus() {
-        return status;
+        return status == null ? ItemStatus.NORMAL : status;
     }
 
     public void setStatus(ItemStatus status) {
@@ -97,7 +98,8 @@ public class Model implements Serializable {
                 ", code=" + code +
                 ", userId=" + userId +
                 ", addedTime=" + TimeUtils.formatDate(addedTime, TimeUtils.DateFormat.YYYY_MMM_dd_E_hh_mm_a) +
-                ", lastModifiedTime=" +  TimeUtils.formatDate(lastModifiedTime, TimeUtils.DateFormat.YYYY_MMM_dd_E_hh_mm_a) +
+                ", lastModifiedTime=" + TimeUtils.formatDate(lastModifiedTime,
+                TimeUtils.DateFormat.YYYY_MMM_dd_E_hh_mm_a) +
                 ", lastSyncTime=" + TimeUtils.formatDate(lastSyncTime, TimeUtils.DateFormat.YYYY_MMM_dd_E_hh_mm_a) +
                 ", status=" + (status == null ? "null" : status.name()) +
                 '}';

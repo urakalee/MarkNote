@@ -32,8 +32,8 @@ class NoteViewModel : BaseViewModel<Note>() {
         return NoteRepository()
     }
 
-    fun list(notebook: Notebook): LiveData<Resource<List<Note>>> {
-        return repository.get(null, null)
+    fun list(notebook: Notebook, category: Category?): LiveData<Resource<List<Note>>> {
+        return repository.get(notebook)
     }
 
     fun getMultiItems(status: ItemStatus, notebook: Notebook?, category: Category?): LiveData<Resource<List<NotesAdapter.MultiItem>>> {

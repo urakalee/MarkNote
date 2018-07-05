@@ -2,16 +2,12 @@ package me.shouheng.notepal.fragment;
 
 import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -33,7 +29,6 @@ import me.shouheng.notepal.model.data.LoadStatus;
 import me.shouheng.notepal.model.enums.ItemStatus;
 import me.shouheng.notepal.util.LogUtils;
 import me.shouheng.notepal.util.ToastUtils;
-import me.shouheng.notepal.util.ViewUtils;
 import me.shouheng.notepal.viewmodel.CategoryViewModel;
 import me.shouheng.notepal.widget.tools.CustomItemAnimator;
 import me.shouheng.notepal.widget.tools.CustomItemTouchHelper;
@@ -41,7 +36,8 @@ import me.shouheng.notepal.widget.tools.DividerItemDecoration;
 import me.urakalee.next2.fragment.NotesFragment;
 
 /**
- * Created by wangshouheng on 2017/3/29.*/
+ * Created by wangshouheng on 2017/3/29.
+ */
 public class CategoriesFragment extends BaseFragment<FragmentCategoriesBinding> implements
         BaseQuickAdapter.OnItemClickListener, OnMainActivityInteraction {
 
@@ -78,8 +74,9 @@ public class CategoriesFragment extends BaseFragment<FragmentCategoriesBinding> 
 
     @Override
     protected void doCreateView(Bundle savedInstanceState) {
-        if (getArguments() != null && getArguments().containsKey(ARG_STATUS))
+        if (getArguments() != null && getArguments().containsKey(ARG_STATUS)) {
             status = (ItemStatus) getArguments().get(ARG_STATUS);
+        }
 
         categoryViewModel = ViewModelProviders.of(this).get(CategoryViewModel.class);
 
@@ -101,7 +98,8 @@ public class CategoriesFragment extends BaseFragment<FragmentCategoriesBinding> 
     }
 
     private void configCategories() {
-        status = getArguments() == null || !getArguments().containsKey(ARG_STATUS) ? ItemStatus.NORMAL : (ItemStatus) getArguments().get(ARG_STATUS);
+        status = getArguments() == null || !getArguments().containsKey(ARG_STATUS) ? ItemStatus.NORMAL
+                : (ItemStatus) getArguments().get(ARG_STATUS);
 
         mAdapter = new CategoriesAdapter(getContext(), Collections.emptyList());
         mAdapter.setOnItemChildClickListener((adapter, view, position) -> {
@@ -117,7 +115,8 @@ public class CategoriesFragment extends BaseFragment<FragmentCategoriesBinding> 
 
         getBinding().rvCategories.setEmptyView(getBinding().emptyView);
         getBinding().rvCategories.setHasFixedSize(true);
-        getBinding().rvCategories.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL_LIST, isDarkTheme()));
+        getBinding().rvCategories.addItemDecoration(
+                new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL_LIST, isDarkTheme()));
         getBinding().rvCategories.setItemAnimator(new CustomItemAnimator());
         getBinding().rvCategories.setLayoutManager(new LinearLayoutManager(getContext()));
         getBinding().rvCategories.setAdapter(mAdapter);
@@ -211,7 +210,7 @@ public class CategoriesFragment extends BaseFragment<FragmentCategoriesBinding> 
     // endregion
 
     private void notifyDataChanged() {
-          /*
+        /*
          * Notify the snagging list is changed. The activity need to record the message, and
          * use it when set result to caller. */
         if (getActivity() != null && getActivity() instanceof OnCategoriesInteractListener) {
@@ -233,7 +232,7 @@ public class CategoriesFragment extends BaseFragment<FragmentCategoriesBinding> 
         PopupMenu popupM = new PopupMenu(getContext(), v);
         popupM.inflate(R.menu.category_pop_menu);
         popupM.setOnMenuItemClickListener(item -> {
-            switch (item.getItemId()){
+            switch (item.getItemId()) {
                 case R.id.action_edit:
                     showEditor(position, mAdapter.getItem(position));
                     break;
@@ -267,31 +266,9 @@ public class CategoriesFragment extends BaseFragment<FragmentCategoriesBinding> 
     }
 
     @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        setHasOptionsMenu(true);
-    }
-
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.capture, menu);
-        super.onCreateOptionsMenu(menu, inflater);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()){
-            case R.id.action_capture:
-                createScreenCapture(getBinding().rvCategories, ViewUtils.dp2Px(getContext(), 60));
-                break;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
     public void onPause() {
         super.onPause();
-        if (mAdapter.isPositionChanged()){
+        if (mAdapter.isPositionChanged()) {
             updateOrders();
         }
     }
@@ -317,7 +294,8 @@ public class CategoriesFragment extends BaseFragment<FragmentCategoriesBinding> 
     }
 
     @Override
-    public void onFastScrollerChanged() { }
+    public void onFastScrollerChanged() {
+    }
 
     public interface OnCategoriesInteractListener {
 
@@ -326,13 +304,18 @@ public class CategoriesFragment extends BaseFragment<FragmentCategoriesBinding> 
          * This method as well as {@link NotesFragment.OnNotesInteractListener#markNoteDataChanged()} is only used
          * to record the list change message and handle in future.
          *
-         * @see NotesFragment.OnNotesInteractListener#markNoteDataChanged() */
-        default void onCategoryDataChanged(){}
+         * @see NotesFragment.OnNotesInteractListener#markNoteDataChanged()
+         */
+        default void onCategoryDataChanged() {
+        }
 
-        default void onResumeToCategory() {}
+        default void onResumeToCategory() {
+        }
 
-        default void onCategorySelected(Category category) {}
+        default void onCategorySelected(Category category) {
+        }
 
-        default void onCategoryLoadStateChanged(LoadStatus status) {}
+        default void onCategoryLoadStateChanged(LoadStatus status) {
+        }
     }
 }

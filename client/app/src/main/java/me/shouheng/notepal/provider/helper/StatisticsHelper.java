@@ -12,9 +12,9 @@ import me.shouheng.notepal.config.Constants;
 import me.shouheng.notepal.model.Attachment;
 import me.shouheng.notepal.model.Location;
 import me.shouheng.notepal.model.Stats;
+import me.shouheng.notepal.model.enums.ItemStatus;
 import me.shouheng.notepal.model.enums.ModelType;
 import me.shouheng.notepal.model.enums.Operation;
-import me.shouheng.notepal.model.enums.ItemStatus;
 import me.shouheng.notepal.provider.AttachmentsStore;
 import me.shouheng.notepal.provider.CategoryStore;
 import me.shouheng.notepal.provider.LocationsStore;
@@ -27,14 +27,16 @@ import me.shouheng.notepal.util.TimeUtils;
 import me.shouheng.notepal.viewmodel.StatisticViewModel;
 
 /**
- * Created by wang shouheng on 2018/1/19.*/
+ * Created by wang shouheng on 2018/1/19.
+ */
 public class StatisticsHelper {
 
     /**
      * Get all the stats prepared to show.
      *
      * @param context the context
-     * @return the Stats object contains the actions result. */
+     * @return the Stats object contains the actions result.
+     */
     @MainThread
     public static Stats getStats(Context context) {
         Stats stats = new Stats();
@@ -49,7 +51,7 @@ public class StatisticsHelper {
         stats.setArchivedMinds(categoryStore.getCount(null, ItemStatus.ARCHIVED, false));
         stats.setTrashedMinds(categoryStore.getCount(null, ItemStatus.TRASHED, false));
 
-        LocationsStore locationsStore = LocationsStore.getInstance(context);
+        LocationsStore locationsStore = LocationsStore.getInstance();
         List<Location> locations = locationsStore.getDistinct(null, null);
         stats.setLocCnt(locations.size());
         stats.setLocations(locations);
@@ -91,12 +93,13 @@ public class StatisticsHelper {
      * Get the added statistic of model, this method can be refined by query one time and filter in program.
      *
      * @param modelType model type
-     * @param days days of model statistic
-     * @return the added count of every day */
+     * @param days      days of model statistic
+     * @return the added count of every day
+     */
     public static List<Integer> getAddedStatistics(ModelType modelType, int days) {
         Calendar sevenDaysAgo = TimeUtils.sevenDaysAgo();
         List<Integer> states = new LinkedList<>();
-        for (int i=0; i<days; i++) {
+        for (int i = 0; i < days; i++) {
             long startMillis = sevenDaysAgo.getTimeInMillis();
             sevenDaysAgo.add(Calendar.DAY_OF_YEAR, 1);
             long endMillis = sevenDaysAgo.getTimeInMillis();

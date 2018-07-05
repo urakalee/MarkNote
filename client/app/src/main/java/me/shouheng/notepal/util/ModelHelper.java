@@ -1,9 +1,9 @@
 package me.shouheng.notepal.util;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.text.ClipboardManager;
@@ -35,7 +35,8 @@ import me.shouheng.notepal.viewmodel.CategoryViewModel;
 import me.shouheng.notepal.widget.FlowLayout;
 
 /**
- * Created by wangshouheng on 2017/11/4.*/
+ * Created by wangshouheng on 2017/11/4.
+ */
 public class ModelHelper {
 
     @Nullable
@@ -50,10 +51,11 @@ public class ModelHelper {
                 + PalmApp.getContext().getString(R.string.text_last_modified_time) + " : "
                 + TimeUtils.getPrettyTime(model.getLastModifiedTime()) + "\n"
                 + PalmApp.getContext().getString(R.string.text_last_sync_time) + " : "
-                + (model.getLastSyncTime().getTime() == 0 ? "--" : TimeUtils.getPrettyTime(model.getLastModifiedTime()));
+                + (model.getLastSyncTime().getTime() == 0 ? "--"
+                : TimeUtils.getPrettyTime(model.getLastModifiedTime()));
     }
 
-    public static void copyToClipboard(Activity ctx, String content) {
+    public static void copyToClipboard(@NonNull Context ctx, String content) {
         ClipboardManager clipboardManager = (ClipboardManager) ctx.getSystemService(Context.CLIPBOARD_SERVICE);
         clipboardManager.setText(content);
     }
@@ -95,7 +97,8 @@ public class ModelHelper {
             shareIntent.putExtra(Intent.EXTRA_STREAM, mindSnagging.getPicture());
         }
 
-        context.startActivity(Intent.createChooser(shareIntent, context.getResources().getString(R.string.share_message_chooser)));
+        context.startActivity(
+                Intent.createChooser(shareIntent, context.getResources().getString(R.string.share_message_chooser)));
     }
 
     public static void shareFile(Context context, File file, String mimeType) {
@@ -107,7 +110,7 @@ public class ModelHelper {
                 context.getResources().getString(R.string.share_message_chooser)));
     }
 
-    public static <T extends Model> void copyLink(Activity ctx, T model) {
+    public static <T extends Model> void copyLink(@NonNull Context ctx, @NonNull T model) {
         if (model.getLastSyncTime().getTime() == 0) {
             ToastUtils.makeToast(R.string.cannot_get_link_of_not_synced_item);
             return;
@@ -125,13 +128,17 @@ public class ModelHelper {
     }
 
     // region statistic helper
-    public static void showStatistic(Context context, Note note) {
+    public static void showStatistic(@NonNull Context context, Note note) {
         View root = LayoutInflater.from(context).inflate(R.layout.dialog_stats, null, false);
         LinearLayout llStats = root.findViewById(R.id.ll_stats);
-        addStat(context, llStats, context.getString(R.string.text_created_time), TimeUtils.getPrettyTime(note.getAddedTime()));
-        addStat(context, llStats, context.getString(R.string.text_last_modified_time), TimeUtils.getPrettyTime(note.getLastModifiedTime()));
-        addStat(context, llStats, context.getString(R.string.text_last_sync_time), (note.getLastSyncTime().getTime() == 0 ? "--" : TimeUtils.getPrettyTime(note.getLastModifiedTime())));
-        addStat(context, llStats, context.getString(R.string.text_chars_number), String.valueOf(note.getContent().length()));
+        addStat(context, llStats, context.getString(R.string.text_created_time),
+                TimeUtils.getPrettyTime(note.getAddedTime()));
+        addStat(context, llStats, context.getString(R.string.text_last_modified_time),
+                TimeUtils.getPrettyTime(note.getLastModifiedTime()));
+        addStat(context, llStats, context.getString(R.string.text_last_sync_time),
+                (note.getLastSyncTime().getTime() == 0 ? "--" : TimeUtils.getPrettyTime(note.getLastModifiedTime())));
+        addStat(context, llStats, context.getString(R.string.text_chars_number),
+                String.valueOf(note.getContent().length()));
         new AlertDialog.Builder(context)
                 .setTitle(R.string.text_statistic)
                 .setView(root)
@@ -148,7 +155,7 @@ public class ModelHelper {
     }
     // endregion
 
-    public static void showLabels(Context context, String tags) {
+    public static void showLabels(Context context, @Nullable String tags) {
         View root = LayoutInflater.from(context).inflate(R.layout.dialog_tags, null, false);
         FlowLayout flowLayout = root.findViewById(R.id.fl_labels);
         addTagsToLayout(context, flowLayout, tags);
@@ -160,22 +167,24 @@ public class ModelHelper {
                 .show();
     }
 
-    private static void addTagsToLayout(Context context, FlowLayout flowLayout, String stringTags){
+    private static void addTagsToLayout(Context context, FlowLayout flowLayout, String stringTags) {
         if (TextUtils.isEmpty(stringTags)) return;
         String[] tags = stringTags.split(CategoryViewModel.CATEGORY_SPLIT);
         for (String tag : tags) addTagToLayout(context, flowLayout, tag);
     }
 
-    private static  void addTagToLayout(Context context, FlowLayout flowLayout, String tag){
+    private static void addTagToLayout(Context context, FlowLayout flowLayout, String tag) {
         int margin = ViewUtils.dp2Px(context, 2f);
         int padding = ViewUtils.dp2Px(context, 5f);
         TextView tvLabel = new TextView(context);
-        tvLabel.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+        tvLabel.setLayoutParams(new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
         ViewGroup.MarginLayoutParams params = new ViewGroup.MarginLayoutParams(tvLabel.getLayoutParams());
         params.setMargins(margin, margin, margin, margin);
         tvLabel.setLayoutParams(params);
         tvLabel.setPadding(padding, 0, padding, 0);
-        tvLabel.setBackgroundResource(ColorUtils.isDarkTheme(context) ? R.drawable.label_background_dark : R.drawable.label_background);
+        tvLabel.setBackgroundResource(ColorUtils.isDarkTheme(context)
+                ? R.drawable.label_background_dark : R.drawable.label_background);
         tvLabel.setText(tag);
         flowLayout.addView(tvLabel);
     }

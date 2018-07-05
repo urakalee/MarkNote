@@ -12,7 +12,8 @@ import me.shouheng.notepal.model.enums.ItemStatus;
 import me.shouheng.notepal.provider.BaseStore;
 
 /**
- * Created by wang shouheng on 2018/3/13. */
+ * Created by wang shouheng on 2018/3/13.
+ */
 public abstract class BaseRepository<T extends Model> {
 
     protected abstract BaseStore<T> getStore();
@@ -47,18 +48,6 @@ public abstract class BaseRepository<T extends Model> {
         return result;
     }
 
-    public LiveData<Resource<List<T>>> getArchived(String whereSQL, String orderSQL) {
-        MutableLiveData<Resource<List<T>>> result = new MutableLiveData<>();
-        new NormalAsyncTask<>(result, () -> getStore().getArchived(whereSQL, orderSQL)).execute();
-        return result;
-    }
-
-    public LiveData<Resource<List<T>>> getTrashed(String whereSQL, String orderSQL) {
-        MutableLiveData<Resource<List<T>>> result = new MutableLiveData<>();
-        new NormalAsyncTask<>(result, () -> getStore().getTrashed(whereSQL, orderSQL)).execute();
-        return result;
-    }
-
     public LiveData<Resource<Integer>> getCount(String whereSQL, ItemStatus status, boolean exclude) {
         MutableLiveData<Resource<Integer>> result = new MutableLiveData<>();
         new NormalAsyncTask<>(result, () -> getStore().getCount(whereSQL, status, exclude)).execute();
@@ -68,12 +57,6 @@ public abstract class BaseRepository<T extends Model> {
     public LiveData<Resource<Boolean>> isNewModel(Long code) {
         MutableLiveData<Resource<Boolean>> result = new MutableLiveData<>();
         new NormalAsyncTask<>(result, () -> getStore().isNewModel(code)).execute();
-        return result;
-    }
-
-    public LiveData<Resource<List<T>>> getPage(int index, int pageCount, String orderSQL, ItemStatus status, boolean exclude) {
-        MutableLiveData<Resource<List<T>>> result = new MutableLiveData<>();
-        new NormalAsyncTask<>(result, () -> getStore().getPage(index, pageCount, orderSQL, status, exclude)).execute();
         return result;
     }
 
@@ -109,15 +92,6 @@ public abstract class BaseRepository<T extends Model> {
         new NormalAsyncTask<>(result, () -> {
             getStore().saveOrUpdate(model);
             return model;
-        }).execute();
-        return result;
-    }
-
-    public LiveData<Resource<List<T>>> batchUpdate(List<T> models, ItemStatus toStatus) {
-        MutableLiveData<Resource<List<T>>> result = new MutableLiveData<>();
-        new NormalAsyncTask<>(result, () -> {
-            getStore().batchUpdate(models, toStatus);
-            return models;
         }).execute();
         return result;
     }

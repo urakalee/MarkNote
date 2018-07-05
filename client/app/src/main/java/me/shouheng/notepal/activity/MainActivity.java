@@ -1,5 +1,7 @@
 package me.shouheng.notepal.activity;
 
+import static android.support.v7.widget.RecyclerView.SCROLL_STATE_IDLE;
+
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -46,7 +48,6 @@ import me.shouheng.notepal.dialog.CategoryEditDialog;
 import me.shouheng.notepal.dialog.NotebookEditDialog;
 import me.shouheng.notepal.dialog.QuickNoteEditor;
 import me.shouheng.notepal.fragment.CategoriesFragment;
-import me.urakalee.next2.fragment.NotesFragment;
 import me.shouheng.notepal.intro.IntroActivity;
 import me.shouheng.notepal.listener.OnAttachingFileListener;
 import me.shouheng.notepal.listener.OnMainActivityInteraction;
@@ -72,11 +73,11 @@ import me.shouheng.notepal.util.preferences.DashboardPreferences;
 import me.shouheng.notepal.util.preferences.LockPreferences;
 import me.shouheng.notepal.util.preferences.UserPreferences;
 import me.shouheng.notepal.viewmodel.CategoryViewModel;
+import me.shouheng.notepal.widget.tools.CustomRecyclerScrollViewListener;
+import me.urakalee.next2.activity.ContentActivity;
+import me.urakalee.next2.fragment.NotesFragment;
 import me.urakalee.next2.viewmodel.NoteViewModel;
 import me.urakalee.next2.viewmodel.NotebookViewModel;
-import me.shouheng.notepal.widget.tools.CustomRecyclerScrollViewListener;
-
-import static android.support.v7.widget.RecyclerView.SCROLL_STATE_IDLE;
 
 public class MainActivity extends CommonActivity<ActivityMainBinding> implements
         NotesFragment.OnNotesInteractListener,
@@ -240,7 +241,7 @@ public class MainActivity extends CommonActivity<ActivityMainBinding> implements
                 if (intent.hasExtra(Constants.EXTRA_MODEL)
                         && (model = (Model) intent.getSerializableExtra(Constants.EXTRA_MODEL)) != null) {
                     if (model instanceof Note) {
-                        ContentActivity.viewNote(this, (Note) model, REQUEST_NOTE_VIEW);
+                        ContentActivity.Companion.viewNote(this, (Note) model, REQUEST_NOTE_VIEW);
                     } else if (model instanceof MindSnagging) {
                         editMindSnagging((MindSnagging) model);
                     }
@@ -273,13 +274,13 @@ public class MainActivity extends CommonActivity<ActivityMainBinding> implements
                 Intent.ACTION_SEND,
                 Intent.ACTION_SEND_MULTIPLE,
                 Constants.INTENT_GOOGLE_NOW) && i.getType() != null) {
-            ContentActivity.resolveThirdPart(this, i, REQUEST_ADD_NOTE);
+            ContentActivity.Companion.resolveThirdPart(this, i, REQUEST_ADD_NOTE);
         }
     }
 
     private void startAddPhoto() {
         PermissionUtils.checkStoragePermission(this, () ->
-                ContentActivity.resolveAction(
+                ContentActivity.Companion.resolveAction(
                         MainActivity.this,
                         getNewNote(),
                         Constants.ACTION_TAKE_PHOTO,
@@ -288,7 +289,7 @@ public class MainActivity extends CommonActivity<ActivityMainBinding> implements
 
     private void startAddSketch() {
         PermissionUtils.checkStoragePermission(this, () ->
-                ContentActivity.resolveAction(
+                ContentActivity.Companion.resolveAction(
                         MainActivity.this,
                         getNewNote(),
                         Constants.ACTION_ADD_SKETCH,
@@ -297,7 +298,7 @@ public class MainActivity extends CommonActivity<ActivityMainBinding> implements
 
     private void startAddFile() {
         PermissionUtils.checkStoragePermission(this, () ->
-                ContentActivity.resolveAction(
+                ContentActivity.Companion.resolveAction(
                         MainActivity.this,
                         getNewNote(),
                         Constants.ACTION_ADD_FILES,
@@ -392,7 +393,7 @@ public class MainActivity extends CommonActivity<ActivityMainBinding> implements
 
     private void editNote(@NonNull final Note note) {
         PermissionUtils.checkStoragePermission(this, () ->
-                ContentActivity.editNote(this, note, REQUEST_ADD_NOTE));
+                ContentActivity.Companion.editNote(this, note, REQUEST_ADD_NOTE));
     }
 
     private Note getNewNote() {

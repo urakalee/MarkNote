@@ -22,7 +22,8 @@ import android.database.sqlite.SQLiteOpenHelper;
  * 8. Extends {@link me.shouheng.notepal.repository.BaseRepository} to add repository.
  * 9. Most import modify {@link PalmDB#VERSION}.
  *
- * Created by wangshouheng on 2017/3/13. */
+ * Created by wangshouheng on 2017/3/13.
+ */
 public class PalmDB extends SQLiteOpenHelper {
 
     public static final String DATABASE_NAME = "NotePal.db";
@@ -34,8 +35,8 @@ public class PalmDB extends SQLiteOpenHelper {
 
     private volatile boolean isOpen = true;
 
-    public static PalmDB getInstance(final Context context){
-        if (sInstance == null){
+    public static PalmDB getInstance(final Context context) {
+        if (sInstance == null) {
             synchronized (PalmDB.class) {
                 if (sInstance == null) {
                     sInstance = new PalmDB(context.getApplicationContext());
@@ -52,7 +53,7 @@ public class PalmDB extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        LocationsStore.getInstance(mContext).onCreate(db);
+        LocationsStore.getInstance().onCreate(db);
         AttachmentsStore.getInstance(mContext).onCreate(db);
         AlarmsStore.getInstance().onCreate(db);
         NotesStore.getInstance(mContext).onCreate(db);
@@ -64,7 +65,7 @@ public class PalmDB extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        LocationsStore.getInstance(mContext).onUpgrade(db, oldVersion, newVersion);
+        LocationsStore.getInstance().onUpgrade(db, oldVersion, newVersion);
         AttachmentsStore.getInstance(mContext).onUpgrade(db, oldVersion, newVersion);
         AlarmsStore.getInstance().onUpgrade(db, oldVersion, newVersion);
         NotesStore.getInstance(mContext).onUpgrade(db, oldVersion, newVersion);

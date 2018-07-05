@@ -9,11 +9,10 @@ import java.util.Date;
 import me.shouheng.notepal.PalmApp;
 import me.shouheng.notepal.config.TextLength;
 import me.shouheng.notepal.model.enums.AlarmType;
+import me.shouheng.notepal.model.enums.ItemStatus;
 import me.shouheng.notepal.model.enums.ModelType;
-import me.shouheng.notepal.model.enums.NoteType;
 import me.shouheng.notepal.model.enums.Operation;
 import me.shouheng.notepal.model.enums.Portrait;
-import me.shouheng.notepal.model.enums.ItemStatus;
 import me.shouheng.notepal.model.enums.WeatherType;
 import me.shouheng.notepal.util.ColorUtils;
 import me.shouheng.notepal.util.TimeUtils;
@@ -21,7 +20,8 @@ import me.shouheng.notepal.util.UserUtil;
 import me.shouheng.notepal.viewmodel.CategoryViewModel;
 
 /**
- * Created by wangshouheng on 2017/11/17. */
+ * Created by wangshouheng on 2017/11/17.
+ */
 public class ModelFactory {
 
     private static long getLongCode() {
@@ -34,7 +34,7 @@ public class ModelFactory {
                 + now.get(Calendar.MINUTE) * 60000
                 + now.get(Calendar.SECOND) * 1000
                 + now.get(Calendar.MILLISECOND);
-        int prefix = (int)(Math.random() * 21); // 生成一个小于[0,20]的整数
+        int prefix = (int) (Math.random() * 21); // 生成一个小于[0,20]的整数
         return prefix * 100000000 + appendix;
     }
 
@@ -109,10 +109,7 @@ public class ModelFactory {
     }
 
     public static Note getNote() {
-        Note note = getModel(Note.class);
-        assert note != null;
-        note.setNoteType(NoteType.NORMAL);
-        return note;
+        return getModel(Note.class);
     }
 
     public static Note getNote(@Nullable Notebook notebook, @Nullable Category category) {
@@ -172,15 +169,18 @@ public class ModelFactory {
 
     private static <M extends Model> String getModelName(M model) {
         String modelName = null;
-        if (model instanceof Attachment) return ((Attachment) model).getUri().toString();
-        else if (model instanceof MindSnagging) modelName = ((MindSnagging) model).getContent();
-        else if (model instanceof Note) modelName = ((Note) model).getTitle();
-        else if (model instanceof Notebook) modelName = ((Notebook) model).getTitle();
-        else if (model instanceof Location) {
+        if (model instanceof Attachment) {
+            return ((Attachment) model).getUri().toString();
+        } else if (model instanceof MindSnagging) {
+            modelName = ((MindSnagging) model).getContent();
+        } else if (model instanceof Note) {
+            modelName = ((Note) model).getTitle();
+        } else if (model instanceof Notebook) {
+            modelName = ((Notebook) model).getTitle();
+        } else if (model instanceof Location) {
             Location location = ((Location) model);
             modelName = location.getCountry() + "|" + location.getCity() + "|" + location.getDistrict();
-        }
-        else if (model instanceof Weather) {
+        } else if (model instanceof Weather) {
             Weather weather = ((Weather) model);
             modelName = PalmApp.getStringCompact(weather.getType().nameRes) + "|" + weather.getTemperature();
         }
