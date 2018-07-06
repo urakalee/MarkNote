@@ -12,8 +12,6 @@ import me.shouheng.notepal.R
 import me.shouheng.notepal.activity.base.CommonActivity
 import me.shouheng.notepal.config.Constants
 import me.shouheng.notepal.databinding.ActivityContentBinding
-import me.shouheng.notepal.fragment.NoteFragment
-import me.shouheng.notepal.fragment.NoteFragment.OnNoteInteractListener
 import me.shouheng.notepal.fragment.base.BaseModelFragment
 import me.shouheng.notepal.fragment.base.CommonFragment
 import me.shouheng.notepal.model.ModelFactory
@@ -22,6 +20,8 @@ import me.shouheng.notepal.provider.NotesStore
 import me.shouheng.notepal.util.FragmentHelper
 import me.shouheng.notepal.util.LogUtils
 import me.shouheng.notepal.util.ToastUtils
+import me.urakalee.next2.fragment.NoteEditFragment
+import me.urakalee.next2.fragment.NoteEditFragment.OnNoteInteractListener
 import me.urakalee.next2.fragment.NoteViewFragment
 import me.urakalee.ranger.extension.getFromBundle
 import me.urakalee.ranger.extension.hasExtraInBundle
@@ -131,9 +131,9 @@ class ContentActivity : CommonActivity<ActivityContentBinding>(),
         if (isEdit) {
             fragment = supportFragmentManager.findFragmentByTag(TAG_NOTE_FRAGMENT)
             if (fragment == null) {
-                fragment = NoteFragment.newInstance(note, requestCode, isThirdPart, action)
+                fragment = NoteEditFragment.newInstance(note, requestCode, isThirdPart, action)
             } else {
-                fragment.arguments?.putBoolean(NoteFragment.KEY_ARGS_RESTORE, true)
+                fragment.arguments?.putBoolean(NoteEditFragment.KEY_ARGS_RESTORE, true)
             }
             FragmentHelper.replace(this, fragment, R.id.fragment_container, TAG_NOTE_FRAGMENT)
         } else {
@@ -169,9 +169,8 @@ class ContentActivity : CommonActivity<ActivityContentBinding>(),
 
     //region delegate
 
-    override fun getIntentForThirdPart(): Intent {
-        return intent
-    }
+    override val intentForThirdPart: Intent
+        get() = intent
 
     //endregion
 
