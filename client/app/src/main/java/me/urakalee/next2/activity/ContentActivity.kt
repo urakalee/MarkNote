@@ -144,11 +144,13 @@ class ContentActivity : CommonActivity<ActivityContentBinding>(),
     }
 
     private fun configToolbar() {
+        // NoteEditing 由于需要侧滑菜单, 把 toolbar 放在了 layout 里, 因此不显示 activity 的 toolbar
         if (intent.getBooleanExtra(EXTRA_HAS_TOOLBAR, false)) {
             binding.bar?.root?.isVisible = true
-            binding.vShadow.isVisible = true
-            setSupportActionBar(binding.bar?.toolbar)
-            if (!isDarkTheme) binding.bar?.toolbar?.popupTheme = R.style.AppTheme_PopupOverlay
+            val toolbarNonNull = binding.bar?.toolbar ?: return
+            setSupportActionBar(toolbarNonNull)
+            supportActionBar?.setDisplayHomeAsUpEnabled(true)
+            if (!isDarkTheme) toolbarNonNull.popupTheme = R.style.AppTheme_PopupOverlay
         }
     }
 

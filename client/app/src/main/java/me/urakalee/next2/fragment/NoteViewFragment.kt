@@ -147,10 +147,8 @@ class NoteViewFragment : BaseFragment<FragmentNoteViewBinding>() {
     }
 
     private fun configToolbar() {
-        val actionBar = (activity as? AppCompatActivity)?.supportActionBar
-        actionBar?.title = noteTitle
-        actionBar?.setDisplayHomeAsUpEnabled(false)
-        if (!isDarkTheme) binding.toolbar.popupTheme = R.style.AppTheme_PopupOverlay
+        val actionBarNonNull = (activity as? AppCompatActivity)?.supportActionBar ?: return
+        actionBarNonNull.title = noteTitle
     }
 
     private fun configViews() {
@@ -246,6 +244,9 @@ class NoteViewFragment : BaseFragment<FragmentNoteViewBinding>() {
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         val contextNonNull = context ?: return super.onOptionsItemSelected(item)
         when (item?.itemId) {
+            android.R.id.home -> {
+                onBackPressed()
+            }
             R.id.action_edit -> {
                 note?.let {
                     ContentActivity.editNote(this, it, REQUEST_FOR_EDIT)
