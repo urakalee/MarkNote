@@ -7,7 +7,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.res.Configuration;
 import android.databinding.DataBindingUtil;
 import android.graphics.Color;
 import android.net.Uri;
@@ -124,6 +123,127 @@ public class MainActivity extends CommonActivity<ActivityMainBinding> implements
         return R.layout.activity_main;
     }
 
+    //region lifecycle
+
+    @Override
+    public void onBackPressed() {
+        if (isDashboard()) {
+            if (getBinding().drawerLayout.isDrawerOpen(GravityCompat.START)) {
+                getBinding().drawerLayout.closeDrawer(GravityCompat.START);
+            } else {
+                if (getBinding().menu.isOpened()) {
+                    getBinding().menu.close(true);
+                    return;
+                }
+                if (isNotesFragment()) {
+                    if (((NotesFragment) getCurrentFragment()).isTopStack()) {
+                        againExit();
+                    } else {
+                        super.onBackPressed();
+                    }
+                } else {
+                    toNotesFragment(true);
+                }
+            }
+        } else {
+            super.onBackPressed();
+        }
+    }
+
+    private void againExit() {
+        if (onBackPressed + TIME_INTERVAL_BACK > System.currentTimeMillis()) {
+            SynchronizeUtils.syncOneDrive(this);
+            super.onBackPressed();
+            return;
+        } else {
+            ToastUtils.makeToast(R.string.text_tab_again_exit);
+        }
+        onBackPressed = System.currentTimeMillis();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unregisterReceiver(notesChangedReceiver);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        LogUtils.d("requestCode:" + requestCode + ", resultCode:" + resultCode);
+
+        if (resultCode != RESULT_OK) return;
+
+        handleAttachmentResult(requestCode, data);
+
+        switch (requestCode) {
+            case REQUEST_FAB_SORT:
+                initFabSortItems();
+                break;
+            case REQUEST_ADD_NOTE:
+            case REQUEST_NOTE_VIEW:
+                if (isNotesFragment()) ((NotesFragment) getCurrentFragment()).reload();
+                break;
+            case REQUEST_TRASH:
+                updateListIfNecessary();
+                break;
+            case REQUEST_ARCHIVE:
+                updateListIfNecessary();
+                break;
+            case REQUEST_SEARCH:
+                updateListIfNecessary();
+                break;
+            case REQUEST_PASSWORD:
+                init();
+                break;
+            case REQUEST_SETTING:
+                int[] changedTypes = data.getIntArrayExtra(SettingsActivity.KEY_CONTENT_CHANGE_TYPES);
+                boolean drawerUpdated = false, listUpdated = false, fabSortUpdated = false, fastScrollerUpdated = false;
+                for (int changedType : changedTypes) {
+                    if (changedType == SettingChangeType.DRAWER.id && !drawerUpdated) {
+                        setupHeader();
+                        drawerUpdated = true;
+                    }
+                    if (changedType == SettingChangeType.NOTE_LIST_TYPE.id && !listUpdated) {
+                        if (isNotesFragment()) {
+                            toNotesFragment(false);
+                        }
+                        listUpdated = true;
+                    }
+                    if (changedType == SettingChangeType.FAB.id && !fabSortUpdated) {
+                        initFabSortItems();
+                        fabSortUpdated = true;
+                    }
+                    if (changedType == SettingChangeType.FAST_SCROLLER.id && !fastScrollerUpdated) {
+                        notifyFastScrollerChanged();
+                        fastScrollerUpdated = true;
+                    }
+                }
+                break;
+        }
+    }
+
+    private void handleAttachmentResult(int requestCode, Intent data) {
+        AttachmentHelper.resolveResult(this, requestCode, data);
+    }
+
+    private void updateListIfNecessary() {
+        Fragment fragment = getCurrentFragment();
+        if (fragment instanceof OnMainActivityInteraction) {
+            ((OnMainActivityInteraction) fragment).onDataSetChanged();
+        }
+    }
+
+    private void notifyFastScrollerChanged() {
+        Fragment fragment = getCurrentFragment();
+        if (fragment instanceof OnMainActivityInteraction) {
+            ((OnMainActivityInteraction) fragment).onFastScrollerChanged();
+        }
+    }
+
+    //endregion
+    //region init
+
     @Override
     protected void beforeSetContentView() {
         setTranslucentStatusBar();
@@ -138,12 +258,7 @@ public class MainActivity extends CommonActivity<ActivityMainBinding> implements
 
         checkPassword();
 
-        regNoteChangeReceiver();
-    }
-
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
+        registerNoteChangeReceiver();
     }
 
     private void checkPassword() {
@@ -175,50 +290,8 @@ public class MainActivity extends CommonActivity<ActivityMainBinding> implements
         toNotesFragment(true);
     }
 
-    private void initViewModels() {
-        notebookViewModel = ViewModelProviders.of(this).get(NotebookViewModel.class);
-        noteViewModel = ViewModelProviders.of(this).get(NoteViewModel.class);
-        categoryViewModel = ViewModelProviders.of(this).get(CategoryViewModel.class);
-    }
-
-    private void configToolbar() {
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.setDisplayHomeAsUpEnabled(true);
-            actionBar.setHomeAsUpIndicator(R.drawable.ic_menu_white);
-        }
-        if (!isDarkTheme()) toolbar.setPopupTheme(R.style.AppTheme_PopupOverlay);
-    }
-
-    private void initHeaderView() {
-        if (headerBinding == null) {
-            View header = getBinding().nav.inflateHeaderView(R.layout.activity_main_nav_header);
-            headerBinding = DataBindingUtil.bind(header);
-        }
-        setupHeader();
-        headerBinding.getRoot().setOnLongClickListener(v -> true);
-        headerBinding.getRoot().setOnClickListener(
-                view -> startActivityForResult(UserInfoActivity.class, REQUEST_USER_INFO));
-    }
-
-    private void setupHeader() {
-        headerBinding.userMotto.setText(dashboardPreferences.getUserMotto());
-
-        boolean enabled = dashboardPreferences.isUserInfoBgEnable();
-        headerBinding.userBg.setVisibility(enabled ? View.VISIBLE : View.GONE);
-        if (enabled) {
-            Uri customUri = dashboardPreferences.getUserInfoBG();
-            Glide.with(PalmApp.getContext())
-                    .load(customUri)
-                    .centerCrop()
-                    .crossFade()
-                    .into(headerBinding.userBg);
-        }
-    }
-
     // region handle intent
+
     private void handleIntent(Intent intent) {
         String action = intent.getAction();
 
@@ -250,12 +323,6 @@ public class MainActivity extends CommonActivity<ActivityMainBinding> implements
             case Constants.ACTION_WIDGET_LAUNCH_APP:
                 // do nothing just open the app.
                 break;
-            case Constants.ACTION_TAKE_PHOTO:
-                startAddPhoto();
-                break;
-            case Constants.ACTION_ADD_SKETCH:
-                startAddSketch();
-                break;
             case Intent.ACTION_SEND:
             case Intent.ACTION_SEND_MULTIPLE:
             case Constants.INTENT_GOOGLE_NOW:
@@ -265,6 +332,12 @@ public class MainActivity extends CommonActivity<ActivityMainBinding> implements
                 // Recreate
                 recreate();
                 break;
+//            case Constants.ACTION_TAKE_PHOTO:
+//                startAddPhoto();
+//                break;
+//            case Constants.ACTION_ADD_SKETCH:
+//                startAddSketch();
+//                break;
         }
     }
 
@@ -278,35 +351,61 @@ public class MainActivity extends CommonActivity<ActivityMainBinding> implements
         }
     }
 
-    private void startAddPhoto() {
-        PermissionUtils.checkStoragePermission(this, () ->
-                ContentActivity.Companion.resolveAction(
-                        MainActivity.this,
-                        getNewNote(),
-                        Constants.ACTION_TAKE_PHOTO,
-                        0));
+    //endregion
+
+    private void configToolbar() {
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setHomeAsUpIndicator(R.drawable.ic_menu_white);
+        }
+        if (!isDarkTheme()) toolbar.setPopupTheme(R.style.AppTheme_PopupOverlay);
     }
 
-    private void startAddSketch() {
-        PermissionUtils.checkStoragePermission(this, () ->
-                ContentActivity.Companion.resolveAction(
-                        MainActivity.this,
-                        getNewNote(),
-                        Constants.ACTION_ADD_SKETCH,
-                        0));
+    private void initViewModels() {
+        notebookViewModel = ViewModelProviders.of(this).get(NotebookViewModel.class);
+        noteViewModel = ViewModelProviders.of(this).get(NoteViewModel.class);
+        categoryViewModel = ViewModelProviders.of(this).get(CategoryViewModel.class);
     }
 
-    private void startAddFile() {
-        PermissionUtils.checkStoragePermission(this, () ->
-                ContentActivity.Companion.resolveAction(
-                        MainActivity.this,
-                        getNewNote(),
-                        Constants.ACTION_ADD_FILES,
-                        0));
+    private void initHeaderView() {
+        if (headerBinding == null) {
+            View header = getBinding().nav.inflateHeaderView(R.layout.activity_main_nav_header);
+            headerBinding = DataBindingUtil.bind(header);
+        }
+        setupHeader();
+        headerBinding.getRoot().setOnLongClickListener(v -> true);
+        headerBinding.getRoot().setOnClickListener(
+                view -> startActivityForResult(UserInfoActivity.class, REQUEST_USER_INFO));
     }
+
+    private void setupHeader() {
+        headerBinding.userMotto.setText(dashboardPreferences.getUserMotto());
+
+        boolean enabled = dashboardPreferences.isUserInfoBgEnable();
+        headerBinding.userBg.setVisibility(enabled ? View.VISIBLE : View.GONE);
+        if (enabled) {
+            Uri customUri = dashboardPreferences.getUserInfoBG();
+            Glide.with(PalmApp.getContext())
+                    .load(customUri)
+                    .centerCrop()
+                    .crossFade()
+                    .into(headerBinding.userBg);
+        }
+    }
+
+    private void registerNoteChangeReceiver() {
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(Constants.ACTION_NOTE_CHANGE_BROADCAST);
+        notesChangedReceiver = new NotesChangedReceiver();
+        registerReceiver(notesChangedReceiver, filter);
+    }
+
     // endregion
-
     // region fab
+
     private void initFloatButtons() {
         getBinding().menu.setMenuButtonColorNormal(accentColor());
         getBinding().menu.setMenuButtonColorPressed(accentColor());
@@ -314,13 +413,16 @@ public class MainActivity extends CommonActivity<ActivityMainBinding> implements
             startActivityForResult(FabSortActivity.class, REQUEST_FAB_SORT);
             return false;
         });
-        getBinding().menu.setOnMenuToggleListener(opened -> getBinding().rlMenuContainer.setVisibility(opened ? View.VISIBLE : View.GONE));
+        getBinding().menu.setOnMenuToggleListener(
+                opened -> getBinding().rlMenuContainer.setVisibility(opened ? View.VISIBLE : View.GONE));
         getBinding().rlMenuContainer.setOnClickListener(view -> getBinding().menu.close(true));
-        getBinding().rlMenuContainer.setBackgroundResource(isDarkTheme() ? R.color.menu_container_dark : R.color.menu_container_light);
+        getBinding().rlMenuContainer.setBackgroundResource(
+                isDarkTheme() ? R.color.menu_container_dark : R.color.menu_container_light);
 
-        fabs = new FloatingActionButton[]{getBinding().fab1, getBinding().fab2, getBinding().fab3, getBinding().fab4, getBinding().fab5};
+        fabs = new FloatingActionButton[]{getBinding().fab1, getBinding().fab2, getBinding().fab3, getBinding().fab4,
+                getBinding().fab5};
 
-        for (int i=0; i<fabs.length; i++) {
+        for (int i = 0; i < fabs.length; i++) {
             fabs[i].setColorNormal(accentColor());
             fabs[i].setColorPressed(accentColor());
             int finalI = i;
@@ -337,13 +439,14 @@ public class MainActivity extends CommonActivity<ActivityMainBinding> implements
             public void hide() {
                 RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) getBinding().menu.getLayoutParams();
                 int fabMargin = lp.bottomMargin;
-                getBinding().menu.animate().translationY(getBinding().menu.getHeight()+fabMargin).setInterpolator(new AccelerateInterpolator(2.0f)).start();
+                getBinding().menu.animate().translationY(getBinding().menu.getHeight() + fabMargin).setInterpolator(
+                        new AccelerateInterpolator(2.0f)).start();
             }
 
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
                 LogUtils.d("onScrollStateChanged: ");
-                if (newState == SCROLL_STATE_IDLE){
+                if (newState == SCROLL_STATE_IDLE) {
                     LogUtils.d("onScrollStateChanged: SCROLL_STATE_IDLE");
                 }
             }
@@ -353,8 +456,9 @@ public class MainActivity extends CommonActivity<ActivityMainBinding> implements
     private void initFabSortItems() {
         try {
             List<FabSortItem> fabSortItems = userPreferences.getFabSortResult();
-            for (int i=0; i<fabs.length; i++) {
-                fabs[i].setImageDrawable(ColorUtils.tintDrawable(getResources().getDrawable(fabSortItems.get(i).iconRes), Color.WHITE));
+            for (int i = 0; i < fabs.length; i++) {
+                fabs[i].setImageDrawable(
+                        ColorUtils.tintDrawable(getResources().getDrawable(fabSortItems.get(i).iconRes), Color.WHITE));
                 fabs[i].setLabelText(getString(fabSortItems.get(i).nameRes));
             }
         } catch (Exception e) {
@@ -373,23 +477,26 @@ public class MainActivity extends CommonActivity<ActivityMainBinding> implements
             case NOTEBOOK:
                 editNotebook();
                 break;
-            case CATEGORY:
-                editCategory();
-                break;
-            case MIND_SNAGGING:
-                editMindSnagging(ModelFactory.getMindSnagging());
-                break;
-            case DRAFT:
-                startAddSketch();
-                break;
-            case FILE:
-                startAddFile();
-                break;
-            case CAPTURE:
-                startAddPhoto();
-                break;
+//            case MIND_SNAGGING:
+//                editMindSnagging(ModelFactory.getMindSnagging());
+//                break;
+//            case CATEGORY:
+//                editCategory();
+//                break;
+//            case FILE:
+//                startAddFile();
+//                break;
+//            case CAPTURE:
+//                startAddPhoto();
+//                break;
+//            case DRAFT:
+//                startAddSketch();
+//                break;
         }
     }
+
+    //endregion
+    //region edit note
 
     private void editNote(@NonNull final Note note) {
         PermissionUtils.checkStoragePermission(this, () ->
@@ -463,6 +570,9 @@ public class MainActivity extends CommonActivity<ActivityMainBinding> implements
         });
     }
 
+    //endregion
+    //region no-use currently
+
     private void editMindSnagging(@NonNull MindSnagging param) {
         quickNoteEditor = new QuickNoteEditor.Builder()
                 .setMindSnagging(param)
@@ -471,6 +581,14 @@ public class MainActivity extends CommonActivity<ActivityMainBinding> implements
                 .setOnConfirmListener(this::saveMindSnagging)
                 .build();
         quickNoteEditor.show(getSupportFragmentManager(), "mind snagging");
+    }
+
+    private void showAttachmentPicker() {
+        new AttachmentPickerDialog.Builder()
+                .setAddLinkVisible(false)
+                .setRecordVisible(false)
+                .setVideoVisible(false)
+                .build().show(getSupportFragmentManager(), "Attachment picker");
     }
 
     private void resolveAttachmentClick(Attachment attachment) {
@@ -498,17 +616,10 @@ public class MainActivity extends CommonActivity<ActivityMainBinding> implements
                 case FAILED:
                     ToastUtils.makeToast(R.string.text_failed_to_modify_data);
                     break;
-                case LOADING:break;
+                case LOADING:
+                    break;
             }
         });
-    }
-
-    private void showAttachmentPicker() {
-        new AttachmentPickerDialog.Builder()
-                .setAddLinkVisible(false)
-                .setRecordVisible(false)
-                .setVideoVisible(false)
-                .build().show(getSupportFragmentManager(), "Attachment picker");
     }
 
     private void editCategory() {
@@ -536,13 +647,36 @@ public class MainActivity extends CommonActivity<ActivityMainBinding> implements
             }
         });
     }
-    // endregion
 
-    // region drawer
-    private void setDrawerLayoutLocked(boolean lockDrawer){
-        getBinding().drawerLayout.setDrawerLockMode(lockDrawer ?
-                DrawerLayout.LOCK_MODE_LOCKED_CLOSED : DrawerLayout.LOCK_MODE_UNLOCKED);
+    private void startAddFile() {
+        PermissionUtils.checkStoragePermission(this, () ->
+                ContentActivity.Companion.resolveAction(
+                        MainActivity.this,
+                        getNewNote(),
+                        Constants.ACTION_ADD_FILES,
+                        0));
     }
+
+    private void startAddPhoto() {
+        PermissionUtils.checkStoragePermission(this, () ->
+                ContentActivity.Companion.resolveAction(
+                        MainActivity.this,
+                        getNewNote(),
+                        Constants.ACTION_TAKE_PHOTO,
+                        0));
+    }
+
+    private void startAddSketch() {
+        PermissionUtils.checkStoragePermission(this, () ->
+                ContentActivity.Companion.resolveAction(
+                        MainActivity.this,
+                        getNewNote(),
+                        Constants.ACTION_ADD_SKETCH,
+                        0));
+    }
+
+    // endregion
+    // region drawer
 
     private void initDrawerMenu() {
         getBinding().nav.getMenu().findItem(R.id.nav_notes).setChecked(true);
@@ -550,8 +684,8 @@ public class MainActivity extends CommonActivity<ActivityMainBinding> implements
             getBinding().drawerLayout.closeDrawers();
             switch (menuItem.getItemId()) {
                 case R.id.nav_notes:
+                case R.id.nav_categories:
                 case R.id.nav_notices:
-                case R.id.nav_labels:
                     menuItem.setChecked(true);
                     break;
             }
@@ -563,16 +697,10 @@ public class MainActivity extends CommonActivity<ActivityMainBinding> implements
     private void execute(final MenuItem menuItem) {
         new Handler().postDelayed(() -> {
             switch (menuItem.getItemId()) {
-                case R.id.nav_sync:
-                    SynchronizeUtils.syncOneDrive(this, REQUEST_SETTING_BACKUP, true);
-                    break;
-                case R.id.nav_settings:
-                    SettingsActivity.start(this, REQUEST_SETTING);
-                    break;
                 case R.id.nav_notes:
                     toNotesFragment(true);
                     break;
-                case R.id.nav_labels:
+                case R.id.nav_categories:
                     toCategoriesFragment();
                     break;
                 case R.id.nav_archive:
@@ -580,6 +708,12 @@ public class MainActivity extends CommonActivity<ActivityMainBinding> implements
                     break;
                 case R.id.nav_trash:
                     startActivityForResult(TrashedActivity.class, REQUEST_TRASH);
+                    break;
+                case R.id.nav_settings:
+                    SettingsActivity.start(this, REQUEST_SETTING);
+                    break;
+                case R.id.nav_sync:
+                    SynchronizeUtils.syncOneDrive(this, REQUEST_SETTING_BACKUP, true);
                     break;
             }
         }, 500);
@@ -598,46 +732,34 @@ public class MainActivity extends CommonActivity<ActivityMainBinding> implements
         CategoriesFragment categoriesFragment = CategoriesFragment.newInstance();
         categoriesFragment.setScrollListener(onScrollListener);
         FragmentHelper.replace(this, categoriesFragment, R.id.fragment_container);
-        new Handler().postDelayed(() -> getBinding().nav.getMenu().findItem(R.id.nav_labels).setChecked(true), 300);
+        new Handler().postDelayed(() -> getBinding().nav.getMenu().findItem(R.id.nav_categories).setChecked(true), 300);
     }
 
-    private Fragment getCurrentFragment(){
-        return getCurrentFragment(R.id.fragment_container);
+    private void setDrawerLayoutLocked(boolean lockDrawer) {
+        getBinding().drawerLayout.setDrawerLockMode(lockDrawer ?
+                DrawerLayout.LOCK_MODE_LOCKED_CLOSED : DrawerLayout.LOCK_MODE_UNLOCKED);
     }
 
-    private boolean isNotesFragment(){
-        Fragment f = getCurrentFragment();
-        return f != null && f instanceof NotesFragment;
-    }
-
-    private boolean isCategoryFragment() {
-        Fragment f = getCurrentFragment();
-        return f != null && f instanceof CategoriesFragment;
-    }
+    //endregion
+    //region private
 
     private boolean isDashboard() {
         Fragment f = getCurrentFragment();
         return f != null && (f instanceof NotesFragment
                 || f instanceof CategoriesFragment);
     }
-    // endregion
 
-    // region notes change receiver
-    private void regNoteChangeReceiver() {
-        IntentFilter filter = new IntentFilter();
-        filter.addAction(Constants.ACTION_NOTE_CHANGE_BROADCAST);
-        notesChangedReceiver = new NotesChangedReceiver();
-        registerReceiver(notesChangedReceiver, filter);
+    private Fragment getCurrentFragment() {
+        return getCurrentFragment(R.id.fragment_container);
     }
 
-    private class NotesChangedReceiver extends BroadcastReceiver {
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            if (isNotesFragment()) ((NotesFragment) getCurrentFragment()).reload();
-        }
+    private boolean isNotesFragment() {
+        Fragment f = getCurrentFragment();
+        return f != null && f instanceof NotesFragment;
     }
+
     // endregion
+    //region menu
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -666,121 +788,7 @@ public class MainActivity extends CommonActivity<ActivityMainBinding> implements
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        LogUtils.d("requestCode:" + requestCode + ", resultCode:" + resultCode);
-
-        if (resultCode != RESULT_OK) return;
-
-        handleAttachmentResult(requestCode, data);
-
-        switch (requestCode) {
-            case REQUEST_FAB_SORT:
-                initFabSortItems();
-                break;
-            case REQUEST_NOTE_VIEW:
-            case REQUEST_ADD_NOTE:
-                if (isNotesFragment()) ((NotesFragment) getCurrentFragment()).reload();
-                break;
-            case REQUEST_TRASH:
-                updateListIfNecessary();
-                break;
-            case REQUEST_ARCHIVE:
-                updateListIfNecessary();
-                break;
-            case REQUEST_SEARCH:
-                updateListIfNecessary();
-                break;
-            case REQUEST_PASSWORD:
-                init();
-                break;
-            case REQUEST_SETTING:
-                int[] changedTypes = data.getIntArrayExtra(SettingsActivity.KEY_CONTENT_CHANGE_TYPES);
-                boolean drawerUpdated = false, listUpdated = false, fabSortUpdated = false, fastScrollerUpdated = false;
-                for (int changedType : changedTypes) {
-                    if (changedType == SettingChangeType.DRAWER.id && !drawerUpdated) {
-                        setupHeader();
-                        drawerUpdated = true;
-                    }
-                    if (changedType == SettingChangeType.NOTE_LIST_TYPE.id && !listUpdated) {
-                        if (isNotesFragment()) {
-                            toNotesFragment(false);
-                        }
-                        listUpdated = true;
-                    }
-                    if (changedType == SettingChangeType.FAB.id && !fabSortUpdated) {
-                        initFabSortItems();
-                        fabSortUpdated = true;
-                    }
-                    if (changedType == SettingChangeType.FAST_SCROLLER.id && !fastScrollerUpdated) {
-                        notifyFastScrollerChanged();
-                        fastScrollerUpdated = true;
-                    }
-                }
-                break;
-        }
-    }
-
-    private void updateListIfNecessary() {
-        Fragment fragment = getCurrentFragment();
-        if (fragment instanceof OnMainActivityInteraction) {
-            ((OnMainActivityInteraction) fragment).onDataSetChanged();
-        }
-    }
-
-    private void notifyFastScrollerChanged() {
-        Fragment fragment = getCurrentFragment();
-        if (fragment instanceof OnMainActivityInteraction) {
-            ((OnMainActivityInteraction) fragment).onFastScrollerChanged();
-        }
-    }
-
-    private void handleAttachmentResult(int requestCode, Intent data) {
-        AttachmentHelper.resolveResult(this, requestCode, data);
-    }
-
-    @Override
-    public void onBackPressed() {
-        if (isDashboard()){
-            if (getBinding().drawerLayout.isDrawerOpen(GravityCompat.START)){
-                getBinding().drawerLayout.closeDrawer(GravityCompat.START);
-            } else {
-                if (getBinding().menu.isOpened()) {
-                    getBinding().menu.close(true);
-                    return;
-                }
-                if (isNotesFragment()) {
-                    if (((NotesFragment) getCurrentFragment()).isTopStack()) {
-                        againExit();
-                    } else {
-                        super.onBackPressed();
-                    }
-                } else {
-                    toNotesFragment(true);
-                }
-            }
-        } else {
-            super.onBackPressed();
-        }
-    }
-
-    private void againExit() {
-        if (onBackPressed + TIME_INTERVAL_BACK > System.currentTimeMillis()) {
-            SynchronizeUtils.syncOneDrive(this);
-            super.onBackPressed();
-            return;
-        } else {
-            ToastUtils.makeToast(R.string.text_tab_again_exit);
-        }
-        onBackPressed = System.currentTimeMillis();
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        unregisterReceiver(notesChangedReceiver);
-    }
+    //endregion
 
     @Override
     public void onColorSelection(@NonNull ColorChooserDialog dialog, int selectedColor) {
@@ -799,11 +807,33 @@ public class MainActivity extends CommonActivity<ActivityMainBinding> implements
         }
     }
 
+    //region delegate
+
+    //region note fragment
+
     @Override
-    public void onNotebookSelected(Notebook notebook) {
+    public void onNotebookSelected(@NonNull Notebook notebook) {
         NotesFragment notesFragment = NotesFragment.Companion.newInstance(notebook, ItemStatus.NORMAL);
         notesFragment.setScrollListener(onScrollListener);
         FragmentHelper.replaceWithCallback(this, notesFragment, R.id.fragment_container);
+    }
+
+    @Override
+    public void onActivityAttached(boolean isTopStack) {
+        setDrawerLayoutLocked(!isTopStack);
+    }
+
+    @Override
+    public void onNoteLoadStateChanged(@NonNull LoadStatus status) {
+        onLoadStateChanged(status);
+    }
+
+    //endregion
+    //region category fragment
+
+    @Override
+    public void onResumeToCategory() {
+        setDrawerLayoutLocked(false);
     }
 
     @Override
@@ -814,14 +844,11 @@ public class MainActivity extends CommonActivity<ActivityMainBinding> implements
     }
 
     @Override
-    public void onResumeToCategory() {
-        setDrawerLayoutLocked(false);
+    public void onCategoryLoadStateChanged(LoadStatus status) {
+        onLoadStateChanged(status);
     }
 
-    @Override
-    public void onActivityAttached(boolean isTopStack) {
-        setDrawerLayoutLocked(!isTopStack);
-    }
+    //endregion
 
     @Override
     public void onAttachingFileErrorOccurred(Attachment attachment) {
@@ -839,16 +866,6 @@ public class MainActivity extends CommonActivity<ActivityMainBinding> implements
         }
     }
 
-    @Override
-    public void onCategoryLoadStateChanged(LoadStatus status) {
-        onLoadStateChanged(status);
-    }
-
-    @Override
-    public void onNoteLoadStateChanged(LoadStatus status) {
-        onLoadStateChanged(status);
-    }
-
     private void onLoadStateChanged(LoadStatus status) {
         switch (status) {
             case SUCCESS:
@@ -860,4 +877,15 @@ public class MainActivity extends CommonActivity<ActivityMainBinding> implements
                 break;
         }
     }
+
+    //endregion
+
+    private class NotesChangedReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (isNotesFragment()) ((NotesFragment) getCurrentFragment()).reload();
+        }
+    }
+
 }

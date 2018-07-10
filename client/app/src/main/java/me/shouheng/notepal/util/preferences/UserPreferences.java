@@ -28,9 +28,9 @@ public class UserPreferences extends BasePreferences {
         defaultFabOrders = new LinkedList<>();
         defaultFabOrders.add(FabSortItem.NOTE);
         defaultFabOrders.add(FabSortItem.NOTEBOOK);
-        defaultFabOrders.add(FabSortItem.MIND_SNAGGING);
-        defaultFabOrders.add(FabSortItem.CATEGORY);
-        defaultFabOrders.add(FabSortItem.FILE);
+//        defaultFabOrders.add(FabSortItem.MIND_SNAGGING);
+//        defaultFabOrders.add(FabSortItem.CATEGORY);
+//        defaultFabOrders.add(FabSortItem.FILE);
 
         defaultMarkdownFormats = new LinkedList<>();
         defaultMarkdownFormats.add(MarkdownFormat.ITALIC);

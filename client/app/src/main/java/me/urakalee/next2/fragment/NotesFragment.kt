@@ -46,14 +46,14 @@ class NotesFragment : BaseFragment<FragmentNotesBinding>(),
 
     companion object {
 
-        private val ARG_NOTEBOOK = "arg_notebook"
-        private val ARG_CATEGORY = "arg_category"
-        private val ARG_STATUS = "arg_status"
+        private const val ARG_NOTEBOOK = "arg_notebook"
+        private const val ARG_CATEGORY = "arg_category"
+        private const val ARG_STATUS = "arg_status"
 
-        private val REQUEST_NOTE_VIEW = 0x0010
-        private val REQUEST_NOTE_EDIT = 0x0011
+        private const val REQUEST_NOTE_VIEW = 0x0010
+        private const val REQUEST_NOTE_EDIT = 0x0011
 
-        fun newInstance(status: ItemStatus): NotesFragment {
+        fun newInstance(status: ItemStatus = ItemStatus.NORMAL): NotesFragment {
             val args = Bundle()
             args.putSerializable(ARG_STATUS, status)
             val fragment = NotesFragment()
@@ -80,13 +80,13 @@ class NotesFragment : BaseFragment<FragmentNotesBinding>(),
         }
     }
 
-    private var status: ItemStatus? = null
+    var isTopStack = true // 笔记本列表时为 true
+        private set
     var notebook: Notebook? = null
         private set
     var category: Category? = null
         private set
-    var isTopStack = true // 笔记本列表时为 false
-        private set
+    private lateinit var status: ItemStatus
 
     private var userPreferences: UserPreferences? = null
 
@@ -240,10 +240,22 @@ class NotesFragment : BaseFragment<FragmentNotesBinding>(),
         showMoveItem(popupMenu, true)
         popupMenu.setOnMenuItemClickListener { item ->
             when (item.itemId) {
-                R.id.action_trash -> update(multiItem.note, ItemStatus.TRASHED)
+                R.id.action_edit -> {
+                    if (isNotebookList()) {
+                        ToastUtils.makeToast("TODO")
+                    } else {
+                        ContentActivity.editNote(this, multiItem.note, REQUEST_NOTE_EDIT)
+                    }
+                }
+                R.id.action_move -> {
+                    if (isNotebookList()) {
+                        ToastUtils.makeToast("TODO")
+                    } else {
+                        moveNote(multiItem.note)
+                    }
+                }
                 R.id.action_archive -> update(multiItem.note, ItemStatus.ARCHIVED)
-                R.id.action_move -> moveNote(multiItem.note)
-                R.id.action_edit -> ContentActivity.editNote(this, multiItem.note, REQUEST_NOTE_EDIT)
+                R.id.action_trash -> update(multiItem.note, ItemStatus.TRASHED)
                 R.id.action_move_out -> update(multiItem.note, ItemStatus.NORMAL)
                 R.id.action_delete -> update(multiItem.note, ItemStatus.DELETED)
             }
@@ -270,12 +282,11 @@ class NotesFragment : BaseFragment<FragmentNotesBinding>(),
         configPopMenu(popupMenu)
         showMoveItem(popupMenu, false)
         popupMenu.setOnMenuItemClickListener { item ->
-            val statusNonNull = status ?: return@setOnMenuItemClickListener true
             when (item.itemId) {
-                R.id.action_trash -> update(multiItem.notebook, statusNonNull, ItemStatus.TRASHED)
-                R.id.action_archive -> update(multiItem.notebook, statusNonNull, ItemStatus.ARCHIVED)
+                R.id.action_trash -> update(multiItem.notebook, status, ItemStatus.TRASHED)
+                R.id.action_archive -> update(multiItem.notebook, status, ItemStatus.ARCHIVED)
                 R.id.action_edit -> editNotebook(position, multiItem.notebook)
-                R.id.action_move_out -> update(multiItem.notebook, statusNonNull, ItemStatus.NORMAL)
+                R.id.action_move_out -> update(multiItem.notebook, status, ItemStatus.NORMAL)
                 R.id.action_delete -> deleteNotebook(multiItem.notebook)
             }
             true
@@ -308,19 +319,18 @@ class NotesFragment : BaseFragment<FragmentNotesBinding>(),
                 .positiveText(R.string.text_delete_still)
                 .negativeText(R.string.text_give_up)
                 .onPositive { _, _ ->
-                    val statusNonNull = status ?: return@onPositive
-                    update(notebook, statusNonNull, ItemStatus.DELETED)
+                    update(notebook, status, ItemStatus.DELETED)
                 }
                 .show()
     }
 
     private fun configPopMenu(popupMenu: PopupMenu) {
-        popupMenu.menu.findItem(R.id.action_move_out).isVisible = status == ItemStatus.ARCHIVED || status == ItemStatus.TRASHED
-        popupMenu.menu.findItem(R.id.action_edit).isVisible = status == ItemStatus.ARCHIVED || status == ItemStatus.NORMAL
-        popupMenu.menu.findItem(R.id.action_move).isVisible = status == ItemStatus.NORMAL
-        popupMenu.menu.findItem(R.id.action_trash).isVisible = status == ItemStatus.NORMAL || status == ItemStatus.ARCHIVED
-        popupMenu.menu.findItem(R.id.action_archive).isVisible = status == ItemStatus.NORMAL
-        popupMenu.menu.findItem(R.id.action_delete).isVisible = status == ItemStatus.TRASHED
+        popupMenu.menu.findItem(R.id.action_edit).isVisible = status.canEdit()
+        popupMenu.menu.findItem(R.id.action_move).isVisible = status.canMove()
+        popupMenu.menu.findItem(R.id.action_archive).isVisible = !isNotebookList() && status.canArchive()
+        popupMenu.menu.findItem(R.id.action_move_out).isVisible = !isNotebookList() && status.canMoveOut()
+        popupMenu.menu.findItem(R.id.action_trash).isVisible = !isNotebookList() && status.canTrash()
+        popupMenu.menu.findItem(R.id.action_delete).isVisible = isNotebookList() || status.canDelete()
     }
 
     private fun showMoveItem(popupMenu: PopupMenu, show: Boolean) {
@@ -484,6 +494,13 @@ class NotesFragment : BaseFragment<FragmentNotesBinding>(),
     }
 
     // endregion
+    //region private
+
+    private fun isNotebookList(): Boolean {
+        return isTopStack
+    }
+
+    //endregion
 
     override fun onDataSetChanged() {
         reload()

@@ -92,7 +92,7 @@ public abstract class BaseListActivity extends CommonActivity<ActivityListBaseWi
                 case R.id.nav_notes:
                     FragmentHelper.replace(this, getNotesFragment(), R.id.fragment_container);
                     break;
-                case R.id.nav_labels:
+                case R.id.nav_categories:
                     FragmentHelper.replace(this, getCategoryFragment(), R.id.fragment_container);
                     break;
             }
