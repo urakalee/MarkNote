@@ -89,7 +89,7 @@ class NoteEditFragment : BaseModelFragment<Note, FragmentNoteBinding>() {
     }
 
     override fun onBackPressed() {
-        onBack()
+        handleBackPress()
     }
 
     //endregion

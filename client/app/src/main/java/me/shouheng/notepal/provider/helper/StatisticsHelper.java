@@ -19,7 +19,7 @@ import me.shouheng.notepal.provider.AttachmentsStore;
 import me.shouheng.notepal.provider.CategoryStore;
 import me.shouheng.notepal.provider.LocationsStore;
 import me.shouheng.notepal.provider.NotebookStore;
-import me.shouheng.notepal.provider.NotesStore;
+import me.urakalee.next2.storage.NoteStore;
 import me.shouheng.notepal.provider.TimelineStore;
 import me.shouheng.notepal.provider.schema.TimelineSchema;
 import me.shouheng.notepal.util.LogUtils;
@@ -41,10 +41,10 @@ public class StatisticsHelper {
     public static Stats getStats(Context context) {
         Stats stats = new Stats();
 
-        NotesStore notesStore = NotesStore.getInstance(context);
-        stats.setTotalNotes(notesStore.getCount(null, ItemStatus.DELETED, true));
-        stats.setArchivedNotes(notesStore.getCount(null, ItemStatus.ARCHIVED, false));
-        stats.setTrashedNotes(notesStore.getCount(null, ItemStatus.TRASHED, false));
+        NoteStore noteStore = NoteStore.Companion.getInstance();
+        stats.setTotalNotes(noteStore.getCount(null, ItemStatus.DELETED, true));
+        stats.setArchivedNotes(noteStore.getCount(null, ItemStatus.ARCHIVED, false));
+        stats.setTrashedNotes(noteStore.getCount(null, ItemStatus.TRASHED, false));
 
         CategoryStore categoryStore = CategoryStore.getInstance(context);
         stats.setTotalMinds(categoryStore.getCount(null, ItemStatus.DELETED, true));

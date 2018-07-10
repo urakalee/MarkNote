@@ -5,7 +5,6 @@ import android.arch.lifecycle.MutableLiveData
 import android.support.annotation.StringRes
 import me.shouheng.notepal.PalmApp
 import me.shouheng.notepal.R
-import me.shouheng.notepal.adapter.NotesAdapter
 import me.shouheng.notepal.async.ResourceAsyncTask
 import me.shouheng.notepal.config.Constants
 import me.shouheng.notepal.model.*
@@ -13,13 +12,13 @@ import me.shouheng.notepal.model.data.Resource
 import me.shouheng.notepal.model.enums.ItemStatus
 import me.shouheng.notepal.model.enums.ModelType
 import me.shouheng.notepal.provider.AttachmentsStore
-import me.shouheng.notepal.provider.NotesStore
 import me.shouheng.notepal.repository.NoteRepository
 import me.shouheng.notepal.util.FileHelper
 import me.shouheng.notepal.util.LogUtils
 import me.shouheng.notepal.util.ModelHelper
 import me.shouheng.notepal.util.preferences.NotePreferences
 import me.shouheng.notepal.viewmodel.BaseViewModel
+import me.urakalee.next2.storage.NoteStore
 import org.apache.commons.io.FileUtils
 import java.io.IOException
 
@@ -34,10 +33,6 @@ class NoteViewModel : BaseViewModel<Note>() {
 
     fun list(notebook: Notebook, category: Category?): LiveData<Resource<List<Note>>> {
         return repository.get(notebook)
-    }
-
-    fun getMultiItems(status: ItemStatus, notebook: Notebook?, category: Category?): LiveData<Resource<List<NotesAdapter.MultiItem>>> {
-        return repository.getMultiItems(status, notebook, category)
     }
 
     fun getEmptySubTitle(status: ItemStatus?): String {
@@ -95,7 +90,7 @@ class NoteViewModel : BaseViewModel<Note>() {
                 return@ResourceAsyncTask Resource.error(e.message, null)
             }
 
-            NotesStore.getInstance(PalmApp.getContext()).saveModel(note)
+            NoteStore.getInstance().saveModel(note)
 
             // Return value
             Resource.success(note)

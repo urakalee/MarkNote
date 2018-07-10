@@ -4,33 +4,32 @@ import android.support.annotation.MainThread;
 
 import java.util.List;
 
-import me.shouheng.notepal.PalmApp;
 import me.shouheng.notepal.model.Note;
 import me.shouheng.notepal.model.enums.ItemStatus;
-import me.shouheng.notepal.provider.NotesStore;
 import me.shouheng.notepal.provider.schema.BaseSchema;
 import me.shouheng.notepal.provider.schema.NoteSchema;
 import me.shouheng.notepal.util.LogUtils;
 import me.shouheng.notepal.util.tools.SearchConditions;
-
+import me.urakalee.next2.storage.NoteStore;
 
 /**
- * Created by WngShhng on 2017/12/11.*/
+ * Created by WngShhng on 2017/12/11.
+ */
 public class QueryRepository {
 
     private SearchConditions conditions;
 
-    private NotesStore notesStore;
+    private NoteStore noteStore;
 
     public QueryRepository(SearchConditions conditions) {
         this.conditions = conditions;
         LogUtils.d(conditions);
-        notesStore = NotesStore.getInstance(PalmApp.getContext());
+        noteStore = NoteStore.Companion.getInstance();
     }
 
     @MainThread
     public List<Note> getNotes(String queryString) {
-        return notesStore.get(getNoteQuerySQL(queryString), NoteSchema.ADDED_TIME + " DESC ");
+        return noteStore.get(getNoteQuerySQL(queryString), NoteSchema.ADDED_TIME + " DESC ");
     }
 
     private String getNoteQuerySQL(String queryString) {

@@ -16,7 +16,7 @@ import me.shouheng.notepal.fragment.base.BaseModelFragment
 import me.shouheng.notepal.fragment.base.CommonFragment
 import me.shouheng.notepal.model.ModelFactory
 import me.shouheng.notepal.model.Note
-import me.shouheng.notepal.provider.NotesStore
+import me.urakalee.next2.storage.NoteStore
 import me.shouheng.notepal.util.FragmentHelper
 import me.shouheng.notepal.util.LogUtils
 import me.shouheng.notepal.util.ToastUtils
@@ -113,7 +113,7 @@ class ContentActivity : CommonActivity<ActivityContentBinding>(),
         if (intent.hasExtra(Constants.EXTRA_CODE)) {
             val code = intent.getLongExtra(Constants.EXTRA_CODE, -1)
             val requestCode = intent.getIntExtra(Constants.EXTRA_REQUEST_CODE, -1)
-            note = note ?: NotesStore.getInstance(this).get(code)
+            note = note ?: NoteStore.getInstance().get(code)
             if (note == null) {
                 ToastUtils.makeToast(R.string.text_no_such_note)
                 LogUtils.d("Failed to resolve intent : $intent")

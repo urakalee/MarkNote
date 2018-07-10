@@ -13,7 +13,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.afollestad.materialdialogs.color.ColorChooserDialog;
 
 import org.polaric.colorful.PermissionUtils;
 
@@ -21,7 +20,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import me.shouheng.notepal.R;
-import me.urakalee.next2.activity.ContentActivity;
 import me.shouheng.notepal.activity.base.CommonActivity;
 import me.shouheng.notepal.config.Constants;
 import me.shouheng.notepal.dialog.CategoryEditDialog;
@@ -44,16 +42,20 @@ import me.shouheng.notepal.viewmodel.CategoryViewModel;
 import me.shouheng.notepal.widget.FlowLayout;
 
 /**
- * Created by wangshouheng on 2017/9/3.*/
+ * Created by wangshouheng on 2017/9/3.
+ */
 public abstract class BaseModelFragment<T extends Model, V extends ViewDataBinding> extends BaseFragment<V> {
 
     // region edit structure
+
     /**
-     * Field remark that is the content changed. */
+     * Field remark that is the content changed.
+     */
     private boolean contentChanged = false;
 
     /**
-     * Have we ever saved or updated the content. */
+     * Have we ever saved or updated the content.
+     */
     private boolean savedOrUpdated = false;
 
     protected void setContentChanged() {
@@ -67,29 +69,35 @@ public abstract class BaseModelFragment<T extends Model, V extends ViewDataBindi
     /**
      * Get the model to work with.
      *
-     * @return the model to work with */
+     * @return the model to work with
+     */
     protected abstract T getModel();
 
     /**
      * Get the view model to operate the model.
      *
-     * @return the view model */
+     * @return the view model
+     */
     protected abstract BaseViewModel<T> getViewModel();
 
     /**
      * Check the model content before save or update.
      *
-     * @return true if the content is legal otherwise false. */
+     * @return true if the content is legal otherwise false.
+     */
     protected boolean checkContent() {
         return true;
     }
 
     /**
-     * This method will be called before save or update the model. */
-    protected void beforeSaveOrUpdate(BeforePersistEventHandler handler) {}
+     * This method will be called before save or update the model.
+     */
+    protected void beforeSaveOrUpdate(BeforePersistEventHandler handler) {
+    }
 
     /**
-     * Save the model to db if it is new, otherwise update the existed one. */
+     * Save the model to db if it is new, otherwise update the existed one.
+     */
     protected void doPersist(PersistEventHandler handler) {
         getViewModel().saveOrUpdate(getModel()).observe(this, tResource -> {
             if (tResource == null) {
@@ -139,7 +147,7 @@ public abstract class BaseModelFragment<T extends Model, V extends ViewDataBindi
         savedOrUpdated = true;
     }
 
-    protected final void onBack() {
+    protected final void handleBackPress() {
         if (getActivity() == null) {
             // the activity is not attached
             LogUtils.e("Error! Activity is not attached when go back!");
@@ -147,14 +155,14 @@ public abstract class BaseModelFragment<T extends Model, V extends ViewDataBindi
         }
 
         CommonActivity activity = (CommonActivity) getActivity();
-        if (isContentChanged()){
+        if (isContentChanged()) {
             new MaterialDialog.Builder(getContext())
                     .title(R.string.text_tips)
                     .content(R.string.text_save_or_discard)
                     .positiveText(R.string.text_save)
                     .negativeText(R.string.text_give_up)
                     .onPositive((materialDialog, dialogAction) -> {
-                        if (!checkContent()){
+                        if (!checkContent()) {
                             return;
                         }
                         saveOrUpdateData(succeed -> setResult());
@@ -179,17 +187,15 @@ public abstract class BaseModelFragment<T extends Model, V extends ViewDataBindi
 
         // If the argument has request code, return it, otherwise just go back
         Bundle args = getArguments();
-        if (args != null && args.containsKey(Constants.EXTRA_REQUEST_CODE)){
+        if (args != null && args.containsKey(Constants.EXTRA_REQUEST_CODE)) {
             Intent intent = new Intent();
             intent.putExtra(Constants.EXTRA_MODEL, getModel());
-            if (args.containsKey(Constants.EXTRA_POSITION)){
+            if (args.containsKey(Constants.EXTRA_POSITION)) {
                 intent.putExtra(Constants.EXTRA_POSITION, args.getInt(Constants.EXTRA_POSITION, 0));
             }
             getActivity().setResult(Activity.RESULT_OK, intent);
-            activity.superOnBackPressed();
-        } else {
-            activity.superOnBackPressed();
         }
+        activity.superOnBackPressed();
     }
 
     public interface BeforePersistEventHandler {
@@ -199,10 +205,11 @@ public abstract class BaseModelFragment<T extends Model, V extends ViewDataBindi
     public interface PersistEventHandler {
         void onGetEventResult(boolean succeed);
     }
-    // endregion
 
+    // endregion
     // region drawer
-    protected void addShortcut(){
+
+    protected void addShortcut() {
         if (getActivity() == null) return;
 
         isNewModel().observe(this, booleanResource -> {
@@ -234,22 +241,9 @@ public abstract class BaseModelFragment<T extends Model, V extends ViewDataBindi
         });
     }
 
-    protected void showColorPickerDialog(int titleRes) {
-        if (!(getActivity() instanceof ContentActivity)) {
-            throw new IllegalArgumentException("The associated activity must be content!");
-        }
-        new ColorChooserDialog.Builder((ContentActivity) getActivity(), titleRes)
-                .preselect(primaryColor())
-                .accentMode(false)
-                .titleSub(titleRes)
-                .backButton(R.string.text_back)
-                .doneButton(R.string.done_label)
-                .cancelButton(R.string.text_cancel)
-                .show();
-    }
     // endregion
-
     // region Base logic about category
+
     private List<Category> allCategories;
     private List<Category> cs = new LinkedList<>();
 
@@ -259,7 +253,8 @@ public abstract class BaseModelFragment<T extends Model, V extends ViewDataBindi
      * Call this method and override {@link #onGetSelectedCategories(List)} to implement
      * the logic of getting categories.
      *
-     * @param selected selected categories */
+     * @param selected selected categories
+     */
     protected void showCategoriesPicker(List<Category> selected) {
         List<Category> all = getAllCategories();
 
@@ -306,7 +301,8 @@ public abstract class BaseModelFragment<T extends Model, V extends ViewDataBindi
         });
     }
 
-    protected void onGetSelectedCategories(List<Category> categories) {}
+    protected void onGetSelectedCategories(List<Category> categories) {
+    }
 
     private List<Category> getAllCategories() {
         if (allCategories == null) {
@@ -318,7 +314,8 @@ public abstract class BaseModelFragment<T extends Model, V extends ViewDataBindi
     /**
      * Call this method and override {@link #getTagsLayout()} to implement the logic of showing tags.
      *
-     * @param stringTags tags string */
+     * @param stringTags tags string
+     */
     protected void addTagsToLayout(String stringTags) {
         if (getTagsLayout() == null) return;
         getTagsLayout().removeAllViews();
@@ -348,11 +345,12 @@ public abstract class BaseModelFragment<T extends Model, V extends ViewDataBindi
 
         getTagsLayout().addView(tvLabel);
     }
-    // endregion
 
+    // endregion
     // region location
+
     protected void tryToLocate() {
-        if (!NetworkUtils.isNetworkAvailable(getActivity())){
+        if (!NetworkUtils.isNetworkAvailable(getActivity())) {
             ToastUtils.makeToast(R.string.check_network_availability);
             return;
         }
@@ -364,7 +362,7 @@ public abstract class BaseModelFragment<T extends Model, V extends ViewDataBindi
     private void baiduLocate() {
         ToastUtils.makeToast(R.string.trying_to_get_location);
         LocationManager.getInstance(getContext()).locate(bdLocation -> {
-            if (bdLocation != null && !TextUtils.isEmpty(bdLocation.getCity())){
+            if (bdLocation != null && !TextUtils.isEmpty(bdLocation.getCity())) {
                 Location location = ModelFactory.getLocation();
                 location.setLongitude(bdLocation.getLongitude());
                 location.setLatitude(bdLocation.getLatitude());
@@ -379,7 +377,9 @@ public abstract class BaseModelFragment<T extends Model, V extends ViewDataBindi
         });
     }
 
-    protected void onGetLocation(Location location) {}
+    protected void onGetLocation(Location location) {
+    }
+
     // endregion
 
     public void onColorSelection(@ColorInt int i) {

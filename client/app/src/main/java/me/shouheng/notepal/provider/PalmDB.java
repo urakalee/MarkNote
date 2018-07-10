@@ -5,6 +5,8 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import me.urakalee.next2.storage.NoteStore;
+
 /**
  * Resources need to modify when add new model:
  *
@@ -56,7 +58,7 @@ public class PalmDB extends SQLiteOpenHelper {
         LocationsStore.getInstance().onCreate(db);
         AttachmentsStore.getInstance(mContext).onCreate(db);
         AlarmsStore.getInstance().onCreate(db);
-        NotesStore.getInstance(mContext).onCreate(db);
+        NoteStore.Companion.getInstance().onCreate(db);
         TimelineStore.getInstance(mContext).onCreate(db);
         NotebookStore.getInstance(mContext).onCreate(db);
         CategoryStore.getInstance(mContext).onCreate(db);
@@ -68,7 +70,7 @@ public class PalmDB extends SQLiteOpenHelper {
         LocationsStore.getInstance().onUpgrade(db, oldVersion, newVersion);
         AttachmentsStore.getInstance(mContext).onUpgrade(db, oldVersion, newVersion);
         AlarmsStore.getInstance().onUpgrade(db, oldVersion, newVersion);
-        NotesStore.getInstance(mContext).onUpgrade(db, oldVersion, newVersion);
+        NoteStore.Companion.getInstance().onUpgrade(db, oldVersion, newVersion);
         TimelineStore.getInstance(mContext).onUpgrade(db, oldVersion, newVersion);
         NotebookStore.getInstance(mContext).onUpgrade(db, oldVersion, newVersion);
         CategoryStore.getInstance(mContext).onUpgrade(db, oldVersion, newVersion);

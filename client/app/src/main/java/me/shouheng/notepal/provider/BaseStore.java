@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
 import java.lang.reflect.ParameterizedType;
@@ -262,7 +263,7 @@ public abstract class BaseStore<T extends Model> {
         }
     }
 
-    public synchronized void saveOrUpdate(T model) {
+    public synchronized void saveOrUpdate(@NonNull T model) {
         if (model == null) return;
 
         if (isNewModel(model.getCode())) {

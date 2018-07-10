@@ -19,7 +19,7 @@ import me.shouheng.notepal.R;
 import me.shouheng.notepal.config.Constants;
 import me.shouheng.notepal.model.Note;
 import me.shouheng.notepal.model.Notebook;
-import me.shouheng.notepal.provider.NotesStore;
+import me.urakalee.next2.storage.NoteStore;
 import me.shouheng.notepal.provider.schema.NoteSchema;
 import me.shouheng.notepal.util.AppWidgetUtils;
 import me.shouheng.notepal.util.ColorUtils;
@@ -53,7 +53,7 @@ public class ListRemoteViewsFactory implements RemoteViewsFactory, SharedPrefere
     private void setupModels() {
         String condition = sharedPreferences.getString(
                 Constants.PREF_WIDGET_SQL_PREFIX + String.valueOf(appWidgetId), "");
-        NotesStore store = NotesStore.getInstance(app);
+        NoteStore store = NoteStore.Companion.getInstance();
         notes = store.get(condition, NoteSchema.LAST_MODIFIED_TIME + " DESC ");
     }
 
