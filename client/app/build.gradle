@@ -42,14 +42,17 @@ android {
     tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
         kotlinOptions {
             jvmTarget = '1.8'
-            freeCompilerArgs = ["-Xenable-jvm-default", "-Xjvm-default=enable"] // enable-jvm-default is only for avoid IDE warning
+            // enable-jvm-default is only for avoid IDE warning
+            freeCompilerArgs = ["-Xenable-jvm-default", "-Xjvm-default=enable"]
         }
     }
+    /*
     sourceSets {
         main {
             jniLibs.srcDirs = ['libs']
         }
     }
+    */
     lintOptions {
         checkReleaseBuilds false
         // Or, if you prefer, you can continue to check for errors in release builds,
@@ -129,5 +132,4 @@ dependencies {
     implementation project(path: ':colorful')
     implementation project(path: ':photoview')
     implementation project(path: ':markdown')
-    implementation files('libs/BaiduLBS_Android.jar')
 }

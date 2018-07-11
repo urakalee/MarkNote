@@ -361,20 +361,7 @@ public abstract class BaseModelFragment<T extends Model, V extends ViewDataBindi
 
     private void baiduLocate() {
         ToastUtils.makeToast(R.string.trying_to_get_location);
-        LocationManager.getInstance(getContext()).locate(bdLocation -> {
-            if (bdLocation != null && !TextUtils.isEmpty(bdLocation.getCity())) {
-                Location location = ModelFactory.getLocation();
-                location.setLongitude(bdLocation.getLongitude());
-                location.setLatitude(bdLocation.getLatitude());
-                location.setCountry(bdLocation.getCountry());
-                location.setProvince(bdLocation.getProvince());
-                location.setCity(bdLocation.getCity());
-                location.setDistrict(bdLocation.getDistrict());
-                onGetLocation(location);
-            } else {
-                ToastUtils.makeToast(R.string.failed_to_get_location);
-            }
-        });
+        LocationManager.getInstance().locate();
     }
 
     protected void onGetLocation(Location location) {
