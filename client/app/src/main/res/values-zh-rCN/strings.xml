@@ -2,23 +2,18 @@
     <string name="app_name">NExT2</string>
 
     <!--region Common-->
-    <string name="text_add_more">添加&#8230;</string>
     <string name="text_add_to_home_screen">添加到手机主屏</string>
-    <string name="text_about">关于</string>
     <string name="text_accept">接受</string>
     <string name="text_tags">标签</string>
     <string name="text_add_tags">添加标签</string>
     <string name="text_add_location">添加位置</string>
     <string name="text_clear">清除</string>
     <string name="text_copy_text">复制文本</string>
-    <string name="text_comments">备注</string>
     <string name="text_copy_link">复制链接</string>
-    <string name="text_comment">备注</string>
     <string name="text_cancel">取消</string>
     <string name="text_close">关闭</string>
     <string name="text_created_time">创建</string>
     <string name="text_delete">删除</string>
-    <string name="text_deleted">删除</string>
     <string name="text_delete_still">仍然删除</string>
     <string name="text_edit">编辑</string>
     <string name="text_find_in_page">在页面中查找</string>
@@ -61,8 +56,6 @@
     <string name="cannot_get_link_of_not_synced_item">无法获取未同步的项目的链接</string>
     <string name="title_required">标题不能为空</string>
     <string name="successfully_add_shortcut">成功添加快捷方式</string>
-    <string name="text_login">登录</string>
-    <string name="text_register">注册</string>
     <string name="text_confirm">确定</string>
     <string name="text_back">返回</string>
     <string name="text_color">颜色</string>
@@ -86,7 +79,6 @@
     <string name="check_network_availability">检查网络连接是否可用</string>
 
     <!--region Common->Announcement-->
-    <string name="need_to_complete">该功能尚待完善</string>
     <string name="dialog_notice_content_part1">用户你好！<![CDATA[<br/><br/>]]>由于时间限制仍然马克笔记有许多不足。我们邀请你来一起完善：</string>
     <string name="dialog_notice_content_part2">1.如果你喜欢马克笔记你可以在<![CDATA[<b>“设置->关于程序->翻译”</b> ]]>中协助开发者将马克笔记翻译成其他语言，或者在应用商店给该应用好评。</string>
     <string name="dialog_notice_content_part3">2.如果你有其他的需求想要实现，或者对马克笔记的功能有不满意的地方，可以通过<![CDATA[<b>Google+社区、Twitter、Weibo或者直接邮件</b>]]>的方式与开发者讨论需求。</string>
@@ -96,24 +88,7 @@
     <string name="dialog_notice_content_part7">请给予马克笔记更多的耐心，我们会努力做得更好。<![CDATA[<br/><br/>]]>最后，祝你使用愉快！</string>
     <!--endregion-->
 
-    <!--region Common->Intro Page-->
-    <string name="intro_1_title">欢迎使用 %s</string>
-    <string name="intro_1_description">感谢您使用 %s\n\n一款帮助您提升工作效率\n记录生活中精彩时刻的\nMarkdown笔记应用</string>
-    <string name="intro_2_title">Markdown</string>
-    <string name="intro_2_description">Markdown语法支持\n分享、导出图片和PDF</string>
-    <string name="intro_3_title">导出</string>
-    <string name="intro_3_description">Html md/text png pdf等\n多种格式导出笔记</string>
-    <string name="intro_4_title">主题</string>
-    <string name="intro_4_description">日夜主题\n13种主色调 16种强调色</string>
-    <string name="intro_5_title">附件</string>
-    <string name="intro_5_description">手绘 图片 照片 视频\n音频 文件 位置</string>
-    <string name="intro_6_title">祝您使用愉快</string>
-    <string name="intro_6_description">加入社区！</string>
-    <!--endregion introduction-->
-
     <!--region Common->Capture-->
-    <string name="empty_list_to_capture">要截取的列表为空</string>
-    <string name="capture_list">列表截图</string>
     <string name="capturing">正在截取&#8230;</string>
     <!--endregion-->
 
@@ -128,7 +103,6 @@
 
     <!--region Common->DrawerItems-->
     <string name="drawer_menu_notes">笔记信息</string>
-    <string name="drawer_menu_minds">小纸条</string>
     <string name="drawer_menu_tags">标签</string>
     <string name="drawer_menu_notices">提醒信息</string>
     <string name="drawer_menu_setting">设置</string>
@@ -145,7 +119,6 @@
     <string name="fab_opt_capture">拍照</string>
     <string name="fab_opt_file">文件</string>
     <string name="fab_opt_draft">手写</string>
-    <string name="fab_opt_link">链接</string>
     <string name="fab_opt_record">录音</string>
     <string name="fab_opt_notice">提醒</string>
     <string name="fab_quick_note">快速笔记</string>
@@ -173,7 +146,6 @@
     <string name="pick_notebook_color">选择笔记本的颜色</string>
     <string name="note_capture_note">笔记截图</string>
     <string name="all_notes">全部笔记</string>
-    <string name="text_replace_tab_with_4_spaces">使用4个空格替换退格</string>
 
     <string name="notes_list_empty">笔记列表为空</string>
     <string name="notes_list_empty_sub_normal">点击主界面的 + 按钮添加笔记</string>
@@ -240,18 +212,9 @@
     <!--endregion-->
 
     <!--region Alarm-->
-    <string name="pick_alarm_type">选择闹钟类型</string>
     <string name="one_shot">一次</string>
     <string name="every_day">每天</string>
-    <string name="every_weekday">每周工作日(周一至周五)</string>
-    <string name="every_weekend">每周周末(周六、周日)</string>
-    <string name="custom_by_week">按周自定义</string>
-    <string name="custom_by_month">按月自定义</string>
-    <string name="clear_reminder">清除提醒</string>
     <string name="day_concat">,</string>
-    <string name="from">从</string>
-    <string name="to">到</string>
-    <string name="at">在</string>
     <string name="until">直到</string>
     <!--endregion-->
 
@@ -288,8 +251,6 @@
     <string name="setting_data_security_sub">添加应用独立锁</string>
     <string name="setting_system_animation">系统动画</string>
     <string name="setting_system_animation_sub">在整个应用中启用系统动画</string>
-    <string name="setting_list_animation">列表动画</string>
-    <string name="setting_list_animation_sub">在整个应用中启用列表动画</string>
     <!--endregion-->
 
     <!--region Setting->Security-->
@@ -338,7 +299,6 @@
     <string name="backup_data_import_message">导入备份</string>
     <string name="backup_data_import_message_warning">警告：此操作将覆盖所有当前数据！</string>
     <string name="backup_data_export_completed">数据备份完成</string>
-    <string name="backup_backup_existing">备份已存在，该备份将被覆盖</string>
 
     <string name="backup_confirm_restoring_backup">确认还原备份</string>
     <string name="backup_settings_included">设置已包括</string>
@@ -398,19 +358,12 @@
     <string name="setting_online_user_guide_sub">获取用户使用手册</string>
     <string name="setting_user_intro">用户导引</string>
     <string name="setting_user_intro_sub">再次显示用户导引</string>
-    <string name="show_introduction_again">再次显示用户导引页？</string>
     <!--endregion-->
 
     <!--region Setting->Other-->
     <string name="setting_others">其他设置</string>
     <string name="setting_support_development">支持开发</string>
     <string name="setting_support_development_sub">你的支持将被用来向程序中增加新的特性</string>
-    <string name="support_development_content">你的支持将被用来向程序中增加新的特性，你可以选择下面的两种支持方式，或者取消：</string>
-    <string name="alipay">支付宝</string>
-    <string name="wechat">微信</string>
-    <string name="next_time">下次吧</string>
-    <string name="donate_dialog_content">你可以选择打开微信或者支付宝，并直接扫描图中的二维码，或者点击按钮将图片下载到相册后进行扫描。</string>
-    <string name="download_donate_picture">下载图片到本地</string>
     <string name="setting_feedback">信息反馈</string>
     <string name="setting_feedback_sub">帮助开发者把程序做得更好</string>
     <string name="setting_about">关于程序</string>
@@ -445,11 +398,6 @@
     <string name="illegal_email_format">邮箱格式不合法</string>
 
     <string name="feedback_types">反馈类型</string>
-    <string name="feedback_email_to_find_you">可以联系到你的邮箱</string>
-    <string name="feedback_details">详情</string>
-    <string name="feedback_connect_email_required">需要联系邮箱</string>
-    <string name="feedback_details_required">需要详情信息</string>
-    <string name="feedback_illegal_email_format">邮箱格式不合法</string>
 
     <string name="feedback_abrupt_crash">意外崩溃</string>
     <string name="feedback_function_improvement">功能改善</string>
@@ -458,7 +406,6 @@
     <!--endregion-->
 
     <!--region User Info-->
-    <string name="user_info_click_to_see_personal_info">个人信息</string>
     <string name="user_info">用户信息</string>
     <string name="school">学校|公司</string>
     <string name="major">专业|职位</string>
@@ -467,10 +414,8 @@
     <string name="not_login_click_to_login">未登录·点击登录</string>
     <string name="login_and_get_storage">登录以获取云存储空间</string>
     <string name="storage_left_monthly">本月剩余存储容量</string>
-    <string name="storage_left_and_click_grant_tips">剩余%dMB,点击获取更多存储空间</string>
     <string name="not_login_try_after_login">未登录，请登录后再次尝试</string>
     <string name="timeline_detail">最近都做了什么</string>
-    <string name="statistic_of_this_week">本周的数据统计</string>
     <string name="activities_in_seven_days">最近7天添加的笔记</string>
     <string name="logout">退出登录</string>
 
@@ -490,16 +435,12 @@
     <string name="please_input_password">请输入密码</string>
     <string name="please_input_password_again">请再次输入密码</string>
     <string name="forget_password">忘记密码</string>
-    <string name="weibo">微博</string>
-    <string name="weixin">微信</string>
-    <string name="qq">QQ</string>
     <string name="use_account_and_password_when_register">使用注册时填写的账号和密码登录</string>
     <string name="login">登录</string>
     <string name="register">注册</string>
     <string name="confirm">确定</string>
     <string name="cancel">取消</string>
     <string name="back">返回</string>
-    <string name="use_social_accounts">使用社交账号登录</string>
     <string name="register_palm_college">注册 %s</string>
     <!--endregion-->
     <!--endregion-->
@@ -526,14 +467,7 @@
     <!--endregion-->
 
     <!--region v1.1.1-->
-    <string name="text_advanced">高级</string>
-    <string name="text_insert">插入</string>
-    <string name="text_table">插入表格</string>
-    <string name="text_link">插入链接</string>
-    <string name="text_checkbox">插入复选框</string>
     <string name="text_math_jax">插入数学表达式(MathJax)</string>
-    <string name="checkbox_content_hint">输入复选框内容</string>
-    <string name="is_checkbox_checked">选中</string>
     <string name="input_math_jax_hint">输入数学表达式</string>
     <string name="is_math_jax_single">是否独立一行</string>
     <string name="invalid_input_tips">无效的输入</string>
@@ -560,7 +494,6 @@
     <string name="text_folder_explore">选择同步的文件夹</string>
     <string name="text_no_more_folders">没有更多可选文件夹了</string>
     <string name="text_please_wait">请等待&#8230;</string>
-    <string name="text_sing_out">登出</string>
     <string name="error_when_try_to_backup">当同步到 %1$s 的时候发生了错误</string>
     <string name="backup_dir_selected_message">成功地设置了同步的文件夹</string>
     <string name="pick_backup_directory_message">进入你想要同步的文件夹，然后选择 \"完成\".</string>
@@ -589,7 +522,6 @@
     <string name="custom_fab_sub">自定义主界面的浮动按钮</string>
     <string name="custom_note_menu">自定义菜单</string>
     <string name="menu_sort_tips">拖动尾部的图标进行拖拽，最终的排序结果就是笔记编辑界面的最终排序。</string>
-    <string name="setting_custom_note_menu">自定义笔记编辑菜单</string>
     <string name="setting_custom_note_menu_sub">自定义笔记编辑界面的底部菜单</string>
     <string name="menu_successfully_saved">成功保存菜单设置</string>
     <string name="setting_preferences">偏好</string>

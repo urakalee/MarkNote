@@ -2,23 +2,18 @@
     <string name="app_name">NExT2</string>
 
     <!--region Common-->
-    <string name="text_add_more">Add&#8230;</string>
     <string name="text_add_to_home_screen">Add shortcut</string>
-    <string name="text_about">About</string>
     <string name="text_accept">Accept</string>
     <string name="text_tags">Tags</string>
     <string name="text_add_tags">Add Tags</string>
     <string name="text_add_location">Add location</string>
     <string name="text_clear">Clear</string>
     <string name="text_copy_text">Copy content</string>
-    <string name="text_comments">Comments</string>
     <string name="text_copy_link">Copy link</string>
-    <string name="text_comment">Comment</string>
     <string name="text_cancel">Cancel</string>
     <string name="text_close">Close</string>
     <string name="text_created_time">Created time</string>
     <string name="text_delete">Delete</string>
-    <string name="text_deleted">Deleted</string>
     <string name="text_delete_still">Delete still</string>
     <string name="text_edit">Edit</string>
     <string name="text_find_in_page">Find in page</string>
@@ -61,8 +56,6 @@
     <string name="cannot_get_link_of_not_synced_item">Unable to get link of un-synchronized project</string>
     <string name="title_required">Title required</string>
     <string name="successfully_add_shortcut">Successfully add shortcut</string>
-    <string name="text_login">Login</string>
-    <string name="text_register">Register</string>
     <string name="text_confirm">Confirm</string>
     <string name="text_back">Back</string>
     <string name="text_color">Color</string>
@@ -86,7 +79,6 @@
     <string name="check_network_availability">Check network availability</string>
 
     <!--region Common->Announcement-->
-    <string name="need_to_complete">Need to complete</string>
     <string name="dialog_notice_content_part1">Hello, user!<![CDATA[<br/><br/>]]>Due to the limit of time, MarkNote still has few weakness. Here we invite you to improve it with us:</string>
     <string name="dialog_notice_content_part2">1.If you like MarkNote you may associate developer by translating it in to other languages(Find in <![CDATA[<b>\"Settings->About->Translation\"</b>]]>), or give rating and feedback in application market.</string>
     <string name="dialog_notice_content_part3">2.If you have special requirements, or if you are unsatisfied about current functions, feed back to developer by any of below ways: <![CDATA[<b>Google+ community, Twitter, Weibo or directly sending an email</b>]]>.</string>
@@ -96,24 +88,7 @@
     <string name="dialog_notice_content_part7">Please give more patience to MarkNote, we will work better.<![CDATA[<br/><br/>]]>Last, wish you have a happy journey with MarkNote!</string>
     <!--endregion-->
 
-    <!--region Common->Intro Page-->
-    <string name="intro_1_title">Welcome to %s</string>
-    <string name="intro_1_description">Thanks for using %s\nthe markdown support application\nfor productivity\n and leisure note-taking</string>
-    <string name="intro_2_title">Markdown</string>
-    <string name="intro_2_description">Markdown grammar support\nshare and export note\nas pictures and PDF files</string>
-    <string name="intro_3_title">Export</string>
-    <string name="intro_3_description">Multiple file formats\nto export</string>
-    <string name="intro_4_title">Colorful</string>
-    <string name="intro_4_description">Light and dark\n13 kinds of primary color\n16 kinds of accent color</string>
-    <string name="intro_5_title">Attachment</string>
-    <string name="intro_5_description">Multiple kinds of attachments\nsketch, picture, photo, video\naudio, file, location</string>
-    <string name="intro_6_title">Enjoy</string>
-    <string name="intro_6_description">Don\'t forget to subscribe\nour community!</string>
-    <!--endregion introduction-->
-
     <!--region Common->Capture-->
-    <string name="empty_list_to_capture">Empty list to capture</string>
-    <string name="capture_list">Capture</string>
     <string name="capturing">Capturing&#8230;</string>
     <!--endregion-->
 
@@ -128,7 +103,6 @@
 
     <!--region Common->DrawerItems-->
     <string name="drawer_menu_notes">Notes</string>
-    <string name="drawer_menu_minds">Snagging</string>
     <string name="drawer_menu_tags">Tags</string>
     <string name="drawer_menu_notices">Notices</string>
     <string name="drawer_menu_setting">Settings</string>
@@ -145,7 +119,6 @@
     <string name="fab_opt_capture">Capture</string>
     <string name="fab_opt_file">File</string>
     <string name="fab_opt_draft">Sketch</string>
-    <string name="fab_opt_link">Link</string>
     <string name="fab_opt_record">Record</string>
     <string name="fab_opt_notice">Alarm</string>
     <string name="fab_quick_note">Quick note</string>
@@ -173,7 +146,6 @@
     <string name="pick_notebook_color">Select the color of notebook</string>
     <string name="note_capture_note">Capture note</string>
     <string name="all_notes">All notes</string>
-    <string name="text_replace_tab_with_4_spaces">Use 4 spaces replaces Tab</string>
 
     <string name="notes_list_empty">Empty notes list</string>
     <string name="notes_list_empty_sub_normal">add note by clicking + in dashboard</string>
@@ -240,18 +212,9 @@
     <!--endregion-->
 
     <!--region Alarm-->
-    <string name="pick_alarm_type">Pick alarm type</string>
     <string name="one_shot">One shot</string>
     <string name="every_day">Every day</string>
-    <string name="every_weekday">Weekday (Mon - Fri)</string>
-    <string name="every_weekend">Weekend (Sat &amp; Sub)</string>
-    <string name="custom_by_week">Custom by week</string>
-    <string name="custom_by_month">Custom by month</string>
-    <string name="clear_reminder">Clear reminder</string>
     <string name="day_concat">,</string>
-    <string name="from">From</string>
-    <string name="to">to</string>
-    <string name="at">at</string>
     <string name="until">until</string>
     <!--endregion-->
 
@@ -288,8 +251,6 @@
     <string name="setting_data_security_sub">Add independent lock</string>
     <string name="setting_system_animation">System animations</string>
     <string name="setting_system_animation_sub">Enable system animations</string>
-    <string name="setting_list_animation">List animations</string>
-    <string name="setting_list_animation_sub">Enable list animations</string>
     <!--endregion-->
 
     <!--region Setting->Security-->
@@ -338,7 +299,6 @@
     <string name="backup_data_import_message">Import backup</string>
     <string name="backup_data_import_message_warning">Warning: this will cover current data!</string>
     <string name="backup_data_export_completed">Backup completed</string>
-    <string name="backup_backup_existing">Backup existed, the existed will be covered</string>
 
     <string name="backup_confirm_restoring_backup">Confirm to restore from backup</string>
     <string name="backup_settings_included">Settings included</string>
@@ -398,19 +358,12 @@
     <string name="setting_online_user_guide_sub">Get online user guide</string>
     <string name="setting_user_intro">User intro</string>
     <string name="setting_user_intro_sub">Show intro page</string>
-    <string name="show_introduction_again">Show intro page again?</string>
     <!--endregion-->
 
     <!--region Setting->Other-->
     <string name="setting_others">Others</string>
     <string name="setting_support_development">Support developing</string>
     <string name="setting_support_development_sub">You support will be used to add new features and functions</string>
-    <string name="support_development_content">You support will be used to add new features and functions. You may choose one of the support channels below:</string>
-    <string name="alipay">AliPay</string>
-    <string name="wechat">WeChat</string>
-    <string name="next_time">Next time</string>
-    <string name="donate_dialog_content">You may launch the AliPay or WeChat and scan the QR code or save the image to album and scan from it.</string>
-    <string name="download_donate_picture">Save image</string>
     <string name="setting_feedback">Feedback</string>
     <string name="setting_feedback_sub">Help developer make application better</string>
     <string name="setting_about">About</string>
@@ -445,11 +398,6 @@
     <string name="illegal_email_format">Illegal email</string>
 
     <string name="feedback_types">Feedback type</string>
-    <string name="feedback_email_to_find_you">Email to contact you</string>
-    <string name="feedback_details">Details</string>
-    <string name="feedback_connect_email_required">Email requied</string>
-    <string name="feedback_details_required">Details required</string>
-    <string name="feedback_illegal_email_format">Illegal email format</string>
 
     <string name="feedback_abrupt_crash">Abrupt crash</string>
     <string name="feedback_function_improvement">Function improvement</string>
@@ -458,7 +406,6 @@
     <!--endregion-->
 
     <!--region User Info-->
-    <string name="user_info_click_to_see_personal_info">User Info</string>
     <string name="user_info">User info</string>
     <string name="school">School | Company</string>
     <string name="major">Major | Carer</string>
@@ -467,10 +414,8 @@
     <string name="not_login_click_to_login">Not login · Click to login</string>
     <string name="login_and_get_storage">Login to get storage</string>
     <string name="storage_left_monthly">Storage left</string>
-    <string name="storage_left_and_click_grant_tips">%d MB left, click to get more storage</string>
     <string name="not_login_try_after_login">Not login, try again after login</string>
     <string name="timeline_detail">What you have done in MarkNote</string>
-    <string name="statistic_of_this_week">Statistics of current week</string>
     <string name="activities_in_seven_days">Notes added during recent 7 days</string>
     <string name="logout">Logout</string>
 
@@ -490,16 +435,12 @@
     <string name="please_input_password">Please input password</string>
     <string name="please_input_password_again">Please input password again</string>
     <string name="forget_password">Forget password</string>
-    <string name="weibo">Weibo</string>
-    <string name="weixin">WeChat</string>
-    <string name="qq">QQ</string>
     <string name="use_account_and_password_when_register">Use account and password when register</string>
     <string name="login">Login</string>
     <string name="register">Register</string>
     <string name="confirm">Confirm</string>
     <string name="cancel">Cancel</string>
     <string name="back">Back</string>
-    <string name="use_social_accounts">Use social account</string>
     <string name="register_palm_college">Register %s</string>
     <!--endregion-->
     <!--endregion-->
@@ -526,14 +467,7 @@
     <!--endregion-->
 
     <!--region v1.1.1-->
-    <string name="text_advanced">Advanced</string>
-    <string name="text_insert">Insert</string>
-    <string name="text_table">Insert table</string>
-    <string name="text_link">Insert link</string>
-    <string name="text_checkbox">Insert checkbox</string>
     <string name="text_math_jax">Insert math jax</string>
-    <string name="checkbox_content_hint">Input checked list item</string>
-    <string name="is_checkbox_checked">Checked</string>
     <string name="input_math_jax_hint">Input your math jax expression</string>
     <string name="is_math_jax_single">Is single line</string>
     <string name="invalid_input_tips">Invalid input</string>
@@ -560,7 +494,6 @@
     <string name="text_folder_explore">Pick folder</string>
     <string name="text_no_more_folders">No more folders</string>
     <string name="text_please_wait">Please wait&#8230;</string>
-    <string name="text_sing_out">Sign out</string>
     <string name="error_when_try_to_backup">Error when try to synchronize : %1$s</string>
     <string name="backup_dir_selected_message">Successfully get synchronization directory</string>
     <string name="pick_backup_directory_message">Get into the folder you want to synchronize to and select \"DONE\".</string>
@@ -590,7 +523,6 @@
     <string name="custom_fab_sub">Custom float action buttons behaviors of dashboard</string>
     <string name="custom_note_menu">Custom menu</string>
     <string name="menu_sort_tips">Drag the rear icon to sort, the menu item will be displayed as sorted in note edit page.</string>
-    <string name="setting_custom_note_menu">Custom note menu</string>
     <string name="setting_custom_note_menu_sub">Custom note bottom menu edit page</string>
     <string name="menu_successfully_saved">Successfully saved note menu</string>
     <string name="setting_preferences">Preferences</string>
