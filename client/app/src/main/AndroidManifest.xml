@@ -86,7 +86,6 @@
                 <data android:scheme="hashtag" />
             </intent-filter>
         </activity>
-        <activity android:name=".intro.IntroActivity" />
         <activity android:name=".activity.SettingsActivity" />
         <activity android:name=".activity.FabSortActivity" />
         <activity android:name=".activity.SketchActivity" />

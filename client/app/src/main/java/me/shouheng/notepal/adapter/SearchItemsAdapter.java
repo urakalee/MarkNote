@@ -17,8 +17,9 @@ import me.shouheng.notepal.util.ColorUtils;
 import me.shouheng.notepal.util.TimeUtils;
 
 /**
- * Created by wangshouheng on 2017/5/8.*/
-public class SearchItemsAdapter extends RecyclerView.Adapter<SearchItemsAdapter.ViewHolder>{
+ * Created by wangshouheng on 2017/5/8.
+ */
+public class SearchItemsAdapter extends RecyclerView.Adapter<SearchItemsAdapter.ViewHolder> {
 
     private List searchResults = new LinkedList();
 
@@ -57,7 +58,8 @@ public class SearchItemsAdapter extends RecyclerView.Adapter<SearchItemsAdapter.
             if (holder.getItemViewType() == STRING) {
                 holder.tvSectionTitle.setText((String) searchResults.get(position));
                 holder.tvSectionTitle.setTextColor(primaryColor);
-                holder.itemView.setBackgroundResource(isDarkTheme ? R.color.dark_theme_background : R.color.light_theme_background);
+                holder.itemView.setBackgroundResource(
+                        isDarkTheme ? R.color.dark_theme_background : R.color.light_theme_background);
             }
         }
     }
@@ -66,12 +68,13 @@ public class SearchItemsAdapter extends RecyclerView.Adapter<SearchItemsAdapter.
         Note note = (Note) searchResults.get(position);
         holder.tvNoteTitle.setText(note.getTitle());
         holder.tvAddedTime.setText(TimeUtils.getLongDateTime(context, note.getAddedTime()));
-        holder.ivIcon.setImageDrawable(ColorUtils.tintDrawable(context.getResources().getDrawable(R.drawable.ic_doc_text_alpha), accentColor));
+        holder.ivIcon.setImageDrawable(
+                ColorUtils.tintDrawable(context.getResources().getDrawable(R.drawable.ic_doc_text_alpha), accentColor));
     }
 
     @Override
     public int getItemCount() {
-        if (null != searchResults){
+        if (null != searchResults) {
             return searchResults.size();
         }
         return 0;
@@ -86,21 +89,16 @@ public class SearchItemsAdapter extends RecyclerView.Adapter<SearchItemsAdapter.
     }
 
     class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+
         View itemView;
 
         TextView tvSectionTitle;
 
-        TextView tvSubTitle;
-
-        TextView tvNoteTitle;
         ImageView ivIcon;
-        ImageView ivMore;
-
-        TextView tvTitle;
-
-        ImageView ivCover;
-        TextView tvMindTitle;
+        TextView tvNoteTitle;
         TextView tvAddedTime;
+
+        ImageView ivMore;
 
         ViewHolder(View itemView) {
             super(itemView);
@@ -108,18 +106,13 @@ public class SearchItemsAdapter extends RecyclerView.Adapter<SearchItemsAdapter.
             this.itemView = itemView;
 
             tvSectionTitle = itemView.findViewById(R.id.tv_section_title);
-            ivMore = itemView.findViewById(R.id.iv_more);
-            if (ivMore != null) ivMore.setVisibility(View.GONE);
 
-            tvTitle = itemView.findViewById(R.id.tv_title);
-            tvSubTitle = itemView.findViewById(R.id.tv_sub_title);
             ivIcon = itemView.findViewById(R.id.iv_icon);
-
             tvNoteTitle = itemView.findViewById(R.id.tv_note_title);
             tvAddedTime = itemView.findViewById(R.id.tv_added_time);
 
-            ivCover = itemView.findViewById(R.id.image_view_cover);
-            tvMindTitle = itemView.findViewById(R.id.text_view_title);
+            ivMore = itemView.findViewById(R.id.iv_more);
+            if (ivMore != null) ivMore.setVisibility(View.GONE);
 
             itemView.setOnClickListener(this);
         }

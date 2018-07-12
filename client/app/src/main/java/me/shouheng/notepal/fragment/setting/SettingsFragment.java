@@ -4,15 +4,12 @@ import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.Preference;
 
-import com.afollestad.materialdialogs.MaterialDialog;
-
 import me.shouheng.notepal.R;
 import me.shouheng.notepal.activity.base.CommonActivity;
 import me.shouheng.notepal.activity.base.ThemedActivity;
 import me.shouheng.notepal.config.Constants;
 import me.shouheng.notepal.dialog.FeedbackDialog;
 import me.shouheng.notepal.dialog.NoticeDialog;
-import me.shouheng.notepal.intro.IntroActivity;
 import me.shouheng.notepal.model.Feedback;
 import me.shouheng.notepal.util.ColorUtils;
 import me.shouheng.notepal.util.IntentUtils;
@@ -69,10 +66,6 @@ public class SettingsFragment extends BaseFragment {
             IntentUtils.openWiki(getActivity());
             return true;
         });
-        findPreference(R.string.key_user_intro).setOnPreferenceClickListener(preference -> {
-            showIntroduction();
-            return true;
-        });
         findPreference(R.string.key_support_develop).setOnPreferenceClickListener(preference -> {
             NoticeDialog.newInstance().show(((CommonActivity) getActivity()).getSupportFragmentManager(), "Notice");
             return true;
@@ -97,16 +90,6 @@ public class SettingsFragment extends BaseFragment {
         String subject = String.format(Constants.DEVELOPER_EMAIL_PREFIX, feedback.getFeedbackType().name());
         String body = feedback.getQuestion() + Constants.DEVELOPER_EMAIL_EMAIL_PREFIX + feedback.getEmail();
         IntentUtils.sendEmail(getActivity(), subject, body);
-    }
-
-    private void showIntroduction() {
-        new MaterialDialog.Builder(getActivity())
-                .title(R.string.text_tips)
-                .content(R.string.show_introduction_again)
-                .positiveText(R.string.text_ok)
-                .negativeText(R.string.text_cancel)
-                .onPositive((materialDialog, dialogAction) -> IntroActivity.launch(getActivity()))
-                .show();
     }
 
     private void updateThemeSettings() {

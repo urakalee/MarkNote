@@ -47,7 +47,6 @@ import me.shouheng.notepal.dialog.CategoryEditDialog;
 import me.shouheng.notepal.dialog.NotebookEditDialog;
 import me.shouheng.notepal.dialog.QuickNoteEditor;
 import me.shouheng.notepal.fragment.CategoriesFragment;
-import me.shouheng.notepal.intro.IntroActivity;
 import me.shouheng.notepal.listener.OnAttachingFileListener;
 import me.shouheng.notepal.listener.OnMainActivityInteraction;
 import me.shouheng.notepal.listener.SettingChangeType;
@@ -250,8 +249,6 @@ public class MainActivity extends CommonActivity<ActivityMainBinding> implements
     protected void doCreateView(Bundle savedInstanceState) {
         userPreferences = UserPreferences.getInstance();
         dashboardPreferences = DashboardPreferences.getInstance();
-
-        IntroActivity.launchIfNecessary(this);
 
         checkPassword();
 
