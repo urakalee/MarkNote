@@ -96,27 +96,20 @@ public class MainActivity extends CommonActivity<ActivityMainBinding> implements
     private final int REQUEST_SETTING_BACKUP = 0x000A;
     // endregion
 
-    private final static long TIME_INTERVAL_BACK = 2000;
-
-    private long onBackPressed;
+    private NotebookViewModel notebookViewModel;
+    private NoteViewModel noteViewModel;
+    private CategoryViewModel categoryViewModel;
 
     private UserPreferences userPreferences;
     private DashboardPreferences dashboardPreferences;
 
-    private QuickNoteEditor quickNoteEditor;
     private NotebookEditDialog notebookEditDialog;
     private CategoryEditDialog categoryEditDialog;
-
-    private RecyclerView.OnScrollListener onScrollListener;
-    private NotesChangedReceiver notesChangedReceiver;
-
-    private FloatingActionButton[] fabs;
-
-    private NotebookViewModel notebookViewModel;
-    private CategoryViewModel categoryViewModel;
-    private NoteViewModel noteViewModel;
+    private QuickNoteEditor quickNoteEditor;
 
     private ActivityMainNavHeaderBinding headerBinding;
+
+    private RecyclerView.OnScrollListener onScrollListener;
 
     @Override
     protected int getLayoutResId() {
@@ -149,6 +142,10 @@ public class MainActivity extends CommonActivity<ActivityMainBinding> implements
             super.onBackPressed();
         }
     }
+
+    private final static long TIME_INTERVAL_BACK = 2000;
+
+    private long onBackPressed;
 
     private void againExit() {
         if (onBackPressed + TIME_INTERVAL_BACK > System.currentTimeMillis()) {
@@ -372,7 +369,7 @@ public class MainActivity extends CommonActivity<ActivityMainBinding> implements
 
     private void initHeaderView() {
         if (headerBinding == null) {
-            View header = getBinding().nav.inflateHeaderView(R.layout.activity_main_nav_header);
+            View header = getBinding().drawer.inflateHeaderView(R.layout.activity_main_nav_header);
             headerBinding = DataBindingUtil.bind(header);
         }
         setupHeader();
@@ -406,17 +403,32 @@ public class MainActivity extends CommonActivity<ActivityMainBinding> implements
     // endregion
     // region fab
 
+    private FloatingActionButton[] fabs;
+
     private void initFloatButtons() {
         getBinding().menu.setMenuButtonColorNormal(accentColor());
         getBinding().menu.setMenuButtonColorPressed(accentColor());
+        getBinding().menu.setOnMenuButtonClickListener((View v) -> {
+            Fragment currentFragment = getCurrentFragment();
+            if (currentFragment instanceof NotesFragment) {
+                if (((NotesFragment) currentFragment).isTopStack()) {
+                    editNotebook();
+                } else {
+                    editNote(getNewNote());
+                }
+            } else if (currentFragment instanceof CategoriesFragment) {
+                // TODO
+            }
+        });
+        /*
         getBinding().menu.setOnMenuButtonLongClickListener(v -> {
             startActivityForResult(FabSortActivity.class, REQUEST_FAB_SORT);
             return false;
         });
         getBinding().menu.setOnMenuToggleListener(
-                opened -> getBinding().rlMenuContainer.setVisibility(opened ? View.VISIBLE : View.GONE));
-        getBinding().rlMenuContainer.setOnClickListener(view -> getBinding().menu.close(true));
-        getBinding().rlMenuContainer.setBackgroundResource(
+                opened -> getBinding().fabMenuBackground.setVisibility(opened ? View.VISIBLE : View.GONE));
+        getBinding().fabMenuBackground.setOnClickListener(view -> getBinding().menu.close(true));
+        getBinding().fabMenuBackground.setBackgroundResource(
                 isDarkTheme() ? R.color.menu_container_dark : R.color.menu_container_light);
 
         fabs = new FloatingActionButton[]{getBinding().fab1, getBinding().fab2, getBinding().fab3, getBinding().fab4,
@@ -428,8 +440,10 @@ public class MainActivity extends CommonActivity<ActivityMainBinding> implements
             int finalI = i;
             fabs[i].setOnClickListener(view -> resolveFabClick(finalI));
         }
+        */
 
         onScrollListener = new CustomRecyclerScrollViewListener() {
+
             @Override
             public void show() {
                 getBinding().menu.animate().translationY(0).setInterpolator(new DecelerateInterpolator(2)).start();
@@ -679,8 +693,8 @@ public class MainActivity extends CommonActivity<ActivityMainBinding> implements
     // region drawer
 
     private void initDrawerMenu() {
-        getBinding().nav.getMenu().findItem(R.id.nav_notes).setChecked(true);
-        getBinding().nav.setNavigationItemSelectedListener(menuItem -> {
+        getBinding().drawer.getMenu().findItem(R.id.nav_notes).setChecked(true);
+        getBinding().drawer.setNavigationItemSelectedListener(menuItem -> {
             getBinding().drawerLayout.closeDrawers();
             switch (menuItem.getItemId()) {
                 case R.id.nav_notes:
@@ -724,7 +738,7 @@ public class MainActivity extends CommonActivity<ActivityMainBinding> implements
         NotesFragment notesFragment = NotesFragment.Companion.newInstance(ItemStatus.NORMAL);
         notesFragment.setScrollListener(onScrollListener);
         FragmentHelper.replace(this, notesFragment, R.id.fragment_container);
-        new Handler().postDelayed(() -> getBinding().nav.getMenu().findItem(R.id.nav_notes).setChecked(true), 300);
+        new Handler().postDelayed(() -> getBinding().drawer.getMenu().findItem(R.id.nav_notes).setChecked(true), 300);
     }
 
     private void toCategoriesFragment() {
@@ -732,7 +746,8 @@ public class MainActivity extends CommonActivity<ActivityMainBinding> implements
         CategoriesFragment categoriesFragment = CategoriesFragment.newInstance();
         categoriesFragment.setScrollListener(onScrollListener);
         FragmentHelper.replace(this, categoriesFragment, R.id.fragment_container);
-        new Handler().postDelayed(() -> getBinding().nav.getMenu().findItem(R.id.nav_categories).setChecked(true), 300);
+        new Handler().postDelayed(() -> getBinding().drawer.getMenu().findItem(R.id.nav_categories).setChecked(true),
+                300);
     }
 
     private void setDrawerLayoutLocked(boolean lockDrawer) {
@@ -879,6 +894,8 @@ public class MainActivity extends CommonActivity<ActivityMainBinding> implements
     }
 
     //endregion
+
+    private NotesChangedReceiver notesChangedReceiver;
 
     private class NotesChangedReceiver extends BroadcastReceiver {
 
