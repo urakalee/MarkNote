@@ -9,12 +9,12 @@ import me.shouheng.notepal.adapter.ModelsPickerAdapter;
 import me.shouheng.notepal.adapter.picker.NotebookPickerStrategy;
 import me.shouheng.notepal.model.Notebook;
 import me.shouheng.notepal.provider.NotebookStore;
-import me.shouheng.notepal.provider.schema.NotebookSchema;
 import me.shouheng.notepal.util.ColorUtils;
 import me.shouheng.notepal.widget.EmptyView;
 
 /**
- * Created by wangshouheng on 2017/10/5.*/
+ * Created by wangshouheng on 2017/10/5.
+ */
 public class NotebookPickerDialog extends BasePickerDialog<Notebook> {
 
     public static NotebookPickerDialog newInstance() {
@@ -27,7 +27,7 @@ public class NotebookPickerDialog extends BasePickerDialog<Notebook> {
     }
 
     private List<Notebook> getNotebooks() {
-        return NotebookStore.getInstance(getContext()).getNotebooks(null, NotebookSchema.ADDED_TIME + " DESC ");
+        return NotebookStore.getInstance(getContext()).get(null, null);
     }
 
     @Override

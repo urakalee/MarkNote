@@ -5,9 +5,11 @@ import android.os.AsyncTask;
 
 import me.shouheng.notepal.listener.OnTaskExecutingListener;
 import me.shouheng.notepal.model.data.Resource;
+import me.shouheng.notepal.util.LogUtils;
 
 /**
- * Created by shouh on 2018/3/16.*/
+ * Created by shouh on 2018/3/16.
+ */
 public class NormalAsyncTask<M> extends AsyncTask<Void, Integer, Resource<M>> {
 
     private MutableLiveData<Resource<M>> result;
@@ -22,10 +24,15 @@ public class NormalAsyncTask<M> extends AsyncTask<Void, Integer, Resource<M>> {
     @Override
     protected Resource<M> doInBackground(Void... voids) {
         if (onTaskExecutingListener != null) {
-            M ret = onTaskExecutingListener.onExecuting();
-            return Resource.success(ret);
+            try {
+                M ret = onTaskExecutingListener.onExecuting();
+                return Resource.success(ret);
+            } catch (Exception e) {
+                LogUtils.e(e);
+                return Resource.error("Failed to load data", null);
+            }
         }
-        return Resource.error("Failed to load data", null);
+        return Resource.error("No listener to load data", null);
     }
 
     @Override

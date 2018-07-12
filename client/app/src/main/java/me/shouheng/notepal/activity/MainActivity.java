@@ -507,7 +507,7 @@ public class MainActivity extends CommonActivity<ActivityMainBinding> implements
     }
 
     //endregion
-    //region edit note
+    //region edit note/notebook
 
     private void editNote(@NonNull final Note note) {
         PermissionUtils.checkStoragePermission(this, () ->
@@ -515,7 +515,7 @@ public class MainActivity extends CommonActivity<ActivityMainBinding> implements
     }
 
     private Note getNewNote() {
-        Note note = ModelFactory.getNote();
+        Note note = ModelFactory.newNote();
 
         boolean isNotes = isNotesFragment();
 
@@ -539,21 +539,17 @@ public class MainActivity extends CommonActivity<ActivityMainBinding> implements
     }
 
     private void editNotebook() {
-        Notebook notebook = ModelFactory.getNotebook();
+        Notebook notebook = ModelFactory.newNotebook();
         notebookEditDialog = NotebookEditDialog.newInstance(this, notebook, (notebookName, notebookColor) -> {
             // notebook fields
-            notebook.setTitle(notebookName);
+            if (notebook.getTitle() == null) {
+                notebook.create(notebookName);
+            } else if (!notebook.getTitle().equals(notebookName)) {
+                notebook.rename(notebookName);
+            }
+            notebook.setTreePath(String.valueOf(notebook.getCode()));
             notebook.setColor(notebookColor);
             notebook.setCount(0);
-            notebook.setTreePath(String.valueOf(notebook.getCode()));
-
-            // notebook parent fields
-            Notebook parent;
-            if (isNotesFragment() && (parent = ((NotesFragment) getCurrentFragment()).getNotebook()) != null) {
-                notebook.setParentCode(parent.getCode());
-                notebook.setTreePath(parent.getTreePath() + "|" + notebook.getCode());
-            }
-
             // do save
             saveNotebook(notebook);
         });

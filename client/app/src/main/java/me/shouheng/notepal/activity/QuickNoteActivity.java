@@ -118,7 +118,7 @@ public class QuickNoteActivity extends BaseActivity implements OnAttachingFileLi
     }
 
     private void saveMindSnagging(MindSnagging mindSnagging, Attachment attachment) {
-        noteViewModel.saveSnagging(ModelFactory.getNote(), mindSnagging, attachment).observe(this, new Observer<Resource<Note>>() {
+        noteViewModel.saveSnagging(ModelFactory.newNote(), mindSnagging, attachment).observe(this, new Observer<Resource<Note>>() {
             @Override
             public void onChanged(@Nullable Resource<Note> noteResource) {
                 if (noteResource == null) {

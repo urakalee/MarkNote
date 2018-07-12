@@ -28,6 +28,34 @@ fun listFiles(dir: File): List<File> {
     return files.asList()
 }
 
+fun getFile(name: String): File {
+    return File(storageRoot(), name)
+}
+
+fun ensureDir(name: String) {
+    ensureDir(getFile(name))
+}
+
+fun ensureDir(file: File) {
+    if (file.isDirectory) {
+        return
+    }
+    if (file.exists()) {
+        throw RuntimeException("Target is a file")
+    } else {
+        file.mkdir()
+    }
+}
+
+fun ensureMoveDir(source: String, target: String) {
+    val targetFile = getFile(target)
+    if (targetFile.exists()) {
+        throw RuntimeException("Target exists")
+    } else {
+        getFile(source).renameTo(targetFile)
+    }
+}
+
 fun getFile(parent: String, child: String): File? {
     return File(storageRoot(), parent).listFiles { pathname ->
         pathname?.name == child

@@ -1,23 +1,19 @@
 package me.shouheng.notepal.model;
 
-import android.support.annotation.Nullable;
+import android.support.annotation.NonNull;
 
-import java.util.Calendar;
-import java.util.Collections;
 import java.util.Date;
 
 import me.shouheng.notepal.PalmApp;
 import me.shouheng.notepal.config.TextLength;
-import me.shouheng.notepal.model.enums.AlarmType;
 import me.shouheng.notepal.model.enums.ItemStatus;
 import me.shouheng.notepal.model.enums.ModelType;
 import me.shouheng.notepal.model.enums.Operation;
 import me.shouheng.notepal.model.enums.Portrait;
 import me.shouheng.notepal.model.enums.WeatherType;
 import me.shouheng.notepal.util.ColorUtils;
-import me.shouheng.notepal.util.TimeUtils;
+import me.shouheng.notepal.util.LogUtils;
 import me.shouheng.notepal.util.UserUtil;
-import me.shouheng.notepal.viewmodel.CategoryViewModel;
 
 /**
  * Created by wangshouheng on 2017/11/17.
@@ -28,16 +24,7 @@ public class ModelFactory {
         return System.currentTimeMillis();
     }
 
-    private static int getIntegerCode() {
-        Calendar now = Calendar.getInstance();
-        int appendix = now.get(Calendar.HOUR_OF_DAY) * 3600000
-                + now.get(Calendar.MINUTE) * 60000
-                + now.get(Calendar.SECOND) * 1000
-                + now.get(Calendar.MILLISECOND);
-        int prefix = (int) (Math.random() * 21); // 生成一个小于[0,20]的整数
-        return prefix * 100000000 + appendix;
-    }
-
+    @NonNull
     private static <T extends Model> T getModel(Class<T> itemType) {
         try {
             T newItem = itemType.newInstance();
@@ -48,43 +35,26 @@ public class ModelFactory {
             newItem.setLastSyncTime(new Date(0));
             newItem.setStatus(ItemStatus.NORMAL);
             return newItem;
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            LogUtils.e(e);
         }
         return null;
     }
 
-    public static Alarm getAlarm() {
-        Calendar c = Calendar.getInstance();
-        Alarm alarm = getModel(Alarm.class);
+    @NonNull
+    public static Notebook newNotebook() {
+        Notebook notebook = getModel(Notebook.class);
+        notebook.setColor(ColorUtils.primaryColor(PalmApp.getContext()));
+        return notebook;
+    }
 
-        assert alarm != null;
-        alarm.setCode(getIntegerCode());
-
-        alarm.setModelType(ModelType.NONE);
-        alarm.setModelCode(0);
-
-        alarm.setEnabled(true);
-        alarm.setAlarmType(AlarmType.SPECIFIED_DATE);
-        alarm.setNextTime(c);
-
-        alarm.setDaysOfWeek(DaysOfWeek.getInstance(0));
-        alarm.setDaysOfMonth(DaysOfMonth.getInstance(0));
-
-        alarm.setStartDate(new Date());
-        alarm.setEndDate(TimeUtils.getTomorrowDate().getTime());
-
-        alarm.setHour(c.get(Calendar.HOUR_OF_DAY));
-        alarm.setMinute(c.get(Calendar.MINUTE));
-
-        return alarm;
+    @NonNull
+    public static Note newNote() {
+        return getModel(Note.class);
     }
 
     public static Attachment getAttachment() {
         Attachment attachment = getModel(Attachment.class);
-        assert attachment != null;
         attachment.setModelType(ModelType.NONE);
         attachment.setModelCode(0);
         return attachment;
@@ -92,40 +62,28 @@ public class ModelFactory {
 
     public static Location getLocation() {
         Location location = getModel(Location.class);
-        assert location != null;
         location.setModelType(ModelType.NONE);
         return location;
+    }
+
+    public static Weather getWeather(WeatherType type, int temperature) {
+        Weather weather = getModel(Weather.class);
+        weather.setType(type);
+        weather.setTemperature(temperature);
+        return weather;
     }
 
     public static MindSnagging getMindSnagging() {
         return getModel(MindSnagging.class);
     }
 
-    public static Notebook getNotebook() {
-        Notebook notebook = getModel(Notebook.class);
-        assert notebook != null;
-        notebook.setColor(ColorUtils.primaryColor(PalmApp.getContext()));
-        return notebook;
-    }
-
-    public static Note getNote() {
-        return getModel(Note.class);
-    }
-
-    public static Note getNote(@Nullable Notebook notebook, @Nullable Category category) {
-        Note note = getNote();
-        if (notebook != null) {
-            note.setParentCode(notebook.getCode());
-            note.setTreePath(notebook.getTreePath() + "|" + note.getCode());
-        } else {
-            note.setTreePath(String.valueOf(note.getCode()));
-        }
-
-        if (category != null) {
-            note.setTags(CategoryViewModel.getTags(Collections.singletonList(category)));
-        }
-
-        return note;
+    public static Category getCategory() {
+        Category category = getModel(Category.class);
+        category.setPortrait(Portrait.FOLDER);
+        category.setCategoryOrder(0);
+        // use the primary color as the category color
+        category.setColor(ColorUtils.primaryColor(PalmApp.getContext()));
+        return category;
     }
 
     public static <T extends Model> TimeLine getTimeLine(T model, Operation operation) {
@@ -147,24 +105,6 @@ public class ModelFactory {
 
     public static Feedback getFeedback() {
         return getModel(Feedback.class);
-    }
-
-    public static Category getCategory() {
-        Category category = getModel(Category.class);
-        assert category != null;
-        category.setPortrait(Portrait.FOLDER);
-        category.setCategoryOrder(0);
-        // use the primary color as the category color
-        category.setColor(ColorUtils.primaryColor(PalmApp.getContext()));
-        return category;
-    }
-
-    public static Weather getWeather(WeatherType type, int temperature) {
-        Weather weather = getModel(Weather.class);
-        assert weather != null;
-        weather.setType(type);
-        weather.setTemperature(temperature);
-        return weather;
     }
 
     private static <M extends Model> String getModelName(M model) {

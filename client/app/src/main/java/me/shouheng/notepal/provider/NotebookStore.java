@@ -52,14 +52,10 @@ public class NotebookStore extends BaseStore<Notebook> {
     public void fillModel(Notebook model, Cursor cursor) {
         model.setTitle(cursor.getString(cursor.getColumnIndex(NotebookSchema.TITLE)));
         model.setColor(cursor.getInt(cursor.getColumnIndex(NotebookSchema.COLOR)));
-        model.setParentCode(cursor.getLong(cursor.getColumnIndex(NotebookSchema.PARENT_CODE)));
         model.setTreePath(cursor.getString(cursor.getColumnIndex(NotebookSchema.TREE_PATH)));
-        int nbCnt, nCnt;
-        if ((nCnt = cursor.getColumnIndex(NotebookSchema.COUNT)) != -1) {
-            model.setCount(cursor.getInt(nCnt));
-        }
-        if ((nbCnt = cursor.getColumnIndex(NotebookSchema.NOTEBOOK_COUNT)) != -1) {
-            model.setNotebookCount(cursor.getInt(nbCnt));
+        int noteCount;
+        if ((noteCount = cursor.getColumnIndex(NotebookSchema.COUNT)) != -1) {
+            model.setCount(cursor.getInt(noteCount));
         }
     }
 
@@ -67,22 +63,7 @@ public class NotebookStore extends BaseStore<Notebook> {
     protected void fillContentValues(ContentValues values, Notebook model) {
         values.put(NotebookSchema.TITLE, model.getTitle());
         values.put(NotebookSchema.COLOR, model.getColor());
-        values.put(NotebookSchema.PARENT_CODE, model.getParentCode());
         values.put(NotebookSchema.TREE_PATH, model.getTreePath());
-    }
-
-    public synchronized List<Notebook> getNotebooks(String whereSQL, String orderSQL) {
-        return getNotebooks(whereSQL, orderSQL, ItemStatus.NORMAL);
-    }
-
-    @Override
-    public synchronized List<Notebook> getArchived(String whereSQL, String orderSQL) {
-        return getNotebooks(whereSQL, orderSQL, ItemStatus.ARCHIVED);
-    }
-
-    @Override
-    public synchronized List<Notebook> getTrashed(String whereSQL, String orderSQL) {
-        return getNotebooks(whereSQL, orderSQL, ItemStatus.TRASHED);
     }
 
     /**
@@ -208,11 +189,19 @@ public class NotebookStore extends BaseStore<Notebook> {
         return notebooks;
     }
 
-    private String getNotesCount(ItemStatus status) {
-        return " (SELECT COUNT(*) FROM " + NoteSchema.TABLE_NAME + " AS t1 "
-                + " WHERE t1." + NoteSchema.TREE_PATH + " LIKE " + tableName + "." + NotebookSchema.TREE_PATH + "||'%'"
-                + " AND t1." + NoteSchema.USER_ID + " = " + userId
-                + " AND t1." + NoteSchema.STATUS + " = " + (status == null ? ItemStatus.NORMAL.id : status.id) + " ) "
-                + " AS " + NotebookSchema.COUNT;
+    @Override
+    public synchronized void saveModel(Notebook notebook) {
+        File dir = FileStorage.getFile(notebook.getTitle());
+        if (notebook.needCreate()) {
+            if (dir.exists()) {
+                throw new RuntimeException("Target exists");
+            }
+            dir.mkdir();
+        } else if (notebook.needRename()) {
+            FileStorage.ensureMoveDir(notebook.getOriginTitle(), notebook.getTitle());
+            notebook.reset();
+        } else {
+            FileStorage.ensureDir(dir);
+        }
     }
 }

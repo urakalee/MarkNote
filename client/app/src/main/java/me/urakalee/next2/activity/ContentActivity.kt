@@ -103,7 +103,7 @@ class ContentActivity : CommonActivity<ActivityContentBinding>(),
             val isEdit = (intent.getStringExtra(Constants.EXTRA_START_TYPE) == Constants.VALUE_START_EDIT)
             toNoteFragment(noteNonNull, if (requestCode == -1) null else requestCode, isEdit, false)
         } else if (intent.action == Constants.ACTION_TO_NOTE_FROM_THIRD_PART) {
-            val noteNonNull = note ?: ModelFactory.getNote()
+            val noteNonNull = note ?: ModelFactory.newNote()
             note = noteNonNull
             val isEdit = (intent.getStringExtra(Constants.EXTRA_START_TYPE) == Constants.VALUE_START_EDIT)
             toNoteFragment(noteNonNull, null, isEdit, true)
