@@ -19,7 +19,7 @@ public class Note extends Model {
     private String title;
 
     @Column(name = NoteSchema.CONTENT_CODE)
-    private long contentCode;
+    private long attachmentCode;
 
     @Column(name = NoteSchema.TAGS)
     private String tags;
@@ -33,10 +33,10 @@ public class Note extends Model {
     // region Android端字段，不计入数据库
 
     private Notebook notebook;
-
     private String content;
-
     private String tagsName;
+
+    private String originTitle;
 
     public Notebook getNotebook() {
         return notebook;
@@ -62,6 +62,26 @@ public class Note extends Model {
         this.tagsName = tagsName;
     }
 
+    public String getOriginTitle() {
+        return originTitle;
+    }
+
+    public void setOriginTitle(String originTitle) {
+        this.originTitle = originTitle;
+    }
+
+    public boolean isNewNote() {
+        return originTitle == null;
+    }
+
+    public boolean needRename() {
+        return !title.equals(originTitle);
+    }
+
+    public void finishRename() {
+        originTitle = title;
+    }
+
     // endregion
 
     public Note() {
@@ -83,12 +103,12 @@ public class Note extends Model {
         this.title = title;
     }
 
-    public long getContentCode() {
-        return contentCode;
+    public long getAttachmentCode() {
+        return attachmentCode;
     }
 
-    public void setContentCode(long contentCode) {
-        this.contentCode = contentCode;
+    public void setAttachmentCode(long attachmentCode) {
+        this.attachmentCode = attachmentCode;
     }
 
     public String getTags() {
@@ -120,7 +140,7 @@ public class Note extends Model {
         return "Note{" +
                 "treePath='" + treePath + '\'' +
                 ", title='" + title + '\'' +
-                ", contentCode=" + contentCode +
+                ", attachmentCode=" + attachmentCode +
                 ", tags='" + tags + '\'' +
                 ", previewImage=" + previewImage +
                 ", previewContent='" + previewContent + '\'' +

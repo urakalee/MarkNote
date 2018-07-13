@@ -1,5 +1,7 @@
 package me.shouheng.notepal.util;
 
+import static java.lang.Long.parseLong;
+
 import android.annotation.SuppressLint;
 import android.content.ContentResolver;
 import android.content.ContentUris;
@@ -46,10 +48,9 @@ import me.shouheng.notepal.model.Attachment;
 import me.shouheng.notepal.model.ModelFactory;
 import me.shouheng.notepal.provider.PalmDB;
 
-import static java.lang.Long.parseLong;
-
 /**
- * Created by wangshouheng on 2017/4/7.*/
+ * Created by wangshouheng on 2017/4/7.
+ */
 public class FileHelper {
 
     private static final String EXTERNAL_STORAGE_FOLDER = "NotePal";
@@ -79,6 +80,7 @@ public class FileHelper {
     }
 
     // region Name
+
     public static String getDefaultFileName(String extension) {
         Calendar now = Calendar.getInstance();
         SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT_SORTABLE, Locale.getDefault());
@@ -87,11 +89,12 @@ public class FileHelper {
         return removeInvalidCharacters(name);
     }
 
-    public static String getNameFromUri(Context mContext, Uri uri) {
+    public static String getNameFromUri(Uri uri) {
         String fileName = "";
         Cursor cursor = null;
         try {
-            cursor = mContext.getContentResolver().query(uri, new String[]{OpenableColumns.DISPLAY_NAME}, null, null, null);
+            cursor = PalmApp.getContext().getContentResolver()
+                    .query(uri, new String[]{OpenableColumns.DISPLAY_NAME}, null, null, null);
             if (cursor != null) {
                 try {
                     if (cursor.moveToFirst()) {
@@ -129,9 +132,10 @@ public class FileHelper {
         }
         return Uri.encode(fixedUpString);
     }
-    // endregion
 
+    // endregion
     // region Path
+
     @SuppressLint("NewApi")
     public static String getPath(final Context context, final Uri uri) {
         if (uri == null) return null;
@@ -146,7 +150,8 @@ public class FileHelper {
                     return Environment.getExternalStorageDirectory() + "/" + split[1];
                 }
             } else if (isDownloadsDocument(uri)) {
-                final Uri contentUri = ContentUris.withAppendedId(Uri.parse("content://downloads/public_downloads"), parseLong(DocumentsContract.getDocumentId(uri)));
+                final Uri contentUri = ContentUris.withAppendedId(Uri.parse("content://downloads/public_downloads"),
+                        parseLong(DocumentsContract.getDocumentId(uri)));
                 return getDataColumn(context, contentUri, null, null);
             } else if (isMediaDocument(uri)) {
                 final String docId = DocumentsContract.getDocumentId(uri);
@@ -198,9 +203,10 @@ public class FileHelper {
         }
         return null;
     }
-    // endregion
 
+    // endregion
     // region Size
+
     public static long getSize(File directory) {
         StatFs statFs = new StatFs(directory.getAbsolutePath());
         long blockSize = 0;
@@ -248,17 +254,15 @@ public class FileHelper {
         return getFileBytes(file, 0, (int) file.length());
     }
 
-    private static byte[] getFileBytes(File file, final int offset, final int size) throws IOException, RemoteException {
+    private static byte[] getFileBytes(File file, final int offset, final int size) throws IOException {
         final FileInputStream fis = new FileInputStream(file);
         final ByteArrayOutputStream memorySteam = new ByteArrayOutputStream(size);
         int ret = copyStreamContents(offset, size, fis, memorySteam);
         return memorySteam.toByteArray();
     }
 
-    private static int copyStreamContents(final long offset,
-                                          final int size,
-                                          final InputStream input,
-                                          final OutputStream output) throws IOException {
+    private static int copyStreamContents(final long offset, final int size,
+            final InputStream input, final OutputStream output) throws IOException {
         byte[] buffer = new byte[size];
         int count = 0, n;
         final long skipAmount = input.skip(offset);
@@ -272,16 +276,16 @@ public class FileHelper {
         }
         return count;
     }
-    // endregion
 
+    // endregion
     // region MimeType
 
     /**
      * Get mime type of given uri.
      *
      * @param mContext the context
-     * @param uri the uri belows to the file stored in the app file system, so the mime type got
-     *            is the mime type of file in file system.
+     * @param uri      the uri belows to the file stored in the app file system, so the mime type got
+     *                 is the mime type of file in file system.
      * @return the mime type
      */
     public static String getMimeType(Context mContext, Uri uri) {
@@ -305,7 +309,7 @@ public class FileHelper {
      * Get file mime type and translate it into the mime type of this application.
      *
      * @param mContext the context
-     * @param uri the uri of attachment
+     * @param uri      the uri of attachment
      * @return the mime type of this application
      */
     public static String getMimeTypeInternal(Context mContext, Uri uri) {
@@ -328,9 +332,10 @@ public class FileHelper {
         }
         return mimeType;
     }
-    // endregion
 
+    // endregion
     // region extension
+
     /**
      * Get file extension from file name.
      *
@@ -349,7 +354,7 @@ public class FileHelper {
      * Get file extension from uri.
      *
      * @param mContext the context
-     * @param uri the uri
+     * @param uri      the uri
      * @return the extension
      */
     public static String getFileExtension(Context mContext, Uri uri) {
@@ -368,9 +373,10 @@ public class FileHelper {
             return extension;
         }
     }
-    // endregion
 
+    // endregion
     // region thumbnail
+
     public static Uri getThumbnailUri(Context mContext, Uri uri) {
         String mimeType = getMimeType(uri.toString());
         if (!TextUtils.isEmpty(mimeType)) {
@@ -393,7 +399,8 @@ public class FileHelper {
             }
         } else {
             String extension, path;
-            extension = TextUtils.isEmpty(path = getPath(mContext, uri)) ?  getFileExtension(uri.toString()) : getFileExtension(path);
+            extension = TextUtils.isEmpty(path = getPath(mContext, uri))
+                    ? getFileExtension(uri.toString()) : getFileExtension(path);
             return getThumbnailUri(mContext, uri, extension);
         }
         return uri;
@@ -401,10 +408,22 @@ public class FileHelper {
 
     private static Uri getThumbnailUri(Context mContext, Uri uri, String extension) {
         switch (extension) {
-            case "mp3":case "wav":case "aac":case "wma":// audio
+            // audio
+            case "mp3":
+            case "wav":
+            case "aac":
+            case "wma":
                 uri = Uri.parse("android.resource://" + mContext.getPackageName() + "/" + R.raw.play);
                 break;
-            case "avi":case "mov":case "wmv":case "3gp":case "rmvb":case "flv":case "mpeg":case "mp4":
+            // video
+            case "avi":
+            case "mov":
+            case "wmv":
+            case "3gp":
+            case "rmvb":
+            case "flv":
+            case "mpeg":
+            case "mp4":
                 return uri;
             default:
                 uri = Uri.parse("android.resource://" + mContext.getPackageName() + "/" + R.raw.files);
@@ -412,6 +431,7 @@ public class FileHelper {
         }
         return uri;
     }
+
     // endregion
 
     public static File createNewAttachmentFile(Context context, String extension) {
@@ -427,7 +447,7 @@ public class FileHelper {
     }
 
     private static Attachment createAttachmentFromUri(Context mContext, Uri uri, boolean moveSource) {
-        String name = FileHelper.getNameFromUri(mContext, uri);
+        String name = FileHelper.getNameFromUri(uri);
         String extension = FileHelper.getFileExtension(name).toLowerCase(Locale.getDefault());
 
         /**
@@ -497,6 +517,7 @@ public class FileHelper {
     }
 
     // region file operations
+
     public static void moveFile(File srcFile, File destFile) throws IOException {
         if (srcFile == null) {
             throw new NullPointerException("Source must not be null");
@@ -518,7 +539,7 @@ public class FileHelper {
         }
         boolean rename = srcFile.renameTo(destFile);
         if (!rename) {
-            copyFile(srcFile, destFile );
+            copyFile(srcFile, destFile);
             if (!srcFile.delete()) {
                 FileUtils.deleteQuietly(destFile);
                 throw new IOException("Failed to delete original file '" + srcFile +
@@ -571,10 +592,11 @@ public class FileHelper {
         }
         return res;
     }
+
     // endregion
 
-    public static Uri getUriFromFile(Context context, File file){
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.M){
+    public static Uri getUriFromFile(Context context, File file) {
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.M) {
             return FileProvider.getUriForFile(context, BuildConfig.APPLICATION_ID + ".provider", file);
         } else {
             return Uri.fromFile(file);
@@ -582,18 +604,22 @@ public class FileHelper {
     }
 
     // region save image external
+
     /**
      * 保存图标到相册中
      *
-     * @param context 上下文
-     * @param bmp 图片
-     * @param isPng 是否是png格式的图片
+     * @param context                  上下文
+     * @param bmp                      图片
+     * @param isPng                    是否是png格式的图片
      * @param onSavedToGalleryListener the callback of saving event
-     * @return 是否成功执行保存操作 */
-    public static boolean saveImageToGallery(Context context, Bitmap bmp, boolean isPng, OnSavedToGalleryListener onSavedToGalleryListener) {
+     * @return 是否成功执行保存操作
+     */
+    public static boolean saveImageToGallery(Context context, Bitmap bmp, boolean isPng,
+            OnSavedToGalleryListener onSavedToGalleryListener) {
         LogUtils.d("saveImageToGallery: " + bmp);
         if (bmp == null) return false;
-        File appDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), context.getString(R.string.app_name));
+        File appDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
+                context.getString(R.string.app_name));
         if (!appDir.exists()) {
             if (!appDir.mkdir()) {
                 return false;
@@ -637,17 +663,20 @@ public class FileHelper {
         return true;
     }
 
-    public static void saveDrawableToGallery(Context context, @DrawableRes int drawableRes, OnSavedToGalleryListener onSavedToGalleryListener) {
+    public static void saveDrawableToGallery(Context context, @DrawableRes int drawableRes,
+            OnSavedToGalleryListener onSavedToGalleryListener) {
         Resources res = context.getResources();
         BitmapDrawable d = (BitmapDrawable) res.getDrawable(drawableRes);
         Bitmap img = d.getBitmap();
         FileHelper.saveImageToGallery(context, img, true, onSavedToGalleryListener);
     }
-    // endregion
 
+    // endregion
     // region export and import
+
     public static File getExternalStoragePublicDir() {
-        String path = Environment.getExternalStorageDirectory() + File.separator + EXTERNAL_STORAGE_FOLDER + File.separator;
+        String path = Environment.getExternalStorageDirectory()
+                + File.separator + EXTERNAL_STORAGE_FOLDER + File.separator;
         File dir = new File(path);
         if (!dir.exists()) dir.mkdirs();
         return dir;
@@ -718,6 +747,7 @@ public class FileHelper {
     public static String getPreferencesName(Context mContext) {
         return mContext.getApplicationContext().getPackageName() + "_preferences.xml";
     }
+
     // endregion
 
     public interface OnSavedToGalleryListener {

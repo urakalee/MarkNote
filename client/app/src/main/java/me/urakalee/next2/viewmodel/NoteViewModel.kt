@@ -84,7 +84,7 @@ class NoteViewModel : BaseViewModel<Note>() {
                 atFile.modelCode = note.code
                 AttachmentsStore.getInstance(PalmApp.getContext()).saveModel(atFile)
 
-                note.contentCode = atFile.code
+                note.attachmentCode = atFile.code
             } catch (e: IOException) {
                 LogUtils.e(e)
                 return@ResourceAsyncTask Resource.error(e.message, null)

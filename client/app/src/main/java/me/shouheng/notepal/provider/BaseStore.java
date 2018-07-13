@@ -4,7 +4,6 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
 import java.lang.reflect.ParameterizedType;
@@ -164,27 +163,6 @@ public abstract class BaseStore<T extends Model> {
         return count;
     }
 
-    public synchronized boolean isNewModel(Long code) {
-        Cursor cursor = null;
-        int count = 0;
-        SQLiteDatabase database = getWritableDatabase();
-        try {
-            cursor = database.rawQuery(" SELECT COUNT(*) AS count FROM " + tableName +
-                            " WHERE " + BaseSchema.USER_ID + " = " + userId
-                            + " AND " + BaseSchema.CODE + " = " + code,
-                    new String[]{});
-            if (cursor != null && cursor.moveToFirst()) {
-                do {
-                    count = cursor.getInt(cursor.getColumnIndex("count"));
-                } while (cursor.moveToNext());
-            }
-        } finally {
-            closeCursor(cursor);
-            closeDatabase(database);
-        }
-        return count == 0;
-    }
-
     public synchronized List<T> getPage(int index, int pageCount, String orderSQL, ItemStatus status, boolean exclude) {
         Cursor cursor = null;
         List<T> models;
@@ -251,14 +229,6 @@ public abstract class BaseStore<T extends Model> {
         } finally {
             database.endTransaction();
             closeDatabase(database);
-        }
-    }
-
-    public synchronized void saveOrUpdate(@NonNull T model) {
-        if (isNewModel(model.getCode())) {
-            saveModel(model);
-        } else {
-            update(model);
         }
     }
 

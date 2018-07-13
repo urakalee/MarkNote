@@ -54,21 +54,6 @@ class NotebookStore private constructor() : BaseStore<Notebook>(PalmApp.getConte
         }
 
     @Synchronized
-    override fun update(model: Notebook) {
-        throw UnsupportedOperationException()
-    }
-
-    @Synchronized
-    override fun update(model: Notebook, toStatus: ItemStatus) {
-        throw UnsupportedOperationException()
-    }
-
-    @Synchronized
-    override fun saveOrUpdate(model: Notebook) {
-        throw UnsupportedOperationException()
-    }
-
-    @Synchronized
     override fun saveModel(notebook: Notebook) {
         val dir = getFile(notebook.title)
         when {
@@ -86,6 +71,16 @@ class NotebookStore private constructor() : BaseStore<Notebook>(PalmApp.getConte
                 ensureDir(dir)
             }
         }
+    }
+
+    @Synchronized
+    override fun update(model: Notebook) {
+        throw UnsupportedOperationException()
+    }
+
+    @Synchronized
+    override fun update(model: Notebook, toStatus: ItemStatus) {
+        throw UnsupportedOperationException()
     }
 
     @Synchronized

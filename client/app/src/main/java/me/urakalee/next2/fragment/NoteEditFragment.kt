@@ -15,10 +15,12 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.view.*
 import android.widget.RelativeLayout
+import com.afollestad.materialdialogs.MaterialDialog
 import com.balysv.materialmenu.MaterialMenuDrawable
 import me.shouheng.notepal.PalmApp
 import me.shouheng.notepal.R
 import me.shouheng.notepal.activity.MenuSortActivity
+import me.shouheng.notepal.activity.base.CommonActivity
 import me.shouheng.notepal.async.CreateAttachmentTask
 import me.shouheng.notepal.config.Constants
 import me.shouheng.notepal.databinding.FragmentNoteBinding
@@ -37,7 +39,6 @@ import me.shouheng.notepal.model.enums.ModelType
 import me.shouheng.notepal.util.*
 import me.shouheng.notepal.util.preferences.UserPreferences
 import me.shouheng.notepal.viewmodel.AttachmentViewModel
-import me.shouheng.notepal.viewmodel.BaseViewModel
 import me.shouheng.notepal.viewmodel.CategoryViewModel
 import me.shouheng.notepal.viewmodel.LocationViewModel
 import me.shouheng.notepal.widget.FlowLayout
@@ -59,14 +60,14 @@ class NoteEditFragment : BaseModelFragment<Note, FragmentNoteBinding>() {
 
     private var materialMenu: MaterialMenuDrawable? = null
 
-    private var note: Note? = null
+    private lateinit var note: Note
     private var categories: List<Category>? = null
 
-    private var noteViewModel: NoteViewModel? = null
-    private var notebookViewModel: NotebookViewModel? = null
-    private var categoryViewModel: CategoryViewModel? = null
-    private var attachmentViewModel: AttachmentViewModel? = null
-    private var locationViewModel: LocationViewModel? = null
+    private lateinit var noteViewModel: NoteViewModel
+    private lateinit var notebookViewModel: NotebookViewModel
+    private lateinit var categoryViewModel: CategoryViewModel
+    private lateinit var attachmentViewModel: AttachmentViewModel
+    private lateinit var locationViewModel: LocationViewModel
 
     override fun getLayoutResId(): Int {
         return R.layout.fragment_note
@@ -89,7 +90,25 @@ class NoteEditFragment : BaseModelFragment<Note, FragmentNoteBinding>() {
     }
 
     override fun onBackPressed() {
-        handleBackPress()
+        val activityNonNull = activity as? CommonActivity<*> ?: return
+        if (contentChanged) {
+            MaterialDialog.Builder(activityNonNull)
+                    .title(R.string.text_tips)
+                    .content(R.string.text_save_or_discard)
+                    .positiveText(R.string.text_save)
+                    .negativeText(R.string.text_give_up)
+                    .onPositive { _, _ ->
+                        saveOrUpdateData {
+                            setResult()
+                        }
+                    }
+                    .onNegative { _, _ ->
+                        activityNonNull.superOnBackPressed()
+                    }
+                    .show()
+        } else {
+            setResult()
+        }
     }
 
     //endregion
@@ -108,13 +127,13 @@ class NoteEditFragment : BaseModelFragment<Note, FragmentNoteBinding>() {
         // Notify that the content is changed if the note fragment is called from sharing and other third part
         // The code must be here since the material menu might be null.
         if (arguments != null && arguments!!.getBoolean(EXTRA_IS_THIRD_PART)) {
-            setContentChanged()
+            contentChanged = true
         }
 
         // Sync methods. Note that the other data may not be fetched for current.
-        configMain(note!!)
+        configMain(note)
 
-        configDrawer(note!!)
+        configDrawer(note)
     }
 
     private fun initViewModels() {
@@ -126,12 +145,14 @@ class NoteEditFragment : BaseModelFragment<Note, FragmentNoteBinding>() {
     }
 
     private fun handleArguments(): Boolean {
-        note = arguments?.get(Constants.EXTRA_MODEL) as? Note
+        val note = arguments?.get(Constants.EXTRA_MODEL) as? Note
         if (note == null) {
             ToastUtils.makeToast(R.string.text_no_such_note)
             activity?.finish()
             return false
         }
+        this.note = note
+        note.originTitle = note.title
 
         // Handle arguments for intent from third part
         if (arguments?.getBoolean(EXTRA_IS_THIRD_PART) == true) {
@@ -147,7 +168,7 @@ class NoteEditFragment : BaseModelFragment<Note, FragmentNoteBinding>() {
                     PermissionUtils.checkStoragePermission(activity as? BaseActivity) { AttachmentHelper.pickFiles(this) }
                 else ->
                     // The cases above is new model, don't need to fetch data.
-                    fetchData(note!!)
+                    fetchData(note)
             }
         }
 
@@ -160,13 +181,13 @@ class NoteEditFragment : BaseModelFragment<Note, FragmentNoteBinding>() {
         val intent = (activity as OnNoteInteractListener).intentForThirdPart
 
         val title = intent.getStringExtra(Intent.EXTRA_SUBJECT)
-        note?.title = title
+        note.title = title
 
         var content = intent.getStringExtra(Intent.EXTRA_TEXT)
         if (!content.isNullOrEmpty()) {
             content = content.replace("\t", TAB_REPLACEMENT)
         }
-        note?.content = content
+        note.content = content
 
         // Single attachment data
         val uri = intent.getParcelableExtra<Uri>(Intent.EXTRA_STREAM)
@@ -210,8 +231,7 @@ class NoteEditFragment : BaseModelFragment<Note, FragmentNoteBinding>() {
     }
 
     private fun fetchCategories(note: Note) {
-        categoryViewModel
-                ?.getCategories(note)
+        categoryViewModel.getCategories(note)
                 ?.observe(this, Observer { listResource ->
                     if (listResource == null) {
                         ToastUtils.makeToast(R.string.text_failed_to_load_data)
@@ -236,8 +256,7 @@ class NoteEditFragment : BaseModelFragment<Note, FragmentNoteBinding>() {
             return
         }
 
-        attachmentViewModel
-                ?.readNoteContent(note)
+        attachmentViewModel.readNoteContent(note)
                 ?.observe(this, Observer { contentResource ->
                     if (contentResource == null) {
                         ToastUtils.makeToast(R.string.text_failed_to_load_data)
@@ -258,8 +277,7 @@ class NoteEditFragment : BaseModelFragment<Note, FragmentNoteBinding>() {
     }
 
     private fun fetchLocation(note: Note) {
-        locationViewModel
-                ?.getLocation(note)
+        locationViewModel.getLocation(note)
                 ?.observe(this, Observer { locationResource ->
                     if (locationResource == null) {
                         ToastUtils.makeToast(R.string.text_failed_to_load_data)
@@ -291,7 +309,7 @@ class NoteEditFragment : BaseModelFragment<Note, FragmentNoteBinding>() {
 
         val ids = intArrayOf(R.id.iv_redo, R.id.iv_undo, R.id.iv_insert_picture, R.id.iv_insert_link, R.id.iv_table)
         for (id in ids) {
-            binding.root.findViewById<View>(id).setOnClickListener({ this.onBottomBarClick(it) })
+            binding.root.findViewById<View>(id).setOnClickListener { this.onBottomBarClick(it) }
         }
 
         addFormatMenus()
@@ -313,10 +331,10 @@ class NoteEditFragment : BaseModelFragment<Note, FragmentNoteBinding>() {
     private fun showNotebookPicker() {
         fragmentManager?.let {
             NotebookPickerDialog.newInstance().setOnItemSelectedListener { dialog, value, _ ->
-                note?.treePath = value.treePath + "|" + value.code
+                note.treePath = value.treePath + "|" + value.code
                 binding?.main?.tvFolder?.text = value.title
                 binding?.main?.tvFolder?.setTextColor(value.color)
-                setContentChanged()
+                contentChanged = true
                 dialog.dismiss()
             }.show(it, "NOTEBOOK_PICKER")
         }
@@ -462,98 +480,48 @@ class NoteEditFragment : BaseModelFragment<Note, FragmentNoteBinding>() {
         binding?.drawer?.tvCharsInfo?.text = charsInfo
     }
 
+    private fun addShortcut() {
+        if (!note.isNewNote) {
+            ShortcutHelper.addShortcut(PalmApp.getContext(), note)
+            ToastUtils.makeToast(R.string.successfully_add_shortcut)
+        } else {
+            val activityNonNull = activity ?: return
+            MaterialDialog.Builder(activityNonNull)
+                    .title(R.string.text_tips)
+                    .content(R.string.text_save_and_retry_to_add_shortcut)
+                    .positiveText(R.string.text_save_and_retry)
+                    .negativeText(R.string.text_give_up)
+                    .onPositive { _, _ ->
+                        saveOrUpdateData {
+                            if (it) {
+                                ShortcutHelper.addShortcut(PalmApp.getContext(), note)
+                                ToastUtils.makeToast(R.string.successfully_add_shortcut)
+                            }
+                        }
+                    }
+                    .show()
+        }
+    }
+
+    // endregion
+
     private fun showStatistics() {
-        val noteNonNull = note ?: return
-        noteNonNull.content = binding?.main?.etContent?.text.toString()
-        context?.let {
-            ModelHelper.showStatistic(it, noteNonNull)
+        note.content = binding?.main?.etContent?.text.toString()
+        activity?.let {
+            ModelHelper.showStatistic(it, note)
         }
     }
 
     // endregion
     //region override BaseModelFragment
 
-    override fun setContentChanged() {
-        if (!isContentChanged) {
-            super.setContentChanged()
-            materialMenu!!.animateIconState(MaterialMenuDrawable.IconState.CHECK)
-        }
-    }
-
-    override fun getModel(): Note? {
-        return note
-    }
-
-    override fun getViewModel(): BaseViewModel<Note>? {
-        return noteViewModel
-    }
-
-    override fun beforeSaveOrUpdate(handler: BaseModelFragment.BeforePersistEventHandler) {
-        val noteNonNull = note ?: return
-        val noteContent = binding?.main?.etContent?.text.toString()
-        noteNonNull.content = noteContent
-
-        // Get note title from title editor or note content
-        val inputTitle = binding?.main?.etTitle?.text.toString()
-        noteNonNull.title = ModelHelper.getNoteTitle(inputTitle, noteContent)
-
-        // Get preview image from note content
-        noteNonNull.previewImage = ModelHelper.getNotePreviewImage(noteContent)
-
-        noteNonNull.previewContent = ModelHelper.getNotePreview(noteContent)
-
-        attachmentViewModel
-                ?.writeNoteContent(noteNonNull)
-                ?.observe(this, Observer { attachmentResource ->
-                    if (attachmentResource == null) {
-                        ToastUtils.makeToast(R.string.text_error_when_save)
-                        return@Observer
-                    }
-                    when (attachmentResource.status) {
-                        LoadStatus.SUCCESS -> {
-                            attachmentResource.data?.code?.let {
-                                noteNonNull.contentCode = it
-                            }
-                            handler.onGetEventResult(true)
-                        }
-                        LoadStatus.FAILED -> {
-                            ToastUtils.makeToast(R.string.text_error_when_save)
-                            handler.onGetEventResult(false)
-                        }
-                        else -> {
-                            // pass
-                        }
-                    }
-                })
-    }
-
-    override fun afterSaveOrUpdate() {
-        super.afterSaveOrUpdate()
-        materialMenu!!.animateIconState(MaterialMenuDrawable.IconState.ARROW)
-        note?.content = binding?.main?.etContent?.text.toString()
-
-        val args = arguments ?: return
-        if (args.getBoolean(EXTRA_IS_THIRD_PART)
-                || args.getString(EXTRA_ACTION) == Constants.ACTION_ADD_SKETCH
-                || args.getString(EXTRA_ACTION) == Constants.ACTION_TAKE_PHOTO
-                || args.getString(EXTRA_ACTION) == Constants.ACTION_ADD_FILES) {
-            sendNoteChangeBroadcast()
-        }
-    }
-
-    private fun sendNoteChangeBroadcast() {
-        val intent = Intent(Constants.ACTION_NOTE_CHANGE_BROADCAST)
-        context?.sendBroadcast(intent)
-    }
-
     override fun onGetSelectedCategories(categories: List<Category>) {
-        val noteNonNull = note ?: return
         this.categories = categories
-        noteNonNull.tags = CategoryViewModel.getTags(categories)
+        note.tags = CategoryViewModel.getTags(categories)
         val tagsName = CategoryViewModel.getTagsName(categories)
-        noteNonNull.tagsName = tagsName
+        note.tagsName = tagsName
         addTagsToLayout(tagsName)
-        setContentChanged()
+        contentChanged = true
     }
 
     override fun getTagsLayout(): FlowLayout? {
@@ -561,11 +529,10 @@ class NoteEditFragment : BaseModelFragment<Note, FragmentNoteBinding>() {
     }
 
     override fun onGetLocation(location: Location) {
-        val note = note ?: return
         location.modelCode = note.code
         location.modelType = ModelType.NOTE
         showLocationInfo(location)
-        locationViewModel?.saveModel(location)
+        locationViewModel.saveModel(location)
     }
 
     /**
@@ -586,15 +553,12 @@ class NoteEditFragment : BaseModelFragment<Note, FragmentNoteBinding>() {
     //region override BaseFragment
 
     override fun onGetAttachment(attachment: Attachment) {
-        val note = note ?: return
         attachment.modelCode = note.code
         attachment.modelType = ModelType.NOTE
-        attachmentViewModel
-                ?.saveModel(attachment)
+        attachmentViewModel.saveModel(attachment)
                 ?.observe(this, Observer { LogUtils.d(it) })
 
-        val context = context ?: return
-        var title = FileHelper.getNameFromUri(context, attachment.uri)
+        var title = FileHelper.getNameFromUri(attachment.uri)
         title = if (title.isNullOrEmpty()) getString(R.string.text_attachment) else title
 
         if (Constants.MIME_TYPE_IMAGE.equals(attachment.mineType, true)
@@ -607,6 +571,147 @@ class NoteEditFragment : BaseModelFragment<Note, FragmentNoteBinding>() {
 
     override fun onFailedGetAttachment(attachment: Attachment) {
         ToastUtils.makeToast(R.string.failed_to_save_attachment)
+    }
+
+    //endregion
+    //region content
+
+    /**
+     * Field remark that is the content changed.
+     */
+    private var contentChanged: Boolean = false
+        set(value) {
+            if (value && !contentChanged) {
+                field = true
+                materialMenu!!.animateIconState(MaterialMenuDrawable.IconState.CHECK)
+            }
+        }
+
+    /**
+     * Have we ever saved or updated the content.
+     */
+    private var savedOrUpdated: Boolean = false
+
+    private fun saveOrUpdateData(handler: ((Boolean) -> Unit)?) {
+        beforeSaveOrUpdate {
+            if (it) {
+                doPersist(handler)
+            }
+        }
+    }
+
+    private fun beforeSaveOrUpdate(handler: ((Boolean) -> Unit)?) {
+        val noteContent = binding?.main?.etContent?.text.toString()
+        note.content = noteContent
+
+        // Get note title from title editor or note content
+        val inputTitle = binding?.main?.etTitle?.text.toString()
+        note.title = ModelHelper.getNoteTitle(inputTitle, noteContent)
+
+        // Get preview image from note content
+        note.previewImage = ModelHelper.getNotePreviewImage(noteContent)
+
+        note.previewContent = ModelHelper.getNotePreview(noteContent)
+
+        attachmentViewModel.writeNoteContent(note)
+                ?.observe(this, Observer { attachmentResource ->
+                    if (attachmentResource == null) {
+                        ToastUtils.makeToast(R.string.text_error_when_save)
+                        return@Observer
+                    }
+                    when (attachmentResource.status) {
+                        LoadStatus.SUCCESS -> {
+                            attachmentResource.data?.code?.let {
+                                note.attachmentCode = it
+                            }
+                            handler?.invoke(true)
+                        }
+                        LoadStatus.FAILED -> {
+                            ToastUtils.makeToast(R.string.text_error_when_save)
+                            handler?.invoke(false)
+                        }
+                        else -> {
+                            // pass
+                        }
+                    }
+                })
+    }
+
+    /**
+     * Save the model to db if it is new, otherwise update the existed one.
+     */
+    private fun doPersist(handler: ((Boolean) -> Unit)?) {
+        noteViewModel.saveModel(note)
+                ?.observe(this, Observer { resource ->
+                    if (resource == null) {
+                        ToastUtils.makeToast(R.string.text_error_when_save)
+                        return@Observer
+                    }
+                    when (resource.status) {
+                        LoadStatus.SUCCESS -> {
+                            ToastUtils.makeToast(R.string.text_save_successfully)
+                            updateState()
+                            afterSaveOrUpdate()
+                            handler?.invoke(true)
+                        }
+                        LoadStatus.FAILED -> {
+                            ToastUtils.makeToast(R.string.text_error_when_save)
+                            handler?.invoke(false)
+                        }
+                        else -> {
+                            // pass
+                        }
+                    }
+                })
+    }
+
+    private fun updateState() {
+        contentChanged = false
+        savedOrUpdated = true
+    }
+
+    private fun afterSaveOrUpdate() {
+        AppWidgetUtils.notifyAppWidgets()
+
+        materialMenu!!.animateIconState(MaterialMenuDrawable.IconState.ARROW)
+        note.content = binding?.main?.etContent?.text.toString()
+
+        val args = arguments ?: return
+        if (args.getBoolean(EXTRA_IS_THIRD_PART)
+                || args.getString(EXTRA_ACTION) == Constants.ACTION_ADD_SKETCH
+                || args.getString(EXTRA_ACTION) == Constants.ACTION_TAKE_PHOTO
+                || args.getString(EXTRA_ACTION) == Constants.ACTION_ADD_FILES) {
+            sendNoteChangeBroadcast()
+        }
+    }
+
+    private fun sendNoteChangeBroadcast() {
+        val intent = Intent(Constants.ACTION_NOTE_CHANGE_BROADCAST)
+        context?.sendBroadcast(intent)
+    }
+
+    private fun setResult() {
+        val activityNonNull = activity as? CommonActivity<*> ?: return
+
+        // The model didn't change.
+        if (!savedOrUpdated) {
+            activityNonNull.superOnBackPressed()
+            return
+        }
+
+        // If the argument has request code, return it, otherwise just go back
+        arguments?.let {
+            if (it.containsKey(Constants.EXTRA_REQUEST_CODE)) {
+                val intent = Intent()
+                intent.putExtra(Constants.EXTRA_MODEL, note)
+                if (it.containsKey(Constants.EXTRA_POSITION)) {
+                    intent.putExtra(Constants.EXTRA_POSITION, it.getInt(Constants.EXTRA_POSITION, 0))
+                }
+                activityNonNull.setResult(Activity.RESULT_OK, intent)
+
+            }
+        }
+        activityNonNull.superOnBackPressed()
     }
 
     //endregion
@@ -627,16 +732,14 @@ class NoteEditFragment : BaseModelFragment<Note, FragmentNoteBinding>() {
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when (item?.itemId) {
             android.R.id.home -> {
-                if (isContentChanged) saveOrUpdateData(null)
+                if (contentChanged) saveOrUpdateData(null)
                 else setResult()
             }
             R.id.action_more -> binding.drawerLayout.openDrawer(GravityCompat.END, true)
             R.id.action_preview -> {
-                note?.let {
-                    it.title = binding?.main?.etTitle?.text.toString()
-                    it.content = binding?.main?.etContent?.text.toString()
-                    ContentActivity.viewNote(this, it, true, 0)
-                }
+                note.title = binding?.main?.etTitle?.text.toString()
+                note.content = binding?.main?.etContent?.text.toString()
+                ContentActivity.viewNote(this, note, true, 0)
             }
         }
         return super.onOptionsItemSelected(item)
@@ -651,8 +754,8 @@ class NoteEditFragment : BaseModelFragment<Note, FragmentNoteBinding>() {
         override fun onTextChanged(charSequence: CharSequence, i: Int, i1: Int, i2: Int) {}
 
         override fun afterTextChanged(editable: Editable) {
-            note?.title = editable.toString()
-            setContentChanged()
+            note.title = editable.toString()
+            contentChanged = true
             updateCharsInfo()
         }
     }
@@ -669,8 +772,8 @@ class NoteEditFragment : BaseModelFragment<Note, FragmentNoteBinding>() {
                     || binding?.main?.etContent?.tag is Boolean && binding?.main?.etContent?.tag as Boolean) {
                 binding?.main?.etContent?.tag = null
             } else {
-                note?.content = s.toString()
-                setContentChanged()
+                note.content = s.toString()
+                contentChanged = true
                 updateCharsInfo()
             }
         }

@@ -30,12 +30,6 @@ public abstract class BaseRepository<T extends Model> {
         return result;
     }
 
-    public LiveData<Resource<Boolean>> isNewModel(Long code) {
-        MutableLiveData<Resource<Boolean>> result = new MutableLiveData<>();
-        new NormalAsyncTask<>(result, () -> getStore().isNewModel(code)).execute();
-        return result;
-    }
-
     public LiveData<Resource<T>> saveModel(T model) {
         MutableLiveData<Resource<T>> result = new MutableLiveData<>();
         new NormalAsyncTask<>(result, () -> {
@@ -58,15 +52,6 @@ public abstract class BaseRepository<T extends Model> {
         MutableLiveData<Resource<T>> result = new MutableLiveData<>();
         new NormalAsyncTask<>(result, () -> {
             getStore().update(model, toStatus);
-            return model;
-        }).execute();
-        return result;
-    }
-
-    public LiveData<Resource<T>> saveOrUpdate(T model) {
-        MutableLiveData<Resource<T>> result = new MutableLiveData<>();
-        new NormalAsyncTask<>(result, () -> {
-            getStore().saveOrUpdate(model);
             return model;
         }).execute();
         return result;

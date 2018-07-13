@@ -48,7 +48,7 @@ class NoteStore private constructor(context: Context) : BaseStore<Note>(context)
 
     public override fun fillModel(note: Note, cursor: Cursor) {
         note.title = cursor.getString(cursor.getColumnIndex(NoteSchema.TITLE))
-        note.contentCode = cursor.getLong(cursor.getColumnIndex(NoteSchema.CONTENT_CODE))
+        note.attachmentCode = cursor.getLong(cursor.getColumnIndex(NoteSchema.CONTENT_CODE))
         note.tags = cursor.getString(cursor.getColumnIndex(NoteSchema.TAGS))
         note.treePath = cursor.getString(cursor.getColumnIndex(NoteSchema.TREE_PATH))
         val preUri = cursor.getString(cursor.getColumnIndex(NoteSchema.PREVIEW_IMAGE))
@@ -58,7 +58,7 @@ class NoteStore private constructor(context: Context) : BaseStore<Note>(context)
 
     override fun fillContentValues(values: ContentValues, note: Note) {
         values.put(NoteSchema.TITLE, note.title)
-        values.put(NoteSchema.CONTENT_CODE, note.contentCode)
+        values.put(NoteSchema.CONTENT_CODE, note.attachmentCode)
         values.put(NoteSchema.TAGS, note.tags)
         values.put(NoteSchema.TREE_PATH, note.treePath)
         val uri = note.previewImage
@@ -77,13 +77,12 @@ class NoteStore private constructor(context: Context) : BaseStore<Note>(context)
         return notes
     }
 
-    @Synchronized
-    override fun saveOrUpdate(note: Note) {
+    override fun saveModel(note: Note) {
         val noteFile = noteFile(note) ?: return
         noteFile.writeText(note.content)
     }
 
-    private fun isNewModel(note: Note): Boolean {
+    fun isNewModel(note: Note): Boolean {
         val noteFile = noteFile(note)
         return noteFile?.isFile ?: false
     }

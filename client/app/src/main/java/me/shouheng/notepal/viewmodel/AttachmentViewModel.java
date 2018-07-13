@@ -24,7 +24,8 @@ import me.shouheng.notepal.util.LogUtils;
 import me.shouheng.notepal.util.preferences.NotePreferences;
 
 /**
- * Created by WangShouheng on 2018/3/13.*/
+ * Created by WangShouheng on 2018/3/13.
+ */
 public class AttachmentViewModel extends BaseViewModel<Attachment> {
 
     @Override
@@ -32,14 +33,10 @@ public class AttachmentViewModel extends BaseViewModel<Attachment> {
         return new AttachmentRepository();
     }
 
-    public LiveData<Resource<Attachment>> saveIfNew(Attachment attachment) {
-        return ((AttachmentRepository) getRepository()).saveIfNew(attachment);
-    }
-
     public LiveData<Resource<String>> readNoteContent(Note note) {
         MutableLiveData<Resource<String>> result = new MutableLiveData<>();
         new ResourceAsyncTask<>(result, () -> {
-            Attachment atFile = AttachmentsStore.getInstance(PalmApp.getContext()).get(note.getContentCode());
+            Attachment atFile = AttachmentsStore.getInstance(PalmApp.getContext()).get(note.getAttachmentCode());
             if (atFile == null) {
                 // return the note content field
                 return Resource.success(note.getContent());
@@ -60,7 +57,7 @@ public class AttachmentViewModel extends BaseViewModel<Attachment> {
     public LiveData<Resource<Attachment>> writeNoteContent(Note note) {
         MutableLiveData<Resource<Attachment>> result = new MutableLiveData<>();
         new ResourceAsyncTask<>(result, () -> {
-            Attachment atFile = AttachmentsStore.getInstance(PalmApp.getContext()).get(note.getContentCode());
+            Attachment atFile = AttachmentsStore.getInstance(PalmApp.getContext()).get(note.getAttachmentCode());
             if (atFile == null) {
                 // If the attachment is not exist, we will try to create a new one.
                 String extension = NotePreferences.getInstance().getNoteFileExtension();

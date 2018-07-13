@@ -1,18 +1,12 @@
 package me.shouheng.notepal.fragment.base;
 
-import android.app.Activity;
-import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.ViewModelProviders;
-import android.content.Intent;
 import android.databinding.ViewDataBinding;
-import android.os.Bundle;
 import android.support.annotation.ColorInt;
 import android.text.TextUtils;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
-import com.afollestad.materialdialogs.MaterialDialog;
 
 import org.polaric.colorful.PermissionUtils;
 
@@ -21,7 +15,6 @@ import java.util.List;
 
 import me.shouheng.notepal.R;
 import me.shouheng.notepal.activity.base.CommonActivity;
-import me.shouheng.notepal.config.Constants;
 import me.shouheng.notepal.dialog.CategoryEditDialog;
 import me.shouheng.notepal.dialog.picker.CategoryPickerDialog;
 import me.shouheng.notepal.manager.LocationManager;
@@ -29,15 +22,10 @@ import me.shouheng.notepal.model.Category;
 import me.shouheng.notepal.model.Location;
 import me.shouheng.notepal.model.Model;
 import me.shouheng.notepal.model.ModelFactory;
-import me.shouheng.notepal.model.data.Resource;
 import me.shouheng.notepal.provider.CategoryStore;
-import me.shouheng.notepal.util.AppWidgetUtils;
-import me.shouheng.notepal.util.LogUtils;
 import me.shouheng.notepal.util.NetworkUtils;
-import me.shouheng.notepal.util.ShortcutHelper;
 import me.shouheng.notepal.util.ToastUtils;
 import me.shouheng.notepal.util.ViewUtils;
-import me.shouheng.notepal.viewmodel.BaseViewModel;
 import me.shouheng.notepal.viewmodel.CategoryViewModel;
 import me.shouheng.notepal.widget.FlowLayout;
 
@@ -46,202 +34,6 @@ import me.shouheng.notepal.widget.FlowLayout;
  */
 public abstract class BaseModelFragment<T extends Model, V extends ViewDataBinding> extends BaseFragment<V> {
 
-    // region edit structure
-
-    /**
-     * Field remark that is the content changed.
-     */
-    private boolean contentChanged = false;
-
-    /**
-     * Have we ever saved or updated the content.
-     */
-    private boolean savedOrUpdated = false;
-
-    protected void setContentChanged() {
-        this.contentChanged = true;
-    }
-
-    protected final boolean isContentChanged() {
-        return contentChanged;
-    }
-
-    /**
-     * Get the model to work with.
-     *
-     * @return the model to work with
-     */
-    protected abstract T getModel();
-
-    /**
-     * Get the view model to operate the model.
-     *
-     * @return the view model
-     */
-    protected abstract BaseViewModel<T> getViewModel();
-
-    /**
-     * Check the model content before save or update.
-     *
-     * @return true if the content is legal otherwise false.
-     */
-    protected boolean checkContent() {
-        return true;
-    }
-
-    /**
-     * This method will be called before save or update the model.
-     */
-    protected void beforeSaveOrUpdate(BeforePersistEventHandler handler) {
-    }
-
-    /**
-     * Save the model to db if it is new, otherwise update the existed one.
-     */
-    protected void doPersist(PersistEventHandler handler) {
-        getViewModel().saveOrUpdate(getModel()).observe(this, tResource -> {
-            if (tResource == null) {
-                ToastUtils.makeToast(R.string.text_error_when_save);
-                return;
-            }
-            switch (tResource.status) {
-                case SUCCESS:
-                    ToastUtils.makeToast(R.string.text_save_successfully);
-                    updateState();
-                    afterSaveOrUpdate();
-                    if (handler != null) handler.onGetEventResult(true);
-                    break;
-                case FAILED:
-                    ToastUtils.makeToast(R.string.text_error_when_save);
-                    if (handler != null) handler.onGetEventResult(false);
-                    break;
-            }
-        });
-    }
-
-    protected void afterSaveOrUpdate() {
-        AppWidgetUtils.notifyAppWidgets();
-    }
-
-    protected LiveData<Resource<Boolean>> isNewModel() {
-        return getViewModel().isNewModel(getModel().getCode());
-    }
-
-    protected final void saveOrUpdateData(PersistEventHandler handler) {
-        if (!checkContent()) {
-            if (handler != null) {
-                handler.onGetEventResult(false);
-            }
-            return;
-        }
-
-        beforeSaveOrUpdate(succeed -> {
-            if (succeed) {
-                doPersist(handler);
-            }
-        });
-    }
-
-    private void updateState() {
-        contentChanged = false;
-        savedOrUpdated = true;
-    }
-
-    protected final void handleBackPress() {
-        if (getActivity() == null) {
-            // the activity is not attached
-            LogUtils.e("Error! Activity is not attached when go back!");
-            return;
-        }
-
-        CommonActivity activity = (CommonActivity) getActivity();
-        if (isContentChanged()) {
-            new MaterialDialog.Builder(getContext())
-                    .title(R.string.text_tips)
-                    .content(R.string.text_save_or_discard)
-                    .positiveText(R.string.text_save)
-                    .negativeText(R.string.text_give_up)
-                    .onPositive((materialDialog, dialogAction) -> {
-                        if (!checkContent()) {
-                            return;
-                        }
-                        saveOrUpdateData(succeed -> setResult());
-                    })
-                    .onNegative((materialDialog, dialogAction) -> activity.superOnBackPressed())
-                    .show();
-        } else {
-            setResult();
-        }
-    }
-
-    protected final void setResult() {
-        // If the activity is null, do nothing
-        if (getActivity() == null) return;
-
-        CommonActivity activity = (CommonActivity) getActivity();
-
-        // The model didn't change.
-        if (!savedOrUpdated) {
-            activity.superOnBackPressed();
-        }
-
-        // If the argument has request code, return it, otherwise just go back
-        Bundle args = getArguments();
-        if (args != null && args.containsKey(Constants.EXTRA_REQUEST_CODE)) {
-            Intent intent = new Intent();
-            intent.putExtra(Constants.EXTRA_MODEL, getModel());
-            if (args.containsKey(Constants.EXTRA_POSITION)) {
-                intent.putExtra(Constants.EXTRA_POSITION, args.getInt(Constants.EXTRA_POSITION, 0));
-            }
-            getActivity().setResult(Activity.RESULT_OK, intent);
-        }
-        activity.superOnBackPressed();
-    }
-
-    public interface BeforePersistEventHandler {
-        void onGetEventResult(boolean succeed);
-    }
-
-    public interface PersistEventHandler {
-        void onGetEventResult(boolean succeed);
-    }
-
-    // endregion
-    // region drawer
-
-    protected void addShortcut() {
-        if (getActivity() == null) return;
-
-        isNewModel().observe(this, booleanResource -> {
-            if (booleanResource == null) {
-                LogUtils.e("Error! booleanResource is null when query is new model!");
-                return;
-            }
-            LogUtils.d(booleanResource);
-            switch (booleanResource.status) {
-                case SUCCESS:
-                    if (booleanResource.data != null && !booleanResource.data) {
-                        ShortcutHelper.addShortcut(getActivity().getApplicationContext(), getModel());
-                        ToastUtils.makeToast(R.string.successfully_add_shortcut);
-                    } else {
-                        new MaterialDialog.Builder(getContext())
-                                .title(R.string.text_tips)
-                                .content(R.string.text_save_and_retry_to_add_shortcut)
-                                .positiveText(R.string.text_save_and_retry)
-                                .negativeText(R.string.text_give_up)
-                                .onPositive((materialDialog, dialogAction) -> saveOrUpdateData(succeed -> {
-                                    if (succeed) {
-                                        ShortcutHelper.addShortcut(getContext(), getModel());
-                                        ToastUtils.makeToast(R.string.successfully_add_shortcut);
-                                    }
-                                })).show();
-                    }
-                    break;
-            }
-        });
-    }
-
-    // endregion
     // region Base logic about category
 
     private List<Category> allCategories;

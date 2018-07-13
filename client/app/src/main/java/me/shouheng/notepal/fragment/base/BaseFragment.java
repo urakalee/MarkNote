@@ -46,7 +46,6 @@ public abstract class BaseFragment<V extends ViewDataBinding> extends CommonFrag
     }
 
     // endregion
-
     // region Attachment
 
     /**

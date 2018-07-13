@@ -25,7 +25,6 @@ public class Notebook extends Model implements Selectable {
      * 目录中内容的数量
      */
     private int count;
-
     private boolean isSelected;
 
     private boolean create;

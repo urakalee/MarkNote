@@ -19,10 +19,6 @@ public abstract class BaseViewModel<T extends Model> extends ViewModel {
         return getRepository().get(code);
     }
 
-    public LiveData<Resource<Boolean>> isNewModel(Long code) {
-        return getRepository().isNewModel(code);
-    }
-
     public LiveData<Resource<T>> saveModel(T model) {
         return getRepository().saveModel(model);
     }
@@ -33,9 +29,5 @@ public abstract class BaseViewModel<T extends Model> extends ViewModel {
 
     public LiveData<Resource<T>> update(T model, ItemStatus toStatus) {
         return getRepository().update(model, toStatus);
-    }
-
-    public LiveData<Resource<T>> saveOrUpdate(T model) {
-        return getRepository().saveOrUpdate(model);
     }
 }
