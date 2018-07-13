@@ -12,9 +12,6 @@ import me.shouheng.notepal.provider.schema.NoteSchema;
 @Table(name = NoteSchema.TABLE_NAME)
 public class Note extends Model {
 
-    @Column(name = NoteSchema.PARENT_CODE)
-    private long parentCode;
-
     @Column(name = NoteSchema.TREE_PATH)
     private String treePath;
 
@@ -70,14 +67,6 @@ public class Note extends Model {
     public Note() {
     }
 
-    public long getParentCode() {
-        return parentCode;
-    }
-
-    public void setParentCode(long parentCode) {
-        this.parentCode = parentCode;
-    }
-
     public String getTreePath() {
         return treePath;
     }
@@ -129,8 +118,7 @@ public class Note extends Model {
     @Override
     public String toString() {
         return "Note{" +
-                "parentCode=" + parentCode +
-                ", treePath='" + treePath + '\'' +
+                "treePath='" + treePath + '\'' +
                 ", title='" + title + '\'' +
                 ", contentCode=" + contentCode +
                 ", tags='" + tags + '\'' +

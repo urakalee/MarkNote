@@ -392,10 +392,15 @@ public class MainActivity extends CommonActivity<ActivityMainBinding> implements
         getBinding().menu.setOnMenuButtonClickListener((View v) -> {
             Fragment currentFragment = getCurrentFragment();
             if (currentFragment instanceof NotesFragment) {
-                if (((NotesFragment) currentFragment).isTopStack()) {
+                NotesFragment notesFragment = (NotesFragment) currentFragment;
+                if (notesFragment.isTopStack()) {
                     editNotebook();
                 } else {
-                    editNote(getNewNote());
+                    Note note = getNewNote();
+                    if (notesFragment.getNotebook() != null) {
+                        note.setNotebook(notesFragment.getNotebook());
+                    }
+                    editNote(note);
                 }
             } else if (currentFragment instanceof CategoriesFragment) {
                 // TODO
@@ -506,7 +511,6 @@ public class MainActivity extends CommonActivity<ActivityMainBinding> implements
         /* Add notebook filed according to current fragment */
         Notebook notebook;
         if (isNotes && (notebook = ((NotesFragment) getCurrentFragment()).getNotebook()) != null) {
-            note.setParentCode(notebook.getCode());
             note.setTreePath(notebook.getTreePath() + "|" + note.getCode());
         } else {
             // The default tree path of note is itself

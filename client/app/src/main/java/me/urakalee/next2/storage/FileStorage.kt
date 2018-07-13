@@ -10,7 +10,7 @@ import java.io.File
  */
 fun sdCard() = Environment.getExternalStorageDirectory()
 
-fun storageRoot() = File(sdCard(), "/Android/data/com.ryeeeeee.markdownx/files/notes/YfdClientWiki")
+fun storageRoot() = File(sdCard(), "/Android/data/com.ryeeeeee.markdownx/files/notes/dayone")
 
 fun listDirs(file: File, showHidden: Boolean = false): List<File> {
     val dir = if (file.isDirectory) file else return listOf()

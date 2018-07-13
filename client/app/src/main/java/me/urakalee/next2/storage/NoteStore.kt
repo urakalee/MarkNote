@@ -47,7 +47,6 @@ class NoteStore private constructor(context: Context) : BaseStore<Note>(context)
     }
 
     public override fun fillModel(note: Note, cursor: Cursor) {
-        note.parentCode = cursor.getLong(cursor.getColumnIndex(NoteSchema.PARENT_CODE))
         note.title = cursor.getString(cursor.getColumnIndex(NoteSchema.TITLE))
         note.contentCode = cursor.getLong(cursor.getColumnIndex(NoteSchema.CONTENT_CODE))
         note.tags = cursor.getString(cursor.getColumnIndex(NoteSchema.TAGS))
@@ -58,7 +57,6 @@ class NoteStore private constructor(context: Context) : BaseStore<Note>(context)
     }
 
     override fun fillContentValues(values: ContentValues, note: Note) {
-        values.put(NoteSchema.PARENT_CODE, note.parentCode)
         values.put(NoteSchema.TITLE, note.title)
         values.put(NoteSchema.CONTENT_CODE, note.contentCode)
         values.put(NoteSchema.TAGS, note.tags)

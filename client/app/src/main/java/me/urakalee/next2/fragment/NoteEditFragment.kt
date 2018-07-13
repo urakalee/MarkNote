@@ -204,13 +204,32 @@ class NoteEditFragment : BaseModelFragment<Note, FragmentNoteBinding>() {
     // region fetch data
 
     private fun fetchData(note: Note) {
-        fetchNoteContent(note)
-        fetchNotebook(note)
         fetchCategories(note)
+        fetchAttachment(note)
         fetchLocation(note)
     }
 
-    private fun fetchNoteContent(note: Note) {
+    private fun fetchCategories(note: Note) {
+        categoryViewModel
+                ?.getCategories(note)
+                ?.observe(this, Observer { listResource ->
+                    if (listResource == null) {
+                        ToastUtils.makeToast(R.string.text_failed_to_load_data)
+                        return@Observer
+                    }
+                    when (listResource.status) {
+                        LoadStatus.SUCCESS -> {
+                            categories = listResource.data
+                            addTagsToLayout(CategoryViewModel.getTagsName(listResource.data))
+                        }
+                        else -> {
+                            // pass
+                        }
+                    }
+                })
+    }
+
+    private fun fetchAttachment(note: Note) {
         // 恢复现场，不需要重新加载数据
         if (!note.content.isNullOrEmpty()
                 && arguments?.getBoolean(KEY_ARGS_RESTORE) == true) {
@@ -231,48 +250,6 @@ class NoteEditFragment : BaseModelFragment<Note, FragmentNoteBinding>() {
                             binding?.main?.etContent?.setText(note.content)
                         }
                         LoadStatus.FAILED -> ToastUtils.makeToast(R.string.note_failed_to_read_file)
-                        else -> {
-                            // pass
-                        }
-                    }
-                })
-    }
-
-    private fun fetchNotebook(note: Note) {
-        notebookViewModel
-                ?.get(note.parentCode)
-                ?.observe(this, Observer { notebookResource ->
-                    if (notebookResource == null) {
-                        ToastUtils.makeToast(R.string.text_failed_to_load_data)
-                        return@Observer
-                    }
-                    when (notebookResource.status) {
-                        LoadStatus.SUCCESS -> if (notebookResource.data != null) {
-                            binding?.main?.tvFolder?.text = notebookResource.data?.title
-                            notebookResource.data?.color?.let {
-                                binding?.main?.tvFolder?.setTextColor(it)
-                            }
-                        }
-                        else -> {
-                            // pass
-                        }
-                    }
-                })
-    }
-
-    private fun fetchCategories(note: Note) {
-        categoryViewModel
-                ?.getCategories(note)
-                ?.observe(this, Observer { listResource ->
-                    if (listResource == null) {
-                        ToastUtils.makeToast(R.string.text_failed_to_load_data)
-                        return@Observer
-                    }
-                    when (listResource.status) {
-                        LoadStatus.SUCCESS -> {
-                            categories = listResource.data
-                            addTagsToLayout(CategoryViewModel.getTagsName(listResource.data))
-                        }
                         else -> {
                             // pass
                         }
@@ -336,7 +313,6 @@ class NoteEditFragment : BaseModelFragment<Note, FragmentNoteBinding>() {
     private fun showNotebookPicker() {
         fragmentManager?.let {
             NotebookPickerDialog.newInstance().setOnItemSelectedListener { dialog, value, _ ->
-                note?.parentCode = value.code
                 note?.treePath = value.treePath + "|" + value.code
                 binding?.main?.tvFolder?.text = value.title
                 binding?.main?.tvFolder?.setTextColor(value.color)

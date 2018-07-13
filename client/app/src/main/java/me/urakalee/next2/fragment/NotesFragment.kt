@@ -244,6 +244,9 @@ class NotesFragment : BaseFragment<FragmentNotesBinding>(),
                     if (isNotebookList()) {
                         ToastUtils.makeToast("TODO")
                     } else {
+                        notebook?.let {
+                            multiItem.note.notebook = it
+                        }
                         ContentActivity.editNote(this, multiItem.note, REQUEST_NOTE_EDIT)
                     }
                 }
@@ -266,10 +269,9 @@ class NotesFragment : BaseFragment<FragmentNotesBinding>(),
 
     private fun moveNote(note: Note) {
         val fragmentNonNull = fragmentManager ?: return
-        NotebookPickerDialog.newInstance().setOnItemSelectedListener { dialog, toBook, _ ->
-            if (toBook.code == note.parentCode) return@setOnItemSelectedListener
-            note.parentCode = toBook.code
-            note.treePath = toBook.treePath + "|" + note.code
+        NotebookPickerDialog.newInstance().setOnItemSelectedListener { dialog, targetNotebook, _ ->
+            if (note.notebook.title == targetNotebook.title) return@setOnItemSelectedListener
+            note.treePath = targetNotebook.treePath + "|" + note.code
             update(note)
             dialog.dismiss()
         }.show(fragmentNonNull, "Notebook picker")
