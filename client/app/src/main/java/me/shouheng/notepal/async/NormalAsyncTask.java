@@ -29,7 +29,7 @@ public class NormalAsyncTask<M> extends AsyncTask<Void, Integer, Resource<M>> {
                 return Resource.success(ret);
             } catch (Exception e) {
                 LogUtils.e(e);
-                return Resource.error("Failed to load data", null);
+                return Resource.error("Failed on execute", null);
             }
         }
         return Resource.error("No listener to load data", null);

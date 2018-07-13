@@ -2,6 +2,10 @@ package me.shouheng.notepal.model;
 
 import android.net.Uri;
 
+import org.joda.time.LocalDate;
+
+import java.io.File;
+
 import me.shouheng.notepal.provider.annotation.Column;
 import me.shouheng.notepal.provider.annotation.Table;
 import me.shouheng.notepal.provider.schema.NoteSchema;
@@ -36,7 +40,9 @@ public class Note extends Model {
     private String content;
     private String tagsName;
 
+    private String timePath;
     private String originTitle;
+    private File originFile;
 
     public Notebook getNotebook() {
         return notebook;
@@ -62,6 +68,14 @@ public class Note extends Model {
         this.tagsName = tagsName;
     }
 
+    public String getTimePath() {
+        return timePath;
+    }
+
+    public void generateTimePath() {
+        timePath = LocalDate.now().toString("yyyy-MM");
+    }
+
     public String getOriginTitle() {
         return originTitle;
     }
@@ -78,8 +92,17 @@ public class Note extends Model {
         return !title.equals(originTitle);
     }
 
+    public File getOriginFile() {
+        return originFile;
+    }
+
+    public void setOriginFile(File originFile) {
+        this.originFile = originFile;
+    }
+
     public void finishRename() {
         originTitle = title;
+        originFile = null;
     }
 
     // endregion

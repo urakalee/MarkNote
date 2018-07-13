@@ -9,6 +9,7 @@ import android.text.TextUtils
 import me.shouheng.notepal.PalmApp
 import me.shouheng.notepal.model.Note
 import me.shouheng.notepal.model.Notebook
+import me.shouheng.notepal.model.enums.ItemStatus
 import me.shouheng.notepal.provider.BaseStore
 import me.shouheng.notepal.provider.schema.NoteSchema
 import java.io.File
@@ -79,18 +80,51 @@ class NoteStore private constructor(context: Context) : BaseStore<Note>(context)
 
     override fun saveModel(note: Note) {
         val noteFile = noteFile(note) ?: return
-        noteFile.writeText(note.content)
+        // TODO: 检查重名, 如果有, 则修改 title, 并通知上层更新
+        if (note.isNewNote) {
+            if (noteFile.exists()) {
+                throw RuntimeException("${note.title} already exists")
+            }
+            noteFile.parentFile.mkdirs()
+            noteFile.writeText(note.content)
+        } else if (note.needRename()) {
+            if (noteFile.exists()) {
+                throw RuntimeException("${note.title} already exists")
+            }
+            noteFile.writeText(note.content)
+            note.originFile.delete()
+            note.finishRename()
+        } else {
+            noteFile.writeText(note.content)
+        }
     }
 
-    fun isNewModel(note: Note): Boolean {
-        val noteFile = noteFile(note)
-        return noteFile?.isFile ?: false
+    override fun update(model: Note) {
+        throw UnsupportedOperationException()
+    }
+
+    override fun update(model: Note, toStatus: ItemStatus) {
+        throw UnsupportedOperationException()
     }
 
     private fun noteFile(note: Note): File? {
-        val notebookNonNull = note.notebook ?: return null
+        val notebookNonNull = note.notebook ?: throw IllegalArgumentException("notebook is null")
+        if (note.isNewNote) {
+            note.generateTimePath()
+        }
+        if (note.timePath == null) {
+            throw IllegalArgumentException("note without time-path")
+        }
         val noteRoot = File(storageRoot(), notebookNonNull.title)
-        return File(noteRoot, note.title)
+        val timeRoot = File(noteRoot, note.timePath)
+        if (note.needRename()) {
+            val originFile = File(timeRoot, note.originTitle)
+            if (!originFile.isFile) {
+                throw IllegalArgumentException("origin note not exists")
+            }
+            note.originFile = originFile
+        }
+        return File(timeRoot, note.title)
     }
 
     companion object {
