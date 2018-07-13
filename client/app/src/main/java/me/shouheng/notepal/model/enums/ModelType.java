@@ -3,7 +3,6 @@ package me.shouheng.notepal.model.enums;
 import android.support.annotation.StringRes;
 
 import me.shouheng.notepal.R;
-import me.shouheng.notepal.model.Alarm;
 import me.shouheng.notepal.model.Attachment;
 import me.shouheng.notepal.model.Location;
 import me.shouheng.notepal.model.MindSnagging;
@@ -20,7 +19,6 @@ public enum ModelType {
     NONE(0, Model.class, R.string.model_name_none),
     NOTE(3, Note.class, R.string.model_name_note),
     NOTEBOOK(9, Notebook.class, R.string.model_name_notebook),
-    ALARM(10, Alarm.class, R.string.model_name_alarm),
     ATTACHMENT(11, Attachment.class, R.string.model_name_attachment),
     LOCATION(13, Location.class, R.string.model_name_location),
     MIND_SNAGGING(14, MindSnagging.class, R.string.model_name_mind_snagging),

@@ -210,18 +210,10 @@
     <string name="file_not_exist">File not found</string>
     <!--endregion-->
 
-    <!--region Alarm-->
-    <string name="one_shot">One shot</string>
-    <string name="every_day">Every day</string>
-    <string name="day_concat">,</string>
-    <string name="until">until</string>
-    <!--endregion-->
-
     <!--region Enums-->
     <string name="model_name_none">None</string>
     <string name="model_name_note">Note</string>
     <string name="model_name_notebook">Notebook</string>
-    <string name="model_name_alarm">Alarm</string>
     <string name="model_name_attachment">Attachment</string>
     <string name="model_name_location">Location</string>
     <string name="model_name_mind_snagging">Snagging</string>

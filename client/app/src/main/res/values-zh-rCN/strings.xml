@@ -210,18 +210,10 @@
     <string name="file_not_exist">文件不存在</string>
     <!--endregion-->
 
-    <!--region Alarm-->
-    <string name="one_shot">一次</string>
-    <string name="every_day">每天</string>
-    <string name="day_concat">,</string>
-    <string name="until">直到</string>
-    <!--endregion-->
-
     <!--region Enums-->
     <string name="model_name_none">None</string>
     <string name="model_name_note">笔记</string>
     <string name="model_name_notebook">笔记本</string>
-    <string name="model_name_alarm">闹钟</string>
     <string name="model_name_attachment">附件</string>
     <string name="model_name_location">位置</string>
     <string name="model_name_mind_snagging">小纸条</string>

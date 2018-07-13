@@ -61,10 +61,9 @@ public class TimeLinesAdapter extends BaseQuickAdapter<TimeLine, BaseViewHolder>
         switch (timeLine.getModelType()) {
             case NOTE: return R.drawable.ic_doc_text_alpha;
             case NOTEBOOK: return R.drawable.ic_folder_black_24dp;
-            case ALARM: return R.drawable.ic_access_alarm_grey;
+            case ATTACHMENT: return R.drawable.ic_attach_file_black;
             case LOCATION: return R.drawable.ic_location1_grey_24dp;
             case MIND_SNAGGING: return R.drawable.ic_lightbulb_outline_black_24dp;
-            case ATTACHMENT: return R.drawable.ic_attach_file_black;
         }
         return R.drawable.ic_insert_drive_file_grey_24dp;
     }
