@@ -71,9 +71,6 @@ class NoteStore private constructor(context: Context) : BaseStore<Note>(context)
     fun getNotes(notebook: Notebook): List<Note> {
         val noteRoot = File(storageRoot(), notebook.title)
         val notes = LinkedList<Note>()
-        if (!noteRoot.isDirectory) {
-            return notes
-        }
         for (file in listFiles(noteRoot)) {
             val note = Note()
             note.title = file.name

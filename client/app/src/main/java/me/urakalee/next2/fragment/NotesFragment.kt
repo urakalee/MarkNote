@@ -283,10 +283,7 @@ class NotesFragment : BaseFragment<FragmentNotesBinding>(),
         showMoveItem(popupMenu, false)
         popupMenu.setOnMenuItemClickListener { item ->
             when (item.itemId) {
-                R.id.action_trash -> update(multiItem.notebook, status, ItemStatus.TRASHED)
-                R.id.action_archive -> update(multiItem.notebook, status, ItemStatus.ARCHIVED)
                 R.id.action_edit -> editNotebook(position, multiItem.notebook)
-                R.id.action_move_out -> update(multiItem.notebook, status, ItemStatus.NORMAL)
                 R.id.action_delete -> deleteNotebook(multiItem.notebook)
             }
             true
@@ -297,10 +294,12 @@ class NotesFragment : BaseFragment<FragmentNotesBinding>(),
     private fun editNotebook(position: Int, notebook: Notebook) {
         val contextNonNull = context ?: return
         val fragmentNonNull = fragmentManager ?: return
-        dialog = NotebookEditDialog.newInstance(contextNonNull, notebook) { categoryName, notebookColor ->
-            notebook.title = categoryName
+        dialog = NotebookEditDialog.newInstance(contextNonNull, notebook) { notebookName, notebookColor ->
+            if (notebook.title != notebookName) {
+                notebook.rename(notebookName)
+            }
             notebook.color = notebookColor
-            update(position, notebook)
+            update(notebook, position)
         }
         dialog?.show(fragmentNonNull, "Notebook Editor")
     }
@@ -319,7 +318,7 @@ class NotesFragment : BaseFragment<FragmentNotesBinding>(),
                 .positiveText(R.string.text_delete_still)
                 .negativeText(R.string.text_give_up)
                 .onPositive { _, _ ->
-                    update(notebook, status, ItemStatus.DELETED)
+                    delete(notebook)
                 }
                 .show()
     }
@@ -453,9 +452,9 @@ class NotesFragment : BaseFragment<FragmentNotesBinding>(),
                 })
     }
 
-    private fun update(position: Int, notebook: Notebook) {
+    private fun update(notebook: Notebook, position: Int) {
         notebookViewModel
-                ?.update(notebook)
+                ?.saveModel(notebook)
                 ?.observe(this, Observer { notebookResource ->
                     if (notebookResource == null) {
                         ToastUtils.makeToast(R.string.text_failed_to_modify_data)
@@ -473,9 +472,9 @@ class NotesFragment : BaseFragment<FragmentNotesBinding>(),
                 })
     }
 
-    private fun update(notebook: Notebook, fromStatus: ItemStatus, toStatus: ItemStatus) {
+    private fun delete(notebook: Notebook) {
         notebookViewModel
-                ?.update(notebook, fromStatus, toStatus)
+                ?.delete(notebook)
                 ?.observe(this, Observer { notebookResource ->
                     if (notebookResource == null) {
                         ToastUtils.makeToast(R.string.text_failed_to_modify_data)

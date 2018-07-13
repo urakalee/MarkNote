@@ -18,13 +18,13 @@ import me.shouheng.notepal.model.enums.Operation;
 import me.shouheng.notepal.provider.AttachmentsStore;
 import me.shouheng.notepal.provider.CategoryStore;
 import me.shouheng.notepal.provider.LocationsStore;
-import me.shouheng.notepal.provider.NotebookStore;
-import me.urakalee.next2.storage.NoteStore;
 import me.shouheng.notepal.provider.TimelineStore;
 import me.shouheng.notepal.provider.schema.TimelineSchema;
 import me.shouheng.notepal.util.LogUtils;
 import me.shouheng.notepal.util.TimeUtils;
 import me.shouheng.notepal.viewmodel.StatisticViewModel;
+import me.urakalee.next2.storage.NoteStore;
+import me.urakalee.next2.storage.NotebookStore;
 
 /**
  * Created by wang shouheng on 2018/1/19.
@@ -57,7 +57,7 @@ public class StatisticsHelper {
         stats.setLocations(locations);
         stats.setTotalLocations(locationsStore.getCount(null, ItemStatus.DELETED, true));
 
-        NotebookStore notebookStore = NotebookStore.getInstance(context);
+        NotebookStore notebookStore = NotebookStore.Companion.getInstance();
         stats.setTotalNotebooks(notebookStore.getCount(null, ItemStatus.TRASHED, false));
 
         AttachmentsStore attachmentsStore = AttachmentsStore.getInstance(context);

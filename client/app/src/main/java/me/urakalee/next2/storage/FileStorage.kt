@@ -12,7 +12,8 @@ fun sdCard() = Environment.getExternalStorageDirectory()
 
 fun storageRoot() = File(sdCard(), "/Android/data/com.ryeeeeee.markdownx/files/notes/YfdClientWiki")
 
-fun listDirs(dir: File, showHidden: Boolean = false): List<File> {
+fun listDirs(file: File, showHidden: Boolean = false): List<File> {
+    val dir = if (file.isDirectory) file else return listOf()
     val dirs = dir.listFiles { pathname: File? ->
         pathname?.isDirectory ?: false
     }
@@ -20,12 +21,20 @@ fun listDirs(dir: File, showHidden: Boolean = false): List<File> {
     return if (showHidden) dirs.asList() else dirs.filterNot { it.name.startsWith('.') }
 }
 
-fun listFiles(dir: File): List<File> {
+fun listFiles(file: File): List<File> {
+    val dir = if (file.isDirectory) file else return listOf()
     val files = dir.listFiles { pathname: File? ->
         pathname?.isFile ?: false
     }
     files.sortByDescending { it.lastModified() } // XXX: 这个值和设备相关...
     return files.asList()
+}
+
+fun isDirEmpty(file: File): Boolean {
+    val dir = if (file.isDirectory) file else return false
+    return dir.list().isEmpty() || dir.listFiles().all {
+        it.isDirectory && isDirEmpty(it)
+    }
 }
 
 fun getFile(name: String): File {

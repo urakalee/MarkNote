@@ -3,7 +3,6 @@ package me.urakalee.next2.viewmodel
 import android.arch.lifecycle.LiveData
 import me.shouheng.notepal.model.Notebook
 import me.shouheng.notepal.model.data.Resource
-import me.shouheng.notepal.model.enums.ItemStatus
 import me.shouheng.notepal.repository.NotebookRepository
 import me.shouheng.notepal.viewmodel.BaseViewModel
 
@@ -20,7 +19,7 @@ class NotebookViewModel : BaseViewModel<Notebook>() {
         return repository.get(null, null)
     }
 
-    fun update(notebook: Notebook, fromStatus: ItemStatus, toStatus: ItemStatus): LiveData<Resource<Notebook>> {
-        return repository.update(notebook, fromStatus, toStatus)
+    fun delete(notebook: Notebook): LiveData<Resource<Notebook>> {
+        return repository.delete(notebook)
     }
 }

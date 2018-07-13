@@ -24,33 +24,9 @@ public abstract class BaseRepository<T extends Model> {
         return result;
     }
 
-    public LiveData<Resource<T>> get(long code, ItemStatus status, boolean exclude) {
-        MutableLiveData<Resource<T>> result = new MutableLiveData<>();
-        new NormalAsyncTask<>(result, () -> getStore().get(code, status, exclude)).execute();
-        return result;
-    }
-
     public LiveData<Resource<List<T>>> get(String whereSQL, String orderSQL) {
         MutableLiveData<Resource<List<T>>> result = new MutableLiveData<>();
         new NormalAsyncTask<>(result, () -> getStore().get(whereSQL, orderSQL)).execute();
-        return result;
-    }
-
-    public LiveData<Resource<List<T>>> get(String whereSQL, String orderSQL, ItemStatus status, boolean exclude) {
-        MutableLiveData<Resource<List<T>>> result = new MutableLiveData<>();
-        new NormalAsyncTask<>(result, () -> getStore().get(whereSQL, orderSQL, status, exclude)).execute();
-        return result;
-    }
-
-    public LiveData<Resource<List<T>>> get(String whereSQL, String[] whereArgs, String orderSQL) {
-        MutableLiveData<Resource<List<T>>> result = new MutableLiveData<>();
-        new NormalAsyncTask<>(result, () -> getStore().get(whereSQL, whereArgs, orderSQL)).execute();
-        return result;
-    }
-
-    public LiveData<Resource<Integer>> getCount(String whereSQL, ItemStatus status, boolean exclude) {
-        MutableLiveData<Resource<Integer>> result = new MutableLiveData<>();
-        new NormalAsyncTask<>(result, () -> getStore().getCount(whereSQL, status, exclude)).execute();
         return result;
     }
 

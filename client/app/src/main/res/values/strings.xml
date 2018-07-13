@@ -153,7 +153,7 @@
     <string name="notes_list_empty_sub_trashed">no trashed note found</string>
     <string name="move_to_another_notebook">Move</string>
     <string name="moved_successfully">Successfully moved</string>
-    <string name="msg_when_delete_notebook">Delete the notebook will delete its child-notebooks and child-notes as well.</string>
+    <string name="msg_when_delete_notebook">Delete the notebook will delete its child-notes as well.</string>
 
     <string name="pick_notebook">Pick notebook</string>
     <string name="no_notebook_available">No available notebook</string>

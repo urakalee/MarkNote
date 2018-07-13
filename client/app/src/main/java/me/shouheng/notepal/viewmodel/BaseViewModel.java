@@ -3,8 +3,6 @@ package me.shouheng.notepal.viewmodel;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.ViewModel;
 
-import java.util.List;
-
 import me.shouheng.notepal.model.Model;
 import me.shouheng.notepal.model.data.Resource;
 import me.shouheng.notepal.model.enums.ItemStatus;
@@ -19,26 +17,6 @@ public abstract class BaseViewModel<T extends Model> extends ViewModel {
 
     public LiveData<Resource<T>> get(long code) {
         return getRepository().get(code);
-    }
-
-    public LiveData<Resource<T>> get(long code, ItemStatus status, boolean exclude) {
-        return getRepository().get(code, status, exclude);
-    }
-
-    public LiveData<Resource<List<T>>> get(String whereSQL, String orderSQL) {
-        return getRepository().get(whereSQL, orderSQL);
-    }
-
-    public LiveData<Resource<List<T>>> get(String whereSQL, String orderSQL, ItemStatus status, boolean exclude) {
-        return getRepository().get(whereSQL, orderSQL, status, exclude);
-    }
-
-    public LiveData<Resource<List<T>>> get(String whereSQL, String[] whereArgs, String orderSQL) {
-        return getRepository().get(whereSQL, whereArgs, orderSQL);
-    }
-
-    public LiveData<Resource<Integer>> getCount(String whereSQL, ItemStatus status, boolean exclude) {
-        return getRepository().getCount(whereSQL, status, exclude);
     }
 
     public LiveData<Resource<Boolean>> isNewModel(Long code) {

@@ -8,9 +8,9 @@ import me.shouheng.notepal.R;
 import me.shouheng.notepal.adapter.ModelsPickerAdapter;
 import me.shouheng.notepal.adapter.picker.NotebookPickerStrategy;
 import me.shouheng.notepal.model.Notebook;
-import me.shouheng.notepal.provider.NotebookStore;
 import me.shouheng.notepal.util.ColorUtils;
 import me.shouheng.notepal.widget.EmptyView;
+import me.urakalee.next2.storage.NotebookStore;
 
 /**
  * Created by wangshouheng on 2017/10/5.
@@ -27,7 +27,7 @@ public class NotebookPickerDialog extends BasePickerDialog<Notebook> {
     }
 
     private List<Notebook> getNotebooks() {
-        return NotebookStore.getInstance(getContext()).get(null, null);
+        return NotebookStore.Companion.getInstance().get(null, null);
     }
 
     @Override

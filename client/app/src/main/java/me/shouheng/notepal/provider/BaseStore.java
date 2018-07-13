@@ -12,8 +12,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 import me.shouheng.notepal.model.Model;
-import me.shouheng.notepal.model.enums.Operation;
 import me.shouheng.notepal.model.enums.ItemStatus;
+import me.shouheng.notepal.model.enums.Operation;
 import me.shouheng.notepal.provider.annotation.Table;
 import me.shouheng.notepal.provider.base.OpenHelperManager;
 import me.shouheng.notepal.provider.helper.StoreHelper;
@@ -24,7 +24,8 @@ import me.shouheng.notepal.util.UserUtil;
 
 
 /**
- * Created by wangshouheng on 2017/8/18. */
+ * Created by wangshouheng on 2017/8/18.
+ */
 public abstract class BaseStore<T extends Model> {
 
     private PalmDB mPalmDatabase = null;
@@ -41,8 +42,9 @@ public abstract class BaseStore<T extends Model> {
         LogUtils.d(mPalmDatabase); // the instance should be singleton
         userId = UserUtil.getInstance(context).getUserIdKept();
         entityClass = (Class) ((ParameterizedType) this.getClass().getGenericSuperclass()).getActualTypeArguments()[0];
-        if (!entityClass.isAnnotationPresent(Table.class))
+        if (!entityClass.isAnnotationPresent(Table.class)) {
             throw new IllegalArgumentException("Entity class should have Table.class annotation");
+        }
         tableName = entityClass.getAnnotation(Table.class).name();
     }
 
@@ -72,11 +74,10 @@ public abstract class BaseStore<T extends Model> {
         if (cursor == null || cursor.isClosed()) return;
         try {
             cursor.close();
-        } catch (Exception e){
+        } catch (Exception e) {
             LogUtils.d("Couldn't close cursor correctly");
         }
     }
-
 
     public synchronized T get(long code) {
         return get(code, ItemStatus.NORMAL, false);
@@ -112,8 +113,8 @@ public abstract class BaseStore<T extends Model> {
      *
      * @param whereSQL where SQL
      * @param orderSQL order SQL
-     * @param status status
-     * @param exclude whether exclude or include
+     * @param status   status
+     * @param exclude  whether exclude or include
      * @return the models list
      */
     public synchronized List<T> get(String whereSQL, String orderSQL, ItemStatus status, boolean exclude) {
@@ -127,32 +128,6 @@ public abstract class BaseStore<T extends Model> {
                             + (status == null ? "" : " AND " + BaseSchema.STATUS + (exclude ? " != " : " = ") + status.id)
                             + (TextUtils.isEmpty(orderSQL) ? "" : " ORDER BY " + orderSQL),
                     new String[]{});
-            models = getList(cursor);
-        } finally {
-            closeCursor(cursor);
-            closeDatabase(database);
-        }
-        return models;
-    }
-
-    /**
-     * In this method, we did`t specify the given status param. IN THIS METHOD WE ONLY SPECIFY THE
-     * USER_ID IS CURRENT LOGIN USER_ID. So, you can add as many where conditions as you want.
-     *
-     * @param whereSQL where SQL
-     * @param whereArgs where args, may be empty, but not NULL.
-     * @param orderSQL order SQL
-     * @return the models list returned
-     */
-    public synchronized List<T> get(String whereSQL, String[] whereArgs, String orderSQL) {
-        Cursor cursor = null;
-        List<T> models = null;
-        SQLiteDatabase database = getWritableDatabase();
-        try {
-            cursor = database.rawQuery(" SELECT * FROM " + tableName +
-                    " WHERE " + BaseSchema.USER_ID + " = " + userId
-                    + (TextUtils.isEmpty(whereSQL) ? "" : " AND " + whereSQL)
-                    + (TextUtils.isEmpty(orderSQL) ? "" : " ORDER BY " + orderSQL), whereArgs);
             models = getList(cursor);
         } finally {
             closeCursor(cursor);
@@ -263,16 +238,6 @@ public abstract class BaseStore<T extends Model> {
         }
     }
 
-    public synchronized void saveOrUpdate(@NonNull T model) {
-        if (model == null) return;
-
-        if (isNewModel(model.getCode())) {
-            saveModel(model);
-        } else {
-            update(model);
-        }
-    }
-
     public synchronized void update(T model, ItemStatus toStatus) {
         if (model == null || toStatus == null) return;
         TimelineHelper.addTimeLine(model, StoreHelper.getStatusOperation(toStatus));
@@ -291,34 +256,15 @@ public abstract class BaseStore<T extends Model> {
         }
     }
 
-    public synchronized void batchUpdate(List<T> models, ItemStatus toStatus) {
-        if (models == null || models.isEmpty() || toStatus == null) return;
-
-        StringBuilder sb = new StringBuilder();
-        int len = models.size();
-        for (int i = 0; i < len; i++) {
-            sb.append(String.valueOf(models.get(i).getCode()));
-            if (i == len - 1) break;
-            sb.append(" , ");
-        }
-
-        SQLiteDatabase database = getWritableDatabase();
-        database.beginTransaction();
-        try {
-            database.execSQL(" UPDATE " + tableName
-                            + " SET " + BaseSchema.STATUS + " = ?, " + BaseSchema.LAST_MODIFIED_TIME + " = ? "
-                            + " WHERE " + BaseSchema.CODE + " IN ( " + sb.toString() + " ) "
-                            + " AND " + BaseSchema.USER_ID + " = ? ",
-                    new String[]{String.valueOf(toStatus.id), String.valueOf(System.currentTimeMillis()), String.valueOf(userId)});
-            database.setTransactionSuccessful();
-        } finally {
-            database.endTransaction();
-            closeDatabase(database);
+    public synchronized void saveOrUpdate(@NonNull T model) {
+        if (isNewModel(model.getCode())) {
+            saveModel(model);
+        } else {
+            update(model);
         }
     }
 
-
-    protected synchronized ContentValues getContentValues(T model){
+    protected synchronized ContentValues getContentValues(T model) {
         ContentValues values = StoreHelper.getBaseContentValues(model);
         fillContentValues(values, model);
         return values;
@@ -326,7 +272,7 @@ public abstract class BaseStore<T extends Model> {
 
     protected synchronized T get(Cursor cursor) {
         T model = null;
-        if (cursor != null && !cursor.isClosed() && cursor.moveToFirst()){
+        if (cursor != null && !cursor.isClosed() && cursor.moveToFirst()) {
             do {
                 model = getModel(cursor);
             } while (cursor.moveToNext());
@@ -336,10 +282,10 @@ public abstract class BaseStore<T extends Model> {
         return model;
     }
 
-    protected synchronized List<T> getList(Cursor cursor){
+    protected synchronized List<T> getList(Cursor cursor) {
         LogUtils.d("Current Object: " + this + ", " + Thread.currentThread());
         List<T> models = new LinkedList<>();
-        if (cursor != null && !cursor.isClosed() && cursor.moveToFirst()){ // exception here
+        if (cursor != null && !cursor.isClosed() && cursor.moveToFirst()) { // exception here
             do {
                 models.add(getModel(cursor));
             } while (cursor.moveToNext());
