@@ -13,7 +13,6 @@ import org.polaric.colorful.BaseActivity;
 
 import java.util.Collections;
 
-import me.shouheng.notepal.PalmApp;
 import me.shouheng.notepal.R;
 import me.shouheng.notepal.config.Constants;
 import me.shouheng.notepal.dialog.AttachmentPickerDialog;
@@ -30,12 +29,9 @@ import me.shouheng.notepal.util.AppWidgetUtils;
 import me.shouheng.notepal.util.AttachmentHelper;
 import me.shouheng.notepal.util.LogUtils;
 import me.shouheng.notepal.util.ToastUtils;
-import me.shouheng.notepal.util.preferences.LockPreferences;
 import me.urakalee.next2.viewmodel.NoteViewModel;
 
 public class QuickNoteActivity extends BaseActivity implements OnAttachingFileListener {
-
-    private final static int REQUEST_PASSWORD = 0x0016;
 
     private QuickNoteEditor quickNoteEditor;
     private NoteViewModel noteViewModel;
@@ -43,15 +39,7 @@ public class QuickNoteActivity extends BaseActivity implements OnAttachingFileLi
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        checkPassword();
-    }
-
-    private void checkPassword() {
-        if (LockPreferences.getInstance().isPasswordRequired() && !PalmApp.isPasswordChecked()) {
-            LockActivity.requireLaunch(this, REQUEST_PASSWORD);
-        } else {
-            init();
-        }
+        init();
     }
 
     private void init() {
@@ -151,15 +139,6 @@ public class QuickNoteActivity extends BaseActivity implements OnAttachingFileLi
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == Activity.RESULT_OK) {
             AttachmentHelper.resolveResult(this, requestCode, data);
-        }
-        switch (requestCode) {
-            case REQUEST_PASSWORD:
-                if (resultCode == RESULT_OK) {
-                    init();
-                } else {
-                    finish();
-                }
-                break;
         }
     }
 

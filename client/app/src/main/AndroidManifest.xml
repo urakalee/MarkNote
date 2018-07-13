@@ -117,10 +117,6 @@
         <service android:name=".async.DataBackupIntentService" />
         <service android:name=".async.onedrive.OneDriveBackupService" />
 
-        <activity
-            android:name=".activity.LockActivity"
-            android:theme="@android:style/Theme.Holo.Dialog.NoActionBar" />
-
         <!-- region App Widget -->
         <receiver android:name=".widget.desktop.ListWidgetProvider">
             <intent-filter>

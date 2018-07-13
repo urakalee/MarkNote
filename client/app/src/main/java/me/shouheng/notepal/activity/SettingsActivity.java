@@ -28,7 +28,6 @@ import me.shouheng.notepal.fragment.setting.SettingsDashboard;
 import me.shouheng.notepal.fragment.setting.SettingsFragment;
 import me.shouheng.notepal.fragment.setting.SettingsNote;
 import me.shouheng.notepal.fragment.setting.SettingsPreferences;
-import me.shouheng.notepal.fragment.setting.SettingsSecurity;
 import me.shouheng.notepal.listener.OnFragmentDestroyListener;
 import me.shouheng.notepal.listener.OnSettingsChangedListener;
 import me.shouheng.notepal.listener.OnThemeSelectedListener;
@@ -36,7 +35,6 @@ import me.shouheng.notepal.listener.SettingChangeType;
 import me.shouheng.notepal.util.ColorUtils;
 import me.shouheng.notepal.util.FragmentHelper;
 import me.shouheng.notepal.util.ToastUtils;
-import me.shouheng.notepal.util.preferences.LockPreferences;
 import me.shouheng.notepal.util.preferences.ThemePreferences;
 
 public class SettingsActivity extends CommonActivity<ActivitySettingsBinding> implements
@@ -47,8 +45,6 @@ public class SettingsActivity extends CommonActivity<ActivitySettingsBinding> im
 
     public final static String KEY_CONTENT_CHANGE_TYPES = "key_content_change_types";
     public final static String ACTION_NAV_TO_BACKUP_FRAGMENT = "action_navigate_to_backup_settings_fragment";
-
-    private final static int REQUEST_CODE_PASSWORD = 0x0201;
 
     private String keyForColor;
 
@@ -144,13 +140,6 @@ public class SettingsActivity extends CommonActivity<ActivitySettingsBinding> im
             showAccentColorPicker();
         } else if (getString(R.string.key_data_backup).equals(key)) {
             replaceWithCallback(new SettingsBackup());
-        } else if (getString(R.string.key_data_security).equals(key)) {
-            if (LockPreferences.getInstance().isPasswordRequired()
-                    && !TextUtils.isEmpty(LockPreferences.getInstance().getPassword())) {
-                LockActivity.requirePassword(this, REQUEST_CODE_PASSWORD);
-            } else {
-                replaceWithCallback(new SettingsSecurity());
-            }
         } else if (getString(R.string.key_about).equals(key)) {
             replaceWithCallback(new AppInfoFragment());
         } else if (getString(R.string.key_setup_dashboard).equals(key)) {
@@ -197,18 +186,6 @@ public class SettingsActivity extends CommonActivity<ActivitySettingsBinding> im
         if (actionBar != null) {
             actionBar.setTitle(R.string.text_settings);
         }
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        switch (requestCode) {
-            case REQUEST_CODE_PASSWORD:
-                if (resultCode == Activity.RESULT_OK) {
-                    FragmentHelper.replaceWithCallback(this, new SettingsSecurity(), R.id.fragment_container);
-                }
-                break;
-        }
-        super.onActivityResult(requestCode, resultCode, data);
     }
 
     @Override

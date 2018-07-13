@@ -68,7 +68,6 @@ import me.shouheng.notepal.util.LogUtils;
 import me.shouheng.notepal.util.SynchronizeUtils;
 import me.shouheng.notepal.util.ToastUtils;
 import me.shouheng.notepal.util.preferences.DashboardPreferences;
-import me.shouheng.notepal.util.preferences.LockPreferences;
 import me.shouheng.notepal.util.preferences.UserPreferences;
 import me.shouheng.notepal.viewmodel.CategoryViewModel;
 import me.shouheng.notepal.widget.tools.CustomRecyclerScrollViewListener;
@@ -88,7 +87,6 @@ public class MainActivity extends CommonActivity<ActivityMainBinding> implements
     private final int REQUEST_ARCHIVE = 0x0003;
     private final int REQUEST_TRASH = 0x0004;
     private final int REQUEST_USER_INFO = 0x0005;
-    private final int REQUEST_PASSWORD = 0x0006;
     private final int REQUEST_SEARCH = 0x0007;
     private final int REQUEST_NOTE_VIEW = 0x0008;
     private final int REQUEST_SETTING = 0x0009;
@@ -189,9 +187,6 @@ public class MainActivity extends CommonActivity<ActivityMainBinding> implements
             case REQUEST_SEARCH:
                 updateListIfNecessary();
                 break;
-            case REQUEST_PASSWORD:
-                init();
-                break;
             case REQUEST_SETTING:
                 int[] changedTypes = data.getIntArrayExtra(SettingsActivity.KEY_CONTENT_CHANGE_TYPES);
                 boolean drawerUpdated = false, listUpdated = false, fabSortUpdated = false, fastScrollerUpdated = false;
@@ -250,19 +245,9 @@ public class MainActivity extends CommonActivity<ActivityMainBinding> implements
         userPreferences = UserPreferences.getInstance();
         dashboardPreferences = DashboardPreferences.getInstance();
 
-        checkPassword();
+        init();
 
         registerNoteChangeReceiver();
-    }
-
-    private void checkPassword() {
-        if (LockPreferences.getInstance().isPasswordRequired()
-                && !PalmApp.isPasswordChecked()
-                && !TextUtils.isEmpty(LockPreferences.getInstance().getPassword())) {
-            LockActivity.requireLaunch(this, REQUEST_PASSWORD);
-        } else {
-            init();
-        }
     }
 
     private void init() {
