@@ -197,7 +197,7 @@ public class MainActivity extends CommonActivity<ActivityMainBinding> implements
                 boolean drawerUpdated = false, listUpdated = false, fabSortUpdated = false, fastScrollerUpdated = false;
                 for (int changedType : changedTypes) {
                     if (changedType == SettingChangeType.DRAWER.id && !drawerUpdated) {
-                        setupHeader();
+                        updateHeader();
                         drawerUpdated = true;
                     }
                     if (changedType == SettingChangeType.NOTE_LIST_TYPE.id && !listUpdated) {
@@ -369,13 +369,12 @@ public class MainActivity extends CommonActivity<ActivityMainBinding> implements
             View header = getBinding().drawer.inflateHeaderView(R.layout.activity_main_nav_header);
             headerBinding = DataBindingUtil.bind(header);
         }
-        setupHeader();
-        headerBinding.getRoot().setOnLongClickListener(v -> true);
+        updateHeader();
         headerBinding.getRoot().setOnClickListener(
                 view -> startActivityForResult(UserInfoActivity.class, REQUEST_USER_INFO));
     }
 
-    private void setupHeader() {
+    private void updateHeader() {
         headerBinding.userMotto.setText(dashboardPreferences.getUserMotto());
 
         boolean enabled = dashboardPreferences.isUserInfoBgEnable();
@@ -897,5 +896,4 @@ public class MainActivity extends CommonActivity<ActivityMainBinding> implements
             if (isNotesFragment()) ((NotesFragment) getCurrentFragment()).reload();
         }
     }
-
 }

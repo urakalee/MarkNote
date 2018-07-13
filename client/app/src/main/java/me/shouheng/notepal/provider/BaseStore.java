@@ -20,7 +20,6 @@ import me.shouheng.notepal.provider.helper.StoreHelper;
 import me.shouheng.notepal.provider.helper.TimelineHelper;
 import me.shouheng.notepal.provider.schema.BaseSchema;
 import me.shouheng.notepal.util.LogUtils;
-import me.shouheng.notepal.util.UserUtil;
 
 
 /**
@@ -28,19 +27,18 @@ import me.shouheng.notepal.util.UserUtil;
  */
 public abstract class BaseStore<T extends Model> {
 
-    private PalmDB mPalmDatabase = null;
+    private PalmDB mPalmDatabase;
 
-    protected Class<T> entityClass = null;
+    protected Class<T> entityClass;
 
-    protected String tableName = null;
+    protected String tableName;
 
-    protected long userId;
+    protected long userId = 0;
 
     @SuppressWarnings("unchecked")
     public BaseStore(Context context) {
         this.mPalmDatabase = PalmDB.getInstance(context);
         LogUtils.d(mPalmDatabase); // the instance should be singleton
-        userId = UserUtil.getInstance(context).getUserIdKept();
         entityClass = (Class) ((ParameterizedType) this.getClass().getGenericSuperclass()).getActualTypeArguments()[0];
         if (!entityClass.isAnnotationPresent(Table.class)) {
             throw new IllegalArgumentException("Entity class should have Table.class annotation");

@@ -13,7 +13,6 @@ import me.shouheng.notepal.model.enums.Portrait;
 import me.shouheng.notepal.model.enums.WeatherType;
 import me.shouheng.notepal.util.ColorUtils;
 import me.shouheng.notepal.util.LogUtils;
-import me.shouheng.notepal.util.UserUtil;
 
 /**
  * Created by wangshouheng on 2017/11/17.
@@ -29,7 +28,6 @@ public class ModelFactory {
         try {
             T newItem = itemType.newInstance();
             newItem.setCode(getLongCode());
-            newItem.setUserId(UserUtil.getInstance(PalmApp.getContext()).getUserIdKept());
             newItem.setAddedTime(new Date());
             newItem.setLastModifiedTime(new Date());
             newItem.setLastSyncTime(new Date(0));

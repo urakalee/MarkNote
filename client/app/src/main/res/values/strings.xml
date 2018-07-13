@@ -49,7 +49,6 @@
     <string name="text_location_info">Location</string>
     <string name="text_no_location_info">Location not found</string>
     <string name="text_show_location">Show location</string>
-    <string name="failed_to_get_location">Failed to get location</string>
     <string name="trying_to_get_location">Trying to get location&#8230;</string>
     <string name="content_was_copied_to_clipboard">Content has been saved to clipboard</string>
     <string name="share_message_chooser">Select share mode</string>
@@ -408,16 +407,10 @@
     <!--region User Info-->
     <string name="user_info">User info</string>
     <string name="school">School | Company</string>
-    <string name="major">Major | Carer</string>
     <string name="timeline">Timeline</string>
     <string name="statistic">Statistics</string>
-    <string name="not_login_click_to_login">Not login · Click to login</string>
-    <string name="login_and_get_storage">Login to get storage</string>
-    <string name="storage_left_monthly">Storage left</string>
-    <string name="not_login_try_after_login">Not login, try again after login</string>
     <string name="timeline_detail">What you have done in MarkNote</string>
     <string name="activities_in_seven_days">Notes added during recent 7 days</string>
-    <string name="logout">Logout</string>
 
     <string name="statistic_activities">Activities during recent 7 days</string>
     <string name="statistic_title_activities">Notes and snagging added during recent 7 days</string>
@@ -431,17 +424,9 @@
     <string name="activities_on_app_will_display_here">your activities in application will be showed here</string>
 
     <!--region User Info->Login-->
-    <string name="please_input_account">Please input account</string>
-    <string name="please_input_password">Please input password</string>
-    <string name="please_input_password_again">Please input password again</string>
-    <string name="forget_password">Forget password</string>
-    <string name="use_account_and_password_when_register">Use account and password when register</string>
-    <string name="login">Login</string>
-    <string name="register">Register</string>
     <string name="confirm">Confirm</string>
     <string name="cancel">Cancel</string>
     <string name="back">Back</string>
-    <string name="register_palm_college">Register %s</string>
     <!--endregion-->
     <!--endregion-->
 
