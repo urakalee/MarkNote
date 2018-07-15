@@ -88,8 +88,12 @@ public class Note extends Model {
         return originTitle == null;
     }
 
+    public void finishNew() {
+        originTitle = title;
+    }
+
     public boolean needRename() {
-        return !title.equals(originTitle);
+        return originTitle != null && !title.equals(originTitle);
     }
 
     public File getOriginFile() {

@@ -581,9 +581,14 @@ class NoteEditFragment : BaseModelFragment<Note, FragmentNoteBinding>() {
      */
     private var contentChanged: Boolean = false
         set(value) {
-            if (value && !contentChanged) {
-                field = true
-                materialMenu!!.animateIconState(MaterialMenuDrawable.IconState.CHECK)
+            when (value) {
+                true -> {
+                    if (!contentChanged) {
+                        field = true
+                        materialMenu!!.animateIconState(MaterialMenuDrawable.IconState.CHECK)
+                    }
+                }
+                false -> field = false
             }
         }
 

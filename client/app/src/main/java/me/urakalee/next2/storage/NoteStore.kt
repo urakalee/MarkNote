@@ -87,6 +87,7 @@ class NoteStore private constructor(context: Context) : BaseStore<Note>(context)
             }
             noteFile.parentFile.mkdirs()
             noteFile.writeText(note.content)
+            note.finishNew()
         } else if (note.needRename()) {
             if (noteFile.exists()) {
                 throw RuntimeException("${note.title} already exists")
