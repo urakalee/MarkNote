@@ -4,7 +4,6 @@ import android.app.Activity
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
-import android.graphics.Color
 import android.net.Uri
 import android.os.AsyncTask
 import android.os.Bundle
@@ -13,8 +12,10 @@ import android.support.v4.widget.DrawerLayout
 import android.support.v7.app.AppCompatActivity
 import android.text.Editable
 import android.text.TextWatcher
-import android.view.*
-import android.widget.RelativeLayout
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
+import android.view.View
 import com.afollestad.materialdialogs.MaterialDialog
 import com.balysv.materialmenu.MaterialMenuDrawable
 import me.shouheng.notepal.PalmApp
@@ -84,7 +85,7 @@ class NoteEditFragment : BaseModelFragment<Note, FragmentNoteBinding>() {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == Activity.RESULT_OK) {
             when (requestCode) {
-                REQ_MENU_SORT -> addFormatMenus()
+                REQ_MENU_SORT -> addFormatBar()
             }
         }
     }
@@ -305,16 +306,13 @@ class NoteEditFragment : BaseModelFragment<Note, FragmentNoteBinding>() {
 
         binding?.main?.llFolder?.setOnClickListener { showNotebookPicker() }
 
-        binding?.main?.rlBottomEditors?.isGone = true
-
         val ids = intArrayOf(R.id.iv_redo, R.id.iv_undo, R.id.iv_insert_picture, R.id.iv_insert_link, R.id.iv_table)
         for (id in ids) {
             binding.root.findViewById<View>(id).setOnClickListener { this.onBottomBarClick(it) }
         }
 
-        addFormatMenus()
+        addFormatBar()
 
-        binding?.main?.ivEnableFormat?.setOnClickListener { toggleFormatBar() }
         binding?.main?.ivSetting?.setOnClickListener { MenuSortActivity.start(this@NoteEditFragment, REQ_MENU_SORT) }
 
         binding?.main?.fssv?.fastScrollDelegate?.setThumbSize(16, 40)
@@ -350,7 +348,7 @@ class NoteEditFragment : BaseModelFragment<Note, FragmentNoteBinding>() {
         }
     }
 
-    private fun addFormatMenus() {
+    private fun addFormatBar() {
         binding?.main?.llContainer?.removeAllViews()
         val padding = 12.dp
         val markdownFormats = UserPreferences.getInstance().markdownFormats
@@ -378,23 +376,6 @@ class NoteEditFragment : BaseModelFragment<Note, FragmentNoteBinding>() {
                 binding?.main?.etContent?.addMathJax(exp, isSingleLine)
             }.show(it, "MATH JAX EDITOR")
         }
-    }
-
-    private fun toggleFormatBar() {
-        val rlBottomEditors = binding?.main?.rlBottomEditors ?: return
-        val ivEnableFormat = binding?.main?.ivEnableFormat ?: return
-        val rlBottomVisible = rlBottomEditors.isVisible
-        rlBottomEditors.isGone = rlBottomVisible // toggle
-        ivEnableFormat.setImageDrawable(
-                ColorUtils.tintDrawable(
-                        resources.getDrawable(R.drawable.ic_text_format_black_24dp),
-                        if (rlBottomVisible) Color.WHITE else primaryColor()
-                ))
-        val params = RelativeLayout.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                ivEnableFormat.height * if (rlBottomVisible) 1 else 2)
-        params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM)
-        binding?.main?.rlBottom?.layoutParams = params
     }
 
     private fun showAttachmentPicker() {

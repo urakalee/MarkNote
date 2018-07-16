@@ -1,30 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
     <RelativeLayout
-        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
         <android.support.v7.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"/>
+            android:layout_height="?attr/actionBarSize" />
 
         <View
-            android:visibility="gone"
-            android:background="@drawable/below_shadow"
             android:layout_width="match_parent"
-            android:layout_height="5dp"/>
+            android:layout_height="5dp"
+            android:background="@drawable/below_shadow"
+            android:visibility="gone" />
 
         <RelativeLayout
             android:id="@+id/rl_bottom"
-            android:layout_gravity="bottom"
-            android:layout_alignParentBottom="true"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/note_bottom_menu_height"
-            tools:layout_height="@dimen/note_bottom_menu_height_double">
+            android:layout_height="@dimen/note_bottom_menu_height_double"
+            android:layout_alignParentBottom="true"
+            android:layout_gravity="bottom">
 
             <RelativeLayout
                 android:id="@+id/rl_bottom_editors"
@@ -33,53 +33,53 @@
 
                 <HorizontalScrollView
                     android:id="@+id/hs_bottom_menu"
-                    android:layout_alignParentBottom="true"
-                    android:background="@color/note_bottom_editors"
                     android:layout_width="match_parent"
-                    android:layout_height="@dimen/note_bottom_menu_height">
+                    android:layout_height="@dimen/note_bottom_menu_height"
+                    android:layout_alignParentBottom="true"
+                    android:background="@color/note_bottom_editors">
 
                     <LinearLayout
                         android:id="@+id/ll_container"
-                        android:orientation="horizontal"
-                        android:paddingEnd="60dp"
                         android:layout_width="wrap_content"
-                        android:layout_height="match_parent"/>
+                        android:layout_height="match_parent"
+                        android:orientation="horizontal"
+                        android:paddingEnd="60dp" />
 
                 </HorizontalScrollView>
 
                 <android.support.v7.widget.AppCompatImageView
                     android:id="@+id/iv_shade"
-                    android:src="@color/note_bottom_editors"
+                    android:layout_width="@dimen/note_bottom_menu_height"
+                    android:layout_height="@dimen/note_bottom_menu_height"
                     android:layout_alignParentBottom="true"
                     android:layout_alignParentEnd="true"
                     android:clickable="true"
-                    android:layout_width="@dimen/note_bottom_menu_height"
-                    android:layout_height="@dimen/note_bottom_menu_height" />
+                    android:src="@color/note_bottom_editors" />
 
                 <android.support.v7.widget.AppCompatImageView
                     android:id="@+id/iv_setting"
                     style="@style/style_note_bottom_button"
-                    android:layout_alignParentBottom="true"
-                    android:layout_alignParentEnd="true"
                     android:layout_width="@dimen/note_bottom_menu_height"
                     android:layout_height="@dimen/note_bottom_menu_height"
-                    android:src="@drawable/ic_settings_black"/>
+                    android:layout_alignParentBottom="true"
+                    android:layout_alignParentEnd="true"
+                    android:src="@drawable/ic_settings_black" />
 
                 <View
-                    android:background="@drawable/rte_shadow_format"
-                    android:layout_toStartOf="@id/iv_shade"
-                    android:layout_alignParentBottom="true"
                     android:layout_width="@dimen/note_bottom_menu_height"
-                    android:layout_height="@dimen/note_bottom_menu_height"/>
+                    android:layout_height="@dimen/note_bottom_menu_height"
+                    android:layout_alignParentBottom="true"
+                    android:layout_toStartOf="@id/iv_shade"
+                    android:background="@drawable/rte_shadow_format" />
 
             </RelativeLayout>
 
             <LinearLayout
                 android:id="@+id/rl_bottom_menu"
                 android:layout_width="match_parent"
+                android:layout_height="@dimen/note_bottom_menu_height"
                 android:layout_alignParentBottom="true"
-                android:background="@color/note_bottom_editors"
-                android:layout_height="@dimen/note_bottom_menu_height">
+                android:background="@color/note_bottom_editors">
 
                 <android.support.v7.widget.AppCompatImageView
                     android:id="@+id/iv_insert_picture"
@@ -106,14 +106,6 @@
                     android:src="@drawable/ic_grid_on_grey_24dp" />
 
                 <android.support.v7.widget.AppCompatImageView
-                    android:id="@+id/iv_enable_format"
-                    style="@style/style_note_bottom_button"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:src="@drawable/ic_text_format_black_24dp" />
-
-                <android.support.v7.widget.AppCompatImageView
                     android:id="@+id/iv_undo"
                     style="@style/style_note_bottom_button"
                     android:layout_width="0dp"
@@ -132,46 +124,46 @@
             </LinearLayout>
 
             <View
-                android:background="@drawable/above_shadow"
-                android:layout_marginEnd="60dp"
-                android:layout_above="@id/rl_bottom_menu"
                 android:layout_width="match_parent"
-                android:layout_height="5dp"/>
+                android:layout_height="5dp"
+                android:layout_above="@id/rl_bottom_menu"
+                android:layout_marginEnd="60dp"
+                android:background="@drawable/above_shadow" />
 
         </RelativeLayout>
 
         <my.shouheng.palmmarkdown.fastscroller.FastScrollScrollView
             android:id="@+id/fssv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:layout_above="@id/rl_bottom"
             android:layout_below="@id/toolbar"
-            android:fitsSystemWindows="true"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:fitsSystemWindows="true">
 
             <LinearLayout
-                android:orientation="vertical"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
 
                 <EditText
                     android:id="@+id/et_title"
-                    android:hint="@string/note_note_title"
-                    android:textStyle="bold"
-                    android:maxLength="@integer/title_length"
-                    android:textColor="@color/colorPrimary"
-                    android:padding="16dp"
-                    android:background="@android:color/transparent"
-                    android:textSize="18sp"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:background="@android:color/transparent"
+                    android:hint="@string/note_note_title"
+                    android:maxLength="@integer/title_length"
+                    android:padding="16dp"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
 
                 <LinearLayout
                     android:id="@+id/ll_folder"
                     android:layout_width="match_parent"
-                    android:background="?attr/selectableItemBackground"
                     android:layout_height="@dimen/note_center_options_height"
                     android:layout_marginEnd="16dp"
                     android:layout_marginStart="8dp"
+                    android:background="?attr/selectableItemBackground"
                     android:orientation="horizontal">
 
                     <ImageView
@@ -192,28 +184,29 @@
                         android:gravity="center_vertical"
                         android:lines="1"
                         android:singleLine="true"
-                        tools:text="我的第一个笔记本"
                         android:text="@string/note_default_notebook"
-                        android:textStyle="bold" />
+                        android:textStyle="bold"
+                        tools:text="我的第一个笔记本" />
 
                 </LinearLayout>
 
-                <View android:id="@+id/line"
-                    android:background="@color/md_grey_500"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginEnd="16dp"
+                <View
+                    android:id="@+id/line"
                     android:layout_width="match_parent"
-                    android:layout_height="0.5dp"/>
+                    android:layout_height="0.5dp"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginStart="16dp"
+                    android:background="@color/md_grey_500" />
 
                 <my.shouheng.palmmarkdown.MarkdownEditor
                     android:id="@+id/et_content"
-                    android:padding="16dp"
-                    android:textSize="16sp"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@android:color/transparent"
                     android:gravity="start"
                     android:hint="@string/note_write_down_what_you_want"
-                    android:background="@android:color/transparent"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
+                    android:padding="16dp"
+                    android:textSize="16sp" />
 
             </LinearLayout>
 

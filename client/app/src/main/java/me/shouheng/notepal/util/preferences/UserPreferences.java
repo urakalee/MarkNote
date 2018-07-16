@@ -15,7 +15,8 @@ import my.shouheng.palmmarkdown.tools.MarkdownFormat;
 
 
 /**
- * Created by shouh on 2018/4/9.*/
+ * Created by shouh on 2018/4/9.
+ */
 public class UserPreferences extends BasePreferences {
 
     public static List<FabSortItem> defaultFabOrders;
@@ -33,25 +34,31 @@ public class UserPreferences extends BasePreferences {
 //        defaultFabOrders.add(FabSortItem.FILE);
 
         defaultMarkdownFormats = new LinkedList<>();
-        defaultMarkdownFormats.add(MarkdownFormat.ITALIC);
-        defaultMarkdownFormats.add(MarkdownFormat.BOLD);
-        defaultMarkdownFormats.add(MarkdownFormat.QUOTE);
-        defaultMarkdownFormats.add(MarkdownFormat.CODE_BLOCK);
-        defaultMarkdownFormats.add(MarkdownFormat.STRIKE);
-        defaultMarkdownFormats.add(MarkdownFormat.HORIZONTAL_LINE);
         defaultMarkdownFormats.add(MarkdownFormat.H1);
         defaultMarkdownFormats.add(MarkdownFormat.H2);
         defaultMarkdownFormats.add(MarkdownFormat.H3);
         defaultMarkdownFormats.add(MarkdownFormat.H4);
         defaultMarkdownFormats.add(MarkdownFormat.H5);
         defaultMarkdownFormats.add(MarkdownFormat.H6);
-        defaultMarkdownFormats.add(MarkdownFormat.XML);
-        defaultMarkdownFormats.add(MarkdownFormat.NUMBER_LIST);
+
+        // TODO: add indent
+
         defaultMarkdownFormats.add(MarkdownFormat.NORMAL_LIST);
-        defaultMarkdownFormats.add(MarkdownFormat.MARK);
-        defaultMarkdownFormats.add(MarkdownFormat.CHECKBOX);
+        defaultMarkdownFormats.add(MarkdownFormat.NUMBER_LIST);
         defaultMarkdownFormats.add(MarkdownFormat.CHECKBOX_OUTLINE);
+        defaultMarkdownFormats.add(MarkdownFormat.CHECKBOX);
+
+        defaultMarkdownFormats.add(MarkdownFormat.QUOTE);
+        defaultMarkdownFormats.add(MarkdownFormat.XML);
         defaultMarkdownFormats.add(MarkdownFormat.CODE_BLOCK);
+
+        defaultMarkdownFormats.add(MarkdownFormat.STRIKE);
+        defaultMarkdownFormats.add(MarkdownFormat.HORIZONTAL_LINE);
+
+        defaultMarkdownFormats.add(MarkdownFormat.ITALIC); // not standard markdown
+        defaultMarkdownFormats.add(MarkdownFormat.BOLD);
+        defaultMarkdownFormats.add(MarkdownFormat.MARK);
+
         defaultMarkdownFormats.add(MarkdownFormat.MATH_JAX);
         defaultMarkdownFormats.add(MarkdownFormat.SUB_SCRIPT);
         defaultMarkdownFormats.add(MarkdownFormat.SUPER_SCRIPT);
@@ -103,7 +110,7 @@ public class UserPreferences extends BasePreferences {
     public void setFabSortResult(List<FabSortItem> fabSortItems) {
         int size = fabSortItems.size();
         StringBuilder fabStr = new StringBuilder();
-        for (int i=0;i<size;i++) {
+        for (int i = 0; i < size; i++) {
             if (i == size - 1) {
                 fabStr.append(fabSortItems.get(i).name());
             } else {
@@ -130,7 +137,7 @@ public class UserPreferences extends BasePreferences {
     public void setMarkdownFormats(List<MarkdownFormat> markdownFormats) {
         int size = markdownFormats.size();
         StringBuilder sb = new StringBuilder();
-        for (int i=0; i<size; i++) {
+        for (int i = 0; i < size; i++) {
             if (i == size - 1) {
                 sb.append(markdownFormats.get(i).name());
             } else {
@@ -146,15 +153,24 @@ public class UserPreferences extends BasePreferences {
 
     private int defaultTimeLineColor(Operation operation) {
         switch (operation) {
-            case DELETE: return PalmApp.getContext().getResources().getColor(R.color.md_red_500);
-            case TRASH: return PalmApp.getContext().getResources().getColor(R.color.md_deep_orange_500);
-            case ARCHIVE: return PalmApp.getContext().getResources().getColor(R.color.md_pink_500);
-            case COMPLETE: return PalmApp.getContext().getResources().getColor(R.color.md_purple_500);
-            case SYNCED: return PalmApp.getContext().getResources().getColor(R.color.md_light_green_900);
-            case ADD: return PalmApp.getContext().getResources().getColor(R.color.md_green_500);
-            case UPDATE: return PalmApp.getContext().getResources().getColor(R.color.md_light_green_700);
-            case INCOMPLETE: return PalmApp.getContext().getResources().getColor(R.color.md_blue_500);
-            case RECOVER: return PalmApp.getContext().getResources().getColor(R.color.md_light_blue_600);
+            case DELETE:
+                return PalmApp.getContext().getResources().getColor(R.color.md_red_500);
+            case TRASH:
+                return PalmApp.getContext().getResources().getColor(R.color.md_deep_orange_500);
+            case ARCHIVE:
+                return PalmApp.getContext().getResources().getColor(R.color.md_pink_500);
+            case COMPLETE:
+                return PalmApp.getContext().getResources().getColor(R.color.md_purple_500);
+            case SYNCED:
+                return PalmApp.getContext().getResources().getColor(R.color.md_light_green_900);
+            case ADD:
+                return PalmApp.getContext().getResources().getColor(R.color.md_green_500);
+            case UPDATE:
+                return PalmApp.getContext().getResources().getColor(R.color.md_light_green_700);
+            case INCOMPLETE:
+                return PalmApp.getContext().getResources().getColor(R.color.md_blue_500);
+            case RECOVER:
+                return PalmApp.getContext().getResources().getColor(R.color.md_light_blue_600);
         }
         return ColorUtils.accentColor(PalmApp.getContext());
     }
