@@ -70,10 +70,15 @@ class NoteStore private constructor(context: Context) : BaseStore<Note>(context)
     fun getNotes(notebook: Notebook): List<Note> {
         val noteRoot = File(storageRoot(), notebook.title)
         val notes = LinkedList<Note>()
-        for (file in listFiles(noteRoot)) {
-            val note = Note()
-            note.title = file.name
-            notes.add(note)
+        val filesInDirs = listFilesInSubDirs(noteRoot)
+        for (dirName in filesInDirs.keys.sortedByDescending { it }) {
+            val files = filesInDirs[dirName] ?: continue
+            for (file in files) {
+                val note = Note()
+                note.title = file.name
+                note.timePath = dirName
+                notes.add(note)
+            }
         }
         return notes
     }

@@ -41,10 +41,10 @@ import java.util.*
 class NoteViewFragment : BaseFragment<FragmentNoteViewBinding>() {
 
     private var note: Note? = null
-    private var noteTitle: String = ""
-        get() = note?.title ?: "无标题"
+    private var noteTitle: String = "无标题"
+        get() = note?.title ?: field
     private var noteContent: String = ""
-        get() = note?.content ?: ""
+        get() = note?.content ?: field
     private var isPreview = false
 
     private var content: String? = null
@@ -126,12 +126,10 @@ class NoteViewFragment : BaseFragment<FragmentNoteViewBinding>() {
         isPreview = argsNonNull.getBoolean(EXTRA_IS_PREVIEW)
         if (!isPreview) {
             val noteNonNull = note!!
-            val noteFile = getFile(noteNonNull.notebook.title, noteNonNull.title)
+            val noteFile = getFile(noteNonNull.notebook.title, noteNonNull.timePath, noteNonNull.title)
             LogUtils.d("noteFile: $noteFile")
             if (noteFile == null) {
                 ToastUtils.makeToast(R.string.note_failed_to_get_note_content)
-                // default content is empty string, to avoid NPE
-                noteNonNull.content = ""
                 return false
             }
             try {

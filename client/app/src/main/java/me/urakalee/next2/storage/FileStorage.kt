@@ -16,21 +16,37 @@ fun sdCard() = Environment.getExternalStorageDirectory()
 fun storageRoot() = File(sdCard(), ROOT_PATH)
 
 fun listDirs(file: File, showHidden: Boolean = false): List<File> {
-    val dir = if (file.isDirectory) file else return listOf()
+    val dir = if (file.isDirectory) file else return emptyList()
     val dirs = dir.listFiles { pathname: File? ->
-        pathname?.isDirectory ?: false
+        pathname?.let {
+            it.isDirectory && (showHidden || !it.name.startsWith('.'))
+        } ?: false
     }
-    dirs.sortBy { it.name } // TODO: 先按名称排序
-    return if (showHidden) dirs.asList() else dirs.filterNot { it.name.startsWith('.') }
+    dirs.sortBy { it.name } // TODO: 手动顺序排序就不需要这个了
+    return dirs.asList()
 }
 
-fun listFiles(file: File): List<File> {
-    val dir = if (file.isDirectory) file else return listOf()
+fun listFiles(file: File, showHidden: Boolean = false): List<File> {
+    val dir = if (file.isDirectory) file else return emptyList()
     val files = dir.listFiles { pathname: File? ->
-        pathname?.isFile ?: false
+        pathname?.let {
+            it.isFile && (showHidden || !it.name.startsWith('.'))
+        } ?: false
     }
     files.sortByDescending { it.lastModified() } // XXX: 这个值和设备相关...
     return files.asList()
+}
+
+fun listFilesInSubDirs(file: File): Map<String, List<File>> {
+    val dirs = listDirs(file)
+    val filesInDirs = mutableMapOf<String, List<File>>()
+    for (dir in dirs) {
+        if (isDirEmpty(dir)) {
+            continue
+        }
+        filesInDirs[dir.name] = listFiles(dir)
+    }
+    return filesInDirs
 }
 
 fun isDirEmpty(file: File): Boolean {
@@ -38,10 +54,6 @@ fun isDirEmpty(file: File): Boolean {
     return dir.list().isEmpty() || dir.listFiles().all {
         it.isDirectory && isDirEmpty(it)
     }
-}
-
-fun getFile(name: String): File {
-    return File(storageRoot(), name)
 }
 
 fun ensureDir(name: String) {
@@ -68,8 +80,21 @@ fun ensureMoveDir(source: String, target: String) {
     }
 }
 
+fun getFile(name: String): File {
+    return File(storageRoot(), name)
+}
+
 fun getFile(parent: String, child: String): File? {
-    return File(storageRoot(), parent).listFiles { pathname ->
+    return getFile(getFile(parent), child)
+}
+
+fun getFile(parent: String, subDir: String, child: String): File? {
+    val dir = getFile(parent, subDir) ?: return null
+    return getFile(dir, child)
+}
+
+fun getFile(parent: File, child: String): File? {
+    return parent.listFiles { pathname ->
         pathname?.name == child
     }.firstOrNull()
 }

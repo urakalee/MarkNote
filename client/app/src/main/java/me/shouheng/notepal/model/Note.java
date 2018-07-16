@@ -72,8 +72,12 @@ public class Note extends Model {
         return timePath;
     }
 
+    public void setTimePath(String timePath) {
+        this.timePath = timePath;
+    }
+
     public void generateTimePath() {
-        timePath = LocalDate.now().toString("yyyy-MM");
+        setTimePath(LocalDate.now().toString("yyyy-MM"));
     }
 
     public String getOriginTitle() {
