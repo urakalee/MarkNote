@@ -32,6 +32,7 @@ import me.shouheng.notepal.util.preferences.UserPreferences
 import me.shouheng.notepal.widget.tools.CustomItemAnimator
 import me.shouheng.notepal.widget.tools.DividerItemDecoration
 import me.urakalee.next2.activity.ContentActivity
+import me.urakalee.next2.config.FeatureConfig
 import me.urakalee.next2.viewmodel.NoteViewModel
 import me.urakalee.next2.viewmodel.NotebookViewModel
 import me.urakalee.ranger.extension.isVisible
@@ -237,7 +238,6 @@ class NotesFragment : BaseFragment<FragmentNotesBinding>(),
         val popupMenu = PopupMenu(contextNonNull, view)
         popupMenu.inflate(R.menu.pop_menu)
         configPopMenu(popupMenu)
-        showMoveItem(popupMenu, true)
         popupMenu.setOnMenuItemClickListener { item ->
             when (item.itemId) {
                 R.id.action_edit -> {
@@ -282,7 +282,6 @@ class NotesFragment : BaseFragment<FragmentNotesBinding>(),
         val popupMenu = PopupMenu(contextNonNull, view)
         popupMenu.inflate(R.menu.pop_menu)
         configPopMenu(popupMenu)
-        showMoveItem(popupMenu, false)
         popupMenu.setOnMenuItemClickListener { item ->
             when (item.itemId) {
                 R.id.action_edit -> editNotebook(position, multiItem.notebook)
@@ -327,10 +326,10 @@ class NotesFragment : BaseFragment<FragmentNotesBinding>(),
 
     private fun configPopMenu(popupMenu: PopupMenu) {
         popupMenu.menu.findItem(R.id.action_edit).isVisible = status.canEdit()
-        popupMenu.menu.findItem(R.id.action_move).isVisible = status.canMove()
-        popupMenu.menu.findItem(R.id.action_archive).isVisible = !isNotebookList() && status.canArchive()
-        popupMenu.menu.findItem(R.id.action_move_out).isVisible = !isNotebookList() && status.canMoveOut()
-        popupMenu.menu.findItem(R.id.action_trash).isVisible = !isNotebookList() && status.canTrash()
+        popupMenu.menu.findItem(R.id.action_move).isVisible = status.canMove() && FeatureConfig.MOVE_NOTE
+        popupMenu.menu.findItem(R.id.action_archive).isVisible = !isNotebookList() && status.canArchive() && FeatureConfig.MOVE_NOTE
+        popupMenu.menu.findItem(R.id.action_move_out).isVisible = !isNotebookList() && status.canMoveOut() && FeatureConfig.MOVE_NOTE
+        popupMenu.menu.findItem(R.id.action_trash).isVisible = !isNotebookList() && status.canTrash() && FeatureConfig.MOVE_NOTE
         popupMenu.menu.findItem(R.id.action_delete).isVisible = isNotebookList() || status.canDelete()
     }
 

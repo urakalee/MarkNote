@@ -45,6 +45,7 @@ import me.shouheng.notepal.viewmodel.LocationViewModel
 import me.shouheng.notepal.widget.FlowLayout
 import me.shouheng.notepal.widget.MDItemView
 import me.urakalee.next2.activity.ContentActivity
+import me.urakalee.next2.config.FeatureConfig
 import me.urakalee.next2.viewmodel.NoteViewModel
 import me.urakalee.next2.viewmodel.NotebookViewModel
 import me.urakalee.ranger.extension.dp
@@ -305,6 +306,10 @@ class NoteEditFragment : BaseModelFragment<Note, FragmentNoteBinding>() {
         binding?.main?.etContent?.addTextChangedListener(contentWatcher)
 
         binding?.main?.llFolder?.setOnClickListener { showNotebookPicker() }
+        binding?.main?.llFolder?.isEnabled = FeatureConfig.MOVE_NOTE
+        note.notebook?.let {
+            binding?.main?.tvFolder?.text = it.title
+        }
 
         val ids = intArrayOf(R.id.iv_redo, R.id.iv_undo, R.id.iv_insert_picture, R.id.iv_insert_link, R.id.iv_table)
         for (id in ids) {
