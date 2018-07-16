@@ -367,7 +367,7 @@ class NoteEditFragment : BaseModelFragment<Note, FragmentNoteBinding>() {
                         || markdownFormat == MarkdownFormat.CHECKBOX_OUTLINE) {
                     binding?.main?.etContent?.addCheckbox("", markdownFormat == MarkdownFormat.CHECKBOX)
                 } else if (markdownFormat == MarkdownFormat.MATH_JAX) {
-                    showMarkJaxEditor()
+                    showMathJaxEditor()
                 } else {
                     binding?.main?.etContent?.addEffect(markdownFormat)
                 }
@@ -375,7 +375,7 @@ class NoteEditFragment : BaseModelFragment<Note, FragmentNoteBinding>() {
         }
     }
 
-    private fun showMarkJaxEditor() {
+    private fun showMathJaxEditor() {
         fragmentManager?.let {
             MathJaxEditor.newInstance { exp, isSingleLine ->
                 binding?.main?.etContent?.addMathJax(exp, isSingleLine)

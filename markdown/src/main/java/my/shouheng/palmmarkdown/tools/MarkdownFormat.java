@@ -9,11 +9,11 @@ import my.shouheng.palmmarkdown.R;
  */
 public enum MarkdownFormat {
     H1(6, R.drawable.ic_shortcut_format_header_1, true),
-    H2(7, R.drawable.ic_shortcut_format_header_2, true),
-    H3(8, R.drawable.ic_shortcut_format_header_3, true),
-    H4(9, R.drawable.ic_shortcut_format_header_4, true),
-    H5(10, R.drawable.ic_shortcut_format_header_5, true),
-    H6(11, R.drawable.ic_shortcut_format_header_6, true),
+    H2(7, R.drawable.ic_shortcut_format_header_2, false),
+    H3(8, R.drawable.ic_shortcut_format_header_3, false),
+    H4(9, R.drawable.ic_shortcut_format_header_4, false),
+    H5(10, R.drawable.ic_shortcut_format_header_5, false),
+    H6(11, R.drawable.ic_shortcut_format_header_6, false),
 
     NORMAL_LIST(16, R.drawable.ic_format_list_bulleted_black_24dp, true),
     NUMBER_LIST(15, R.drawable.ic_format_list_numbered_black_24dp, true),

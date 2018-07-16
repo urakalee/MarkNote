@@ -35,11 +35,6 @@ public class UserPreferences extends BasePreferences {
 
         defaultMarkdownFormats = new LinkedList<>();
         defaultMarkdownFormats.add(MarkdownFormat.H1);
-        defaultMarkdownFormats.add(MarkdownFormat.H2);
-        defaultMarkdownFormats.add(MarkdownFormat.H3);
-        defaultMarkdownFormats.add(MarkdownFormat.H4);
-        defaultMarkdownFormats.add(MarkdownFormat.H5);
-        defaultMarkdownFormats.add(MarkdownFormat.H6);
 
         // TODO: add indent
 
