@@ -60,7 +60,7 @@ class NoteViewFragment : BaseFragment<FragmentNoteViewBinding>() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        setHasOptionsMenu(!isPreview)
+        setHasOptionsMenu(true)
     }
 
     override fun onBackPressed() {
@@ -216,9 +216,11 @@ class NoteViewFragment : BaseFragment<FragmentNoteViewBinding>() {
     //region menu
 
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
-        inflater?.inflate(R.menu.note_view_menu, menu)
-        menu?.findItem(R.id.action_find)?.let {
-            initSearchView(it.actionView as SearchView)
+        if (!isPreview) {
+            inflater?.inflate(R.menu.note_view_menu, menu)
+            menu?.findItem(R.id.action_find)?.let {
+                initSearchView(it.actionView as SearchView)
+            }
         }
         super.onCreateOptionsMenu(menu, inflater)
     }
