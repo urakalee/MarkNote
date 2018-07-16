@@ -126,7 +126,7 @@ class NoteViewFragment : BaseFragment<FragmentNoteViewBinding>() {
         isPreview = argsNonNull.getBoolean(EXTRA_IS_PREVIEW)
         if (!isPreview) {
             val noteNonNull = note!!
-            val noteFile = getFile(noteNonNull.notebook.title, noteNonNull.timePath, noteNonNull.title)
+            val noteFile = getFile(noteNonNull.notebook.title, noteNonNull.timePath, noteNonNull.fileName)
             LogUtils.d("noteFile: $noteFile")
             if (noteFile == null) {
                 ToastUtils.makeToast(R.string.note_failed_to_get_note_content)

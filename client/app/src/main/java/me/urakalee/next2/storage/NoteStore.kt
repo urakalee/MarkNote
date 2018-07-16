@@ -75,7 +75,7 @@ class NoteStore private constructor(context: Context) : BaseStore<Note>(context)
             val files = filesInDirs[dirName] ?: continue
             for (file in files) {
                 val note = Note()
-                note.title = file.name
+                note.setTitleByFileName(file.name)
                 note.timePath = dirName
                 notes.add(note)
             }
@@ -124,13 +124,13 @@ class NoteStore private constructor(context: Context) : BaseStore<Note>(context)
         val noteRoot = File(storageRoot(), notebookNonNull.title)
         val timeRoot = File(noteRoot, note.timePath)
         if (note.needRename()) {
-            val originFile = File(timeRoot, note.originTitle)
+            val originFile = File(timeRoot, note.originFileName)
             if (!originFile.isFile) {
                 throw IllegalArgumentException("origin note not exists")
             }
             note.originFile = originFile
         }
-        return File(timeRoot, note.title)
+        return File(timeRoot, note.fileName)
     }
 
     companion object {

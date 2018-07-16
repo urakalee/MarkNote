@@ -1,6 +1,7 @@
 package me.shouheng.notepal.model;
 
 import android.net.Uri;
+import android.support.annotation.NonNull;
 
 import org.joda.time.LocalDate;
 
@@ -15,6 +16,8 @@ import me.shouheng.notepal.provider.schema.NoteSchema;
  */
 @Table(name = NoteSchema.TABLE_NAME)
 public class Note extends Model {
+
+    private static final String DEFAULT_SUFFIX = ".md";
 
     @Column(name = NoteSchema.TREE_PATH)
     private String treePath;
@@ -43,6 +46,22 @@ public class Note extends Model {
     private String timePath;
     private String originTitle;
     private File originFile;
+
+    public String getFileName() {
+        if (title.endsWith(DEFAULT_SUFFIX)) {
+            return title;
+        } else {
+            return title + DEFAULT_SUFFIX;
+        }
+    }
+
+    public void setTitleByFileName(@NonNull String name) {
+        if (name.endsWith(DEFAULT_SUFFIX)) {
+            title = name.substring(0, name.length() - DEFAULT_SUFFIX.length());
+        } else {
+            title = name;
+        }
+    }
 
     public Notebook getNotebook() {
         return notebook;
@@ -82,6 +101,14 @@ public class Note extends Model {
 
     public String getOriginTitle() {
         return originTitle;
+    }
+
+    public String getOriginFileName() {
+        if (originTitle.endsWith(DEFAULT_SUFFIX)) {
+            return originTitle;
+        } else {
+            return originTitle + DEFAULT_SUFFIX;
+        }
     }
 
     public void setOriginTitle(String originTitle) {
