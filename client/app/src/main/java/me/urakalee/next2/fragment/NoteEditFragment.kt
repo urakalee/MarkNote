@@ -46,14 +46,17 @@ import me.shouheng.notepal.widget.FlowLayout
 import me.shouheng.notepal.widget.MDItemView
 import me.urakalee.next2.activity.ContentActivity
 import me.urakalee.next2.config.FeatureConfig
+import me.urakalee.next2.storage.getFile
 import me.urakalee.next2.viewmodel.NoteViewModel
 import me.urakalee.next2.viewmodel.NotebookViewModel
 import me.urakalee.ranger.extension.dp
 import me.urakalee.ranger.extension.isGone
 import me.urakalee.ranger.extension.isVisible
 import my.shouheng.palmmarkdown.tools.MarkdownFormat
+import org.apache.commons.io.FileUtils
 import org.polaric.colorful.BaseActivity
 import org.polaric.colorful.PermissionUtils
+import java.io.IOException
 
 /**
  * @author Uraka.Lee
@@ -227,9 +230,22 @@ class NoteEditFragment : BaseModelFragment<Note, FragmentNoteBinding>() {
     // region fetch data
 
     private fun fetchData(note: Note) {
+        fetchContentIfNeed(note)
         fetchCategories(note)
         fetchAttachment(note)
         fetchLocation(note)
+    }
+
+    private fun fetchContentIfNeed(note: Note) {
+        if (note.content == null) {
+            val noteFile = getFile(note.notebook.title, note.timePath, note.fileName)
+            try {
+                note.content = FileUtils.readFileToString(noteFile, "utf-8")
+            } catch (e: IOException) {
+                LogUtils.d("IOException: $e")
+                ToastUtils.makeToast(R.string.note_failed_to_read_file)
+            }
+        }
     }
 
     private fun fetchCategories(note: Note) {
