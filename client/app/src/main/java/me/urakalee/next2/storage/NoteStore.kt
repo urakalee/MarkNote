@@ -76,6 +76,7 @@ class NoteStore private constructor(context: Context) : BaseStore<Note>(context)
             for (file in files) {
                 val note = Note()
                 note.setTitleByFileName(file.name)
+                note.notebook = notebook
                 note.timePath = dirName
                 notes.add(note)
             }
@@ -110,7 +111,28 @@ class NoteStore private constructor(context: Context) : BaseStore<Note>(context)
     }
 
     override fun update(model: Note, toStatus: ItemStatus) {
-        throw UnsupportedOperationException()
+        when (toStatus) {
+            ItemStatus.DELETED -> {
+                delete(model)
+            }
+            else ->
+                throw UnsupportedOperationException()
+        }
+    }
+
+    private fun delete(note: Note) {
+        val noteFile = noteFile(note) ?: return
+        if (noteFile.isFile) {
+            if (noteFile.delete()) {
+                if (isDirEmpty(noteFile.parentFile)) {
+                    noteFile.parentFile.delete()
+                }
+            } else {
+                throw RuntimeException("delete note failed")
+            }
+        } else {
+            throw IllegalArgumentException("note is not file")
+        }
     }
 
     private fun noteFile(note: Note): File? {

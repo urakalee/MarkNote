@@ -164,7 +164,7 @@ class NotesFragment : BaseFragment<FragmentNotesBinding>(),
             if (actionBar != null) {
                 actionBar.setTitle(R.string.drawer_menu_notes)
                 actionBar.setDisplayHomeAsUpEnabled(true)
-                val subTitle = if (notebook != null) notebook!!.title else if (category != null) category!!.name else null
+                val subTitle = notebook?.title ?: category?.name
                 actionBar.subtitle = subTitle
                 actionBar.setHomeAsUpIndicator(if (isTopStack) R.drawable.ic_menu_white else R.drawable.ic_arrow_back_white_24dp)
             }
@@ -248,9 +248,6 @@ class NotesFragment : BaseFragment<FragmentNotesBinding>(),
                     if (isNotebookList()) {
                         ToastUtils.makeToast("TODO")
                     } else {
-                        notebook?.let {
-                            multiItem.note.notebook = it
-                        }
                         ContentActivity.editNote(this, multiItem.note, REQUEST_NOTE_EDIT)
                     }
                 }
@@ -264,7 +261,7 @@ class NotesFragment : BaseFragment<FragmentNotesBinding>(),
                 R.id.action_archive -> update(multiItem.note, ItemStatus.ARCHIVED)
                 R.id.action_trash -> update(multiItem.note, ItemStatus.TRASHED)
                 R.id.action_move_out -> update(multiItem.note, ItemStatus.NORMAL)
-                R.id.action_delete -> update(multiItem.note, ItemStatus.DELETED)
+                R.id.action_delete -> delete(multiItem.note)
             }
             true
         }
@@ -334,11 +331,7 @@ class NotesFragment : BaseFragment<FragmentNotesBinding>(),
         popupMenu.menu.findItem(R.id.action_archive).isVisible = !isNotebookList() && status.canArchive() && FeatureConfig.MOVE_NOTE
         popupMenu.menu.findItem(R.id.action_move_out).isVisible = !isNotebookList() && status.canMoveOut() && FeatureConfig.MOVE_NOTE
         popupMenu.menu.findItem(R.id.action_trash).isVisible = !isNotebookList() && status.canTrash() && FeatureConfig.MOVE_NOTE
-        popupMenu.menu.findItem(R.id.action_delete).isVisible = isNotebookList() || status.canDelete()
-    }
-
-    private fun showMoveItem(popupMenu: PopupMenu, show: Boolean) {
-        popupMenu.menu.findItem(R.id.action_move).isVisible = show
+        popupMenu.menu.findItem(R.id.action_delete).isVisible = true
     }
 
     // endregion
@@ -416,6 +409,8 @@ class NotesFragment : BaseFragment<FragmentNotesBinding>(),
         }
     }
 
+    //region note
+
     private fun update(note: Note) {
         noteViewModel
                 ?.update(note)
@@ -457,6 +452,13 @@ class NotesFragment : BaseFragment<FragmentNotesBinding>(),
                 })
     }
 
+    private fun delete(note: Note) {
+        update(note, ItemStatus.DELETED)
+    }
+
+    //endregion
+    //region notebook
+
     private fun update(notebook: Notebook, position: Int) {
         notebookViewModel
                 ?.saveModel(notebook)
@@ -496,6 +498,8 @@ class NotesFragment : BaseFragment<FragmentNotesBinding>(),
                     }
                 })
     }
+
+    //endregion
 
     // endregion
     //region private
