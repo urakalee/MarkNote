@@ -195,7 +195,11 @@ class NotesFragment : BaseFragment<FragmentNotesBinding>(),
         adapter?.setOnItemLongClickListener { adapter, view, position ->
             val item = adapter.data[position] as MultiItem
             if (item.itemType == MultiItem.ITEM_TYPE_NOTE) {
-                popNoteMenu(view, item)
+                notebook?.let {
+                    item.note.notebook = it
+                    ContentActivity.editNote(this, item.note, REQUEST_NOTE_EDIT)
+                }
+//                popNoteMenu(view, item)
             } else if (item.itemType == MultiItem.ITEM_TYPE_NOTEBOOK) {
                 popNotebookMenu(view, item, position)
             }

@@ -237,7 +237,7 @@ class NoteEditFragment : BaseModelFragment<Note, FragmentNoteBinding>() {
     }
 
     private fun fetchContentIfNeed(note: Note) {
-        if (note.content == null) {
+        if (!note.isNewNote && note.content == null) {
             val noteFile = getFile(note.notebook.title, note.timePath, note.fileName)
             try {
                 note.content = FileUtils.readFileToString(noteFile, "utf-8")
