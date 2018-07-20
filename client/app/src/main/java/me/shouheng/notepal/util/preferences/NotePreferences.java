@@ -12,7 +12,7 @@ public class NotePreferences extends BasePreferences {
     public static NotePreferences getInstance() {
         if (sInstance == null) {
             synchronized (NotePreferences.class) {
-                if (sInstance == null){
+                if (sInstance == null) {
                     sInstance = new NotePreferences(PalmApp.getContext());
                 }
             }
@@ -22,14 +22,6 @@ public class NotePreferences extends BasePreferences {
 
     private NotePreferences(Context context) {
         super(context);
-    }
-
-    public void setShowNoteExpanded(boolean isExpanded) {
-        putBoolean(R.string.key_key_show_note_expanded, isExpanded);
-    }
-
-    public boolean isNoteExpanded() {
-        return getBoolean(R.string.key_key_show_note_expanded, true);
     }
 
     public void setNoteFileExtension(String extension) {

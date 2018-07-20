@@ -19,27 +19,25 @@ import me.shouheng.notepal.model.Notebook;
 import me.shouheng.notepal.util.ColorUtils;
 import me.shouheng.notepal.util.FileHelper;
 import me.shouheng.notepal.util.TimeUtils;
-import me.shouheng.notepal.util.preferences.NotePreferences;
 import me.shouheng.notepal.widget.tools.BubbleTextGetter;
 
 /**
- * Created by wang shouheng on 2017/12/23.*/
-public class NotesAdapter extends BaseMultiItemQuickAdapter<NotesAdapter.MultiItem, BaseViewHolder> implements
-        BubbleTextGetter {
+ * Created by wang shouheng on 2017/12/23.
+ */
+public class NotesAdapter extends BaseMultiItemQuickAdapter<NotesAdapter.MultiItem, BaseViewHolder>
+        implements BubbleTextGetter {
 
     private Context context;
 
     private int accentColor;
     private boolean isDarkTheme;
-    private boolean isExpanded;
 
     public NotesAdapter(Context context, List<NotesAdapter.MultiItem> data) {
         super(data);
 
-        this.isExpanded = NotePreferences.getInstance().isNoteExpanded();
         this.context = context;
-        addItemType(MultiItem.ITEM_TYPE_NOTE, isExpanded ? R.layout.item_note_expanded : R.layout.item_note);
-        addItemType(MultiItem.ITEM_TYPE_NOTEBOOK, R.layout.item_note);
+        addItemType(MultiItem.ITEM_TYPE_NOTE, R.layout.item_note);
+        addItemType(MultiItem.ITEM_TYPE_NOTEBOOK, R.layout.item_notebook);
 
         accentColor = ColorUtils.accentColor(context);
         isDarkTheme = ColorUtils.isDarkTheme(context);
@@ -50,11 +48,7 @@ public class NotesAdapter extends BaseMultiItemQuickAdapter<NotesAdapter.MultiIt
         if (isDarkTheme) helper.itemView.setBackgroundResource(R.color.dark_theme_background);
         switch (helper.getItemViewType()) {
             case MultiItem.ITEM_TYPE_NOTE:
-                if (isExpanded) {
-                    convertNoteExpanded(helper, item.note);
-                } else {
-                    convertNote(helper, item.note);
-                }
+                convertNote(helper, item.note);
                 break;
             case MultiItem.ITEM_TYPE_NOTEBOOK:
                 convertNotebook(helper, item.notebook);
@@ -63,14 +57,7 @@ public class NotesAdapter extends BaseMultiItemQuickAdapter<NotesAdapter.MultiIt
         helper.addOnClickListener(R.id.iv_more);
     }
 
-    private void convertNote(BaseViewHolder helper, Note note) {
-        helper.setText(R.id.tv_note_title, note.getTitle());
-        helper.setText(R.id.tv_added_time, TimeUtils.getLongDateTime(context, note.getAddedTime()));
-        helper.setImageDrawable(R.id.iv_icon, ColorUtils.tintDrawable(
-                context.getResources().getDrawable(R.drawable.ic_doc_text_alpha), accentColor));
-    }
-
-    private void convertNoteExpanded(BaseViewHolder holder, Note note) {
+    private void convertNote(BaseViewHolder holder, Note note) {
         holder.itemView.setBackgroundColor(PalmApp.getColorCompact(isDarkTheme ?
                 R.color.dark_theme_background : R.color.light_theme_background));
         holder.setText(R.id.tv_note_title, note.getTitle());
@@ -93,7 +80,8 @@ public class NotesAdapter extends BaseMultiItemQuickAdapter<NotesAdapter.MultiIt
     private void convertNotebook(BaseViewHolder helper, Notebook notebook) {
         int nbColor = notebook.getColor();
         helper.setText(R.id.tv_note_title, notebook.getTitle());
-        String str = context.getResources().getQuantityString(R.plurals.notes_number, notebook.getCount(), notebook.getCount());
+        String str = context.getResources().getQuantityString(R.plurals.notes_number, notebook.getCount(),
+                notebook.getCount());
         helper.setText(R.id.tv_added_time, str);
         helper.setImageDrawable(R.id.iv_icon, ColorUtils.tintDrawable(
                 context.getResources().getDrawable(R.drawable.ic_folder_black_24dp), nbColor));
