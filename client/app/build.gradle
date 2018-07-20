@@ -15,6 +15,18 @@ android {
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     signingConfigs {
+        debug {
+            Properties properties = new Properties()
+            InputStream inputStream = project.rootProject.file('local.properties').newDataInputStream();
+            properties.load(inputStream)
+
+            storeFile file(properties.getProperty('keystore.file'))
+            storePassword properties.getProperty('keystore.password')
+            keyAlias properties.getProperty('keystore.name')
+            keyPassword properties.getProperty('keystore.password')
+
+            v2SigningEnabled false
+        }
         release {}
     }
     buildTypes {
