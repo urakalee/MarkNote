@@ -114,9 +114,6 @@
                 android:resource="@xml/provider_paths" />
         </provider>
 
-        <service android:name=".async.DataBackupIntentService" />
-        <service android:name=".async.onedrive.OneDriveBackupService" />
-
         <!-- region App Widget -->
         <receiver android:name=".widget.desktop.ListWidgetProvider">
             <intent-filter>
@@ -166,7 +163,6 @@
             android:theme="@style/TransParentDialog" />
         <!-- endregion -->
 
-        <activity android:name=".activity.DirectoryActivity" />
         <activity android:name=".activity.MenuSortActivity"></activity>
     </application>
 

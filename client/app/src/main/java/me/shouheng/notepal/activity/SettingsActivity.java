@@ -23,7 +23,6 @@ import me.shouheng.notepal.activity.base.CommonActivity;
 import me.shouheng.notepal.databinding.ActivitySettingsBinding;
 import me.shouheng.notepal.fragment.AppInfoFragment;
 import me.shouheng.notepal.fragment.setting.PrimaryPickerFragment;
-import me.shouheng.notepal.fragment.setting.SettingsBackup;
 import me.shouheng.notepal.fragment.setting.SettingsDashboard;
 import me.shouheng.notepal.fragment.setting.SettingsFragment;
 import me.shouheng.notepal.fragment.setting.SettingsNote;
@@ -90,8 +89,6 @@ public class SettingsActivity extends CommonActivity<ActivitySettingsBinding> im
         String action = getIntent().getAction();
         if (TextUtils.isEmpty(action)) {
             FragmentHelper.replace(this, new SettingsFragment(), R.id.fragment_container);
-        } else if (ACTION_NAV_TO_BACKUP_FRAGMENT.equals(action)){
-            FragmentHelper.replace(this, new SettingsBackup(), R.id.fragment_container);
         }
     }
 
@@ -138,8 +135,6 @@ public class SettingsActivity extends CommonActivity<ActivitySettingsBinding> im
             replaceWithCallback(PrimaryPickerFragment.newInstance());
         } else if (getString(R.string.key_accent_color).equals(key)) {
             showAccentColorPicker();
-        } else if (getString(R.string.key_data_backup).equals(key)) {
-            replaceWithCallback(new SettingsBackup());
         } else if (getString(R.string.key_about).equals(key)) {
             replaceWithCallback(new AppInfoFragment());
         } else if (getString(R.string.key_setup_dashboard).equals(key)) {

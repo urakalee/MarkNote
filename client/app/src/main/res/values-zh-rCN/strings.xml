@@ -67,7 +67,6 @@
     <string name="text_move_out">移出</string>
     <string name="text_tab_again_exit">再按一次退出</string>
     <string name="text_attachment">附件</string>
-    <string name="working">正在执行&#8230;</string>
     <string name="text_ok">好的</string>
     <string name="text_export_html">导出html</string>
     <string name="text_failed_to_load_data">加载数据失败</string>
@@ -243,36 +242,6 @@
     <string name="setting_system_animation_sub">在整个应用中启用系统动画</string>
     <!--endregion-->
 
-    <!--region Setting->Backup-->
-    <string name="backup_to_external_storage">备份到手机外部存储空间</string>
-    <string name="backup_to_external_storage_sub">备份在手机外部存储空间的数据在应用被卸载的时候不会被删除</string>
-    <string name="backup_import_from_external_storage">从手机外部存储空间导入</string>
-    <string name="backup_import_from_external_storage_sub">导入手机外部存储空间中备份的数据</string>
-
-    <string name="backup_include_settings">包括设置（带密码）</string>
-    <string name="backup_data_export_message">输入备份名称</string>
-    <string name="backup_data_export_name_empty">输入的名称为空，将使用默认名称</string>
-    <string name="backup_no_backups_available">无可用备份</string>
-    <string name="backup_data_import_message">导入备份</string>
-    <string name="backup_data_import_message_warning">警告：此操作将覆盖所有当前数据！</string>
-    <string name="backup_data_export_completed">数据备份完成</string>
-
-    <string name="backup_confirm_restoring_backup">确认还原备份</string>
-    <string name="backup_settings_included">设置已包括</string>
-
-    <string name="backup_confirm_removing_backup">确认删除备份</string>
-    <string name="backup_data_delete_message">删除备份</string>
-    <string name="backup_data_deletion_completed">数据删除完成</string>
-    <string name="backup_no_backup_data_selected">没有选中的备份</string>
-
-    <string name="backup_data_import_completed">数据导入完成</string>
-    <string name="backup_click_to_refresh_application">点击刷新应用</string>
-
-    <string name="backup_no_backups_to_delete">没有备份数据</string>
-    <string name="backup_delete_external_backup">删除外部存储的备份数据</string>
-    <string name="backup_delete_external_backup_sub">删除备份在外部存储空间的数据</string>
-    <!--endregion-->
-
     <!--region Setting->Note-->
     <string name="setting_note">笔记设置</string>
     <string name="setting_note_sub">笔记相关的设置</string>
@@ -419,41 +388,6 @@
     <!--endregion-->
 
     <!--regionv1.1.2-->
-    <string name="text_external_storage">外部存储</string>
-    <string name="text_one_drive">OneDrive</string>
-    <string name="one_drive_backup_title">连接 OneDrive</string>
-    <string name="one_drive_backup_sub_title">登录 OneDrive 以同步文件</string>
-    <string name="sign_out_one_drive">登出 OneDrive</string>
-    <string name="sign_out_one_drive_sub">登出 OneDrive 停止同步</string>
-    <string name="one_drive_backup_folder">当前同步的文件ID是 %1$s</string>
-    <string name="text_error">错误</string>
-    <string name="text_successfully_logout">成功登出</string>
-    <string name="backup_only_wifi">只在 WiFi 环境下进行同步</string>
-    <string name="backup_only_wifi_sub">勾选则只在 WiFi 环境下进行同步</string>
-    <string name="backup_time_interval">同步的时间间隔</string>
-    <string name="text_sync_settings">同步设置</string>
-    <string name="failed_query_sync_cloud">未知的错误类型！</string>
-    <string name="text_done">完成</string>
-    <string name="text_folder_explore">选择同步的文件夹</string>
-    <string name="text_no_more_folders">没有更多可选文件夹了</string>
-    <string name="text_please_wait">请等待&#8230;</string>
-    <string name="error_when_try_to_backup">当同步到 %1$s 的时候发生了错误</string>
-    <string name="backup_dir_selected_message">成功地设置了同步的文件夹</string>
-    <string name="pick_backup_directory_message">进入你想要同步的文件夹，然后选择 \"完成\".</string>
-    <string name="available_directory_found">在当前的文件夹中发现了可用的 \"NotePal\". 你可以按下 \"完成\" 来完成选择。</string>
-    <string name="login_drive_message">请登录你的 OneDrive 账号后再次尝试</string>
-    <string name="text_syncing">正在同步&#8230;</string>
-    <string name="synchronize_path_changed_message">系统检测到你更换了备份目录，所有的同步状态都将会被清理掉，这意味着会重新对所有的文件进行同步。这可能需要一定的时间才能完成。</string>
-
-    <string name="sync_every_15_minutes">每隔 15 分钟</string>
-    <string name="sync_every_30_minutes">每隔 30 分钟</string>
-    <string name="sync_every_hour">每小时</string>
-    <string name="sync_every_2_hours">每隔 2 小时</string>
-    <string name="sync_every_6_hours">每隔 6 小时</string>
-    <string name="sync_every_12_hours">每隔 12 小时</string>
-    <string name="sync_every_day">每天</string>
-
-    <string name="text_get_it">知道了</string>
     <string name="text_config_widget">自定义桌面小控件</string>
 
     <string name="auto_compress_image_title">自动压缩图片</string>

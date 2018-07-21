@@ -21,7 +21,6 @@ import me.shouheng.notepal.model.Model;
 /**
  * TODO All the todo items in later version:
  *
- * 1. Add ringtone to {@link me.shouheng.notepal.async.DataBackupIntentService} when included the notification logic;
  * 2. Enable copy link logic when the server is ready. {@link me.shouheng.notepal.util.ModelHelper#copyLink(Activity, Model)};
  * 3. Add Google Drive logic, check if the file has backup time in google drive;
  * 6. Modify import from external logic, since current logic did nothing according to the db version and change,
@@ -55,8 +54,6 @@ public class PalmApp extends Application {
 
     private static PalmApp mInstance;
 
-    private static boolean passwordChecked;
-
     public static synchronized PalmApp getContext() {
         return mInstance;
     }
@@ -83,14 +80,6 @@ public class PalmApp extends Application {
                 .debuggable(BuildConfig.DEBUG)
                 .build();
         Fabric.with(fabric);
-    }
-
-    public static boolean isPasswordChecked() {
-        return passwordChecked;
-    }
-
-    public static void setPasswordChecked() {
-        PalmApp.passwordChecked = true;
     }
 
     public static String getStringCompact(@StringRes int resId) {

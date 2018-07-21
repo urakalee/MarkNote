@@ -67,7 +67,6 @@
     <string name="text_move_out">Move out</string>
     <string name="text_tab_again_exit">Again to exit</string>
     <string name="text_attachment">Attachment</string>
-    <string name="working">Working&#8230;</string>
     <string name="text_ok">OK</string>
     <string name="text_export_html">Export html</string>
     <string name="text_failed_to_load_data">Failed to load data.</string>
@@ -243,36 +242,6 @@
     <string name="setting_system_animation_sub">Enable system animations</string>
     <!--endregion-->
 
-    <!--region Setting->Backup-->
-    <string name="backup_to_external_storage">Backup to external storage</string>
-    <string name="backup_to_external_storage_sub">The data backup on external storage won\'t be delete when the application is uninstalled</string>
-    <string name="backup_import_from_external_storage">Import from external storage</string>
-    <string name="backup_import_from_external_storage_sub">Import data backup on external storage</string>
-
-    <string name="backup_include_settings">Include settings（with password）</string>
-    <string name="backup_data_export_message">Input backup name</string>
-    <string name="backup_data_export_name_empty">Empty backup name, the default name will be used</string>
-    <string name="backup_no_backups_available">No available backup</string>
-    <string name="backup_data_import_message">Import backup</string>
-    <string name="backup_data_import_message_warning">Warning: this will cover current data!</string>
-    <string name="backup_data_export_completed">Backup completed</string>
-
-    <string name="backup_confirm_restoring_backup">Confirm to restore from backup</string>
-    <string name="backup_settings_included">Settings included</string>
-
-    <string name="backup_confirm_removing_backup">Confirm to delete backup</string>
-    <string name="backup_data_delete_message">Delete backup</string>
-    <string name="backup_data_deletion_completed">Backup delete completed</string>
-    <string name="backup_no_backup_data_selected">No backup selected</string>
-
-    <string name="backup_data_import_completed">Data import completed</string>
-    <string name="backup_click_to_refresh_application">Click to refresh application</string>
-
-    <string name="backup_no_backups_to_delete">No backup to delete</string>
-    <string name="backup_delete_external_backup">Delete external backup</string>
-    <string name="backup_delete_external_backup_sub">Delete the backup on external storage</string>
-    <!--endregion-->
-
     <!--region Setting->Note-->
     <string name="setting_note">Note</string>
     <string name="setting_note_sub">Set note performance</string>
@@ -419,42 +388,6 @@
     <!--endregion-->
 
     <!--region v1.1.2-->
-    <string name="text_external_storage">External Storage</string>
-    <string name="text_one_drive">OneDrive</string>
-    <string name="one_drive_backup_title">Connect OneDrive</string>
-    <string name="one_drive_backup_sub_title">Sign in to synchronize files to OneDrive</string>
-    <string name="sign_out_one_drive">Sign out OneDrive</string>
-    <string name="sign_out_one_drive_sub">Sign out OneDrive to stop synchronize</string>
-    <string name="one_drive_backup_folder">Currently synchronization folder is %1$s</string>
-    <string name="text_error">Error</string>
-    <string name="text_successfully_logout">Successfully logout</string>
-    <string name="backup_only_wifi">Only in WiFi environment</string>
-    <string name="backup_only_wifi_sub">Backup only in WiFi environment</string>
-    <string name="backup_time_interval">Synchronization time interval</string>
-    <string name="text_sync_settings">Synchronization settings</string>
-    <string name="failed_query_sync_cloud">Unknown error occurred!</string>
-    <string name="text_done">Done</string>
-    <string name="text_folder_explore">Pick folder</string>
-    <string name="text_no_more_folders">No more folders</string>
-    <string name="text_please_wait">Please wait&#8230;</string>
-    <string name="error_when_try_to_backup">Error when try to synchronize : %1$s</string>
-    <string name="backup_dir_selected_message">Successfully get synchronization directory</string>
-    <string name="pick_backup_directory_message">Get into the folder you want to synchronize to and select \"DONE\".</string>
-    <string name="available_directory_found">Available folder \"NotePal\" is found in current folder. You can press \"Done\" to complete selection.</string>
-    <string name="login_drive_message">Sign in your OneDrive account before synchronize.</string>
-    <string name="text_syncing">Synchronizing&#8230;</string>
-    <string name="synchronize_path_changed_message">The system detected that you have changed the synchronization path. All the synchronization state will be cleared. That means you have to re-synchronize everything again, which may take few time to accomplish.</string>
-
-    <string name="sync_every_15_minutes">Every 15 minutes</string>
-    <string name="sync_every_30_minutes">Every 30 minutes</string>
-    <string name="sync_every_hour">Every hour</string>
-    <string name="sync_every_2_hours">Every 2 hours</string>
-    <string name="sync_every_6_hours">Every 6 hours</string>
-    <string name="sync_every_12_hours">Every 12 hours</string>
-    <string name="sync_every_day">Daily</string>
-
-    <string name="text_get_it">Get it</string>
-    <string name="text_undone">Undone</string>
     <string name="text_config_widget">Widget configuration</string>
 
     <string name="auto_compress_image_title">Auto compress image</string>

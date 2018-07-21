@@ -65,7 +65,6 @@ import me.shouheng.notepal.util.ColorUtils;
 import me.shouheng.notepal.util.FragmentHelper;
 import me.shouheng.notepal.util.IntentUtils;
 import me.shouheng.notepal.util.LogUtils;
-import me.shouheng.notepal.util.SynchronizeUtils;
 import me.shouheng.notepal.util.ToastUtils;
 import me.shouheng.notepal.util.preferences.DashboardPreferences;
 import me.shouheng.notepal.util.preferences.UserPreferences;
@@ -146,7 +145,6 @@ public class MainActivity extends CommonActivity<ActivityMainBinding> implements
 
     private void againExit() {
         if (onBackPressed + TIME_INTERVAL_BACK > System.currentTimeMillis()) {
-            SynchronizeUtils.syncOneDrive(this);
             super.onBackPressed();
             return;
         } else {
@@ -708,7 +706,6 @@ public class MainActivity extends CommonActivity<ActivityMainBinding> implements
                     SettingsActivity.start(this, REQUEST_SETTING);
                     break;
                 case R.id.nav_sync:
-                    SynchronizeUtils.syncOneDrive(this, REQUEST_SETTING_BACKUP, true);
                     break;
             }
         }, 500);
