@@ -21,7 +21,7 @@ fun <T : Serializable> Intent.putToBundle(key: String, value: T) {
     this.putExtra(me.urakalee.ranger.extension.ARG_BUNDLE, bundle)
 }
 
-fun <T> Intent.getFromBundle(key: String, defaultValue: T? = null): T? {
+inline fun <reified T> Intent.getFromBundle(key: String, defaultValue: T? = null): T? {
     val bundle = this.getBundleExtra(me.urakalee.ranger.extension.ARG_BUNDLE)
     return bundle?.get(key) as? T ?: defaultValue // XXX: use reified to avoid warning
 }
