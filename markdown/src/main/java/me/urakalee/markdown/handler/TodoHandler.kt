@@ -17,7 +17,7 @@ object TodoHandler : MarkHandler {
                     CHECKED
                 },
                 {
-                    UNCHECKED
+                    ""
                 },
                 {
                     super.handleTodo(inputMark, source, sourceMark)

@@ -17,7 +17,7 @@ object ListHandler : MarkHandler {
                 Mark.LA.defaultMark
             }
             Mark.LA -> {
-                Mark.LI.defaultMark
+                ""
             }
             else -> {
                 super.handleList(inputMark, source, sourceMark)

@@ -12,6 +12,6 @@ object HeaderHandler : MarkHandler {
     const val MAX_LEVEL = 4
 
     override fun handleHeader(inputMark: Mark, source: String, sourceMark: Mark): String {
-        return if (source.length < MAX_LEVEL) "$source#" else Mark.H.defaultMark
+        return if (source.length < MAX_LEVEL) "$source#" else ""
     }
 }
