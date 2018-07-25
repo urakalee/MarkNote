@@ -58,11 +58,20 @@ class DayOneStrategy : DefaultStrategy() {
         val (mark, indent, content) = detectPrecedingMark(targetLine)
         val newMark = Mark.handle(inputMark, mark)
         val firstNonIndent = start + indent.length
-        editor?.text?.replace(firstNonIndent, firstNonIndent + mark.length, newMark)
-        editor?.setSelection(end + newMark.length - mark.length) // 简单处理, 光标放在行尾
+        // 如果 newMark.isEmpty, 一定是删除原有标记, 也就是说 mark 有效且后面有空格, length + 1
+        val replaceLength = if (newMark.isEmpty()) mark.length + 1 else mark.length
+        editor?.text?.replace(firstNonIndent, firstNonIndent + replaceLength, newMark)
+        editor?.setSelection(end + newMark.length - replaceLength) // 简单处理, 光标放在行尾
     }
 
     /**
+     * 前缀空格会被当做 indent
+     *
+     * mark
+     * - "": 没有找到标签(没有找到字符后面的空格) -> 加标记+空格
+     * - mark: 标记 -> 处理标记
+     * - ???: 非标记文本, 有空格 -> 加标记+空格
+     *
      * @return mark, indent, content
      */
     private fun detectPrecedingMark(line: String): Triple<String, Indent, String> {
