@@ -8,7 +8,7 @@ import me.urakalee.markdown.handler.*
 enum class Mark(val pattern: Regex, val defaultMark: String, val handler: MarkHandler) {
 
     NONE(Regex(""), "", NoneHandler),
-    H(Regex("#+"), "#", HeaderHandler),
+    H(Regex("#+"), "#".repeat(HeaderHandler.MIN_LEVEL), HeaderHandler),
     LI(Regex("[-*]"), "-", ListHandler),
     LO(Regex("\\d\\."), "1.", ListHandler),
     LA(Regex("[a-z]\\."), "a.", ListHandler),

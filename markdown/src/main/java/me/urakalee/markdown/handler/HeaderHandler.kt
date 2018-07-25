@@ -8,7 +8,10 @@ import me.urakalee.markdown.MarkHandler
  */
 object HeaderHandler : MarkHandler {
 
+    const val MIN_LEVEL = 2
+    const val MAX_LEVEL = 4
+
     override fun handleHeader(inputMark: Mark, source: String, sourceMark: Mark): String {
-        return if (source.length < 6) "$source${Mark.H.defaultMark}" else Mark.H.defaultMark
+        return if (source.length < MAX_LEVEL) "$source#" else Mark.H.defaultMark
     }
 }

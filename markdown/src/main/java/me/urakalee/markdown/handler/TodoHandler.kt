@@ -8,8 +8,8 @@ import me.urakalee.markdown.MarkHandler
  */
 object TodoHandler : MarkHandler {
 
-    val CHECKED = "- [X]"
-    val UNCHECKED = "- [ ]"
+    const val CHECKED = "- [X]"
+    const val UNCHECKED = "- [ ]"
 
     override fun handleTodo(inputMark: Mark, source: String, sourceMark: Mark): String {
         return handleTodo(source,
