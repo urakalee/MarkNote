@@ -7,7 +7,6 @@ import me.shouheng.notepal.PalmApp
 import me.shouheng.notepal.model.Notebook
 import me.shouheng.notepal.model.enums.ItemStatus
 import me.shouheng.notepal.provider.BaseStore
-import java.util.*
 
 /**
  * Created by wangshouheng on 2017/8/19.
@@ -34,23 +33,9 @@ class NotebookStore private constructor() : BaseStore<Notebook>(PalmApp.getConte
         return notebooks
     }
 
-    /**
-     * Get notebooks of given status. Here are mainly two cases match:
-     * 1).Notes count of given notebook > 0;
-     * 2).The notebook itself is in given status.
-     *
-     * @return the notebooks
-     */
     private val notebooks: List<Notebook>
         get() {
-            val notebookRoot = storageRoot()
-            val notebooks = LinkedList<Notebook>()
-            for (file in listDirs(notebookRoot, false)) {
-                val notebook = Notebook()
-                notebook.title = file.name
-                notebooks.add(notebook)
-            }
-            return notebooks
+            return listNotebook()
         }
 
     @Synchronized

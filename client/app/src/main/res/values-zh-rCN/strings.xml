@@ -162,8 +162,8 @@
     <string name="tag_name">标签名称</string>
     <string name="pick_tag_color">选择标签颜色</string>
     <plurals name="notes_number">
-        <item quantity="one">%d 个笔记</item>
-        <item quantity="other">%d 个笔记</item>
+        <item quantity="one">最近 %d 个笔记</item>
+        <item quantity="other">最近 %d 个笔记</item>
     </plurals>
     <string name="tag_delete_message">删除该标签不会删除其相关的笔记。</string>
     <string name="tags_list_empty">标签列表为空</string>

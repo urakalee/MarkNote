@@ -12,7 +12,7 @@ enum class Mark(val pattern: Regex, val defaultMark: String, val handler: MarkHa
     LI(Regex("[-*]"), "-", ListHandler),
     LO(Regex("\\d\\."), "1.", ListHandler),
     LA(Regex("[a-z]\\."), "a.", ListHandler),
-    TD(Regex("- \\[[x ]]", RegexOption.IGNORE_CASE), "- [ ]", TodoHandler),
+    TD(Regex("- \\[[x ]]", RegexOption.IGNORE_CASE), TodoHandler.UNCHECKED, TodoHandler),
     QT(Regex(">"), ">", QuoteHandler);
 
     companion object {

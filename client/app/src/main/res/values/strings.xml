@@ -162,8 +162,8 @@
     <string name="tag_name">Tag name</string>
     <string name="pick_tag_color">Pick tag color</string>
     <plurals name="notes_number">
-        <item quantity="one">%d note</item>
-        <item quantity="other">%d notes</item>
+        <item quantity="one">Recent %d note</item>
+        <item quantity="other">Recent %d notes</item>
     </plurals>
     <string name="tag_delete_message">Delete tag will only delete the connection with notes, notes won\'t be deleted.</string>
     <string name="tags_list_empty">Empty tag list</string>

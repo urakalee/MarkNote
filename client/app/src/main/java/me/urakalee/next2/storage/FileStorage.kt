@@ -17,10 +17,8 @@ fun storageRoot() = File(sdCard(), ROOT_PATH)
 
 fun listDirs(file: File, showHidden: Boolean = false): List<File> {
     val dir = if (file.isDirectory) file else return emptyList()
-    val dirs = dir.listFiles { pathname: File? ->
-        pathname?.let {
-            it.isDirectory && (showHidden || !it.name.startsWith('.'))
-        } ?: false
+    val dirs = dir.listFiles { f: File ->
+        f.isDirectory && (showHidden || !isHidden(f))
     }
     dirs.sortBy { it.name } // TODO: 手动顺序排序就不需要这个了
     return dirs.asList()
@@ -28,10 +26,8 @@ fun listDirs(file: File, showHidden: Boolean = false): List<File> {
 
 fun listFiles(file: File, showHidden: Boolean = false): List<File> {
     val dir = if (file.isDirectory) file else return emptyList()
-    val files = dir.listFiles { pathname: File? ->
-        pathname?.let {
-            it.isFile && (showHidden || !it.name.startsWith('.'))
-        } ?: false
+    val files = dir.listFiles { f: File ->
+        f.isFile && (showHidden || !isHidden(f))
     }
     files.sortByDescending { it.lastModified() } // XXX: 这个值和设备相关...
     return files.asList()
@@ -78,6 +74,21 @@ fun ensureMoveDir(source: String, target: String) {
     } else {
         getFile(source).renameTo(targetFile)
     }
+}
+
+/**
+ * @return -1 if not directory
+ */
+fun countFiles(file: File, ext: String? = null, includeHidden: Boolean = false): Int {
+    val dir = if (file.isDirectory) file else return -1
+    val files = dir.listFiles { f: File ->
+        f.isFile && (ext == null || f.name.endsWith("$ext")) && (includeHidden || !isHidden(f))
+    }
+    return files.size
+}
+
+fun isHidden(file: File): Boolean {
+    return file.name.startsWith('.')
 }
 
 fun getFile(name: String): File {

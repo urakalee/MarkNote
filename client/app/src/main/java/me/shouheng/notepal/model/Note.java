@@ -10,6 +10,7 @@ import java.io.File;
 import me.shouheng.notepal.provider.annotation.Column;
 import me.shouheng.notepal.provider.annotation.Table;
 import me.shouheng.notepal.provider.schema.NoteSchema;
+import me.urakalee.next2.config.TimeConfig;
 
 /**
  * Created by wangshouheng on 2017/5/12.
@@ -17,7 +18,7 @@ import me.shouheng.notepal.provider.schema.NoteSchema;
 @Table(name = NoteSchema.TABLE_NAME)
 public class Note extends Model {
 
-    private static final String DEFAULT_SUFFIX = ".md";
+    public static final String DEFAULT_SUFFIX = ".md";
 
     @Column(name = NoteSchema.TREE_PATH)
     private String treePath;
@@ -96,7 +97,7 @@ public class Note extends Model {
     }
 
     public void generateTimePath() {
-        setTimePath(LocalDate.now().toString("yyyy-MM"));
+        setTimePath(LocalDate.now().toString(TimeConfig.MONTH_FORMAT));
     }
 
     public String getOriginTitle() {
