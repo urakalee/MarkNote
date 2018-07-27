@@ -34,8 +34,15 @@ public abstract class BaseStore<T extends Model> {
 
     protected long userId = 0;
 
+    protected boolean isDbStore() {
+        return true;
+    }
+
     @SuppressWarnings("unchecked")
     public BaseStore(Context context) {
+        if (!isDbStore()) {
+            return;
+        }
         this.mPalmDatabase = PalmDB.getInstance(context);
         LogUtils.d(mPalmDatabase); // the instance should be singleton
         entityClass = (Class) ((ParameterizedType) this.getClass().getGenericSuperclass()).getActualTypeArguments()[0];
@@ -88,7 +95,8 @@ public abstract class BaseStore<T extends Model> {
             cursor = database.rawQuery(" SELECT * FROM " + tableName
                             + " WHERE " + BaseSchema.USER_ID + " = " + userId
                             + " AND " + BaseSchema.CODE + " = " + code
-                            + (status == null ? "" : " AND " + BaseSchema.STATUS + (exclude ? " != " : " = ") + status.id),
+                            + (status == null ? "" : " AND " + BaseSchema.STATUS + (exclude ? " != " : " = ") +
+                            status.id),
                     new String[]{});
             model = get(cursor);
         } finally {
@@ -122,7 +130,8 @@ public abstract class BaseStore<T extends Model> {
             cursor = database.rawQuery(" SELECT * FROM " + tableName
                             + " WHERE " + BaseSchema.USER_ID + " = " + userId
                             + (TextUtils.isEmpty(whereSQL) ? "" : " AND " + whereSQL)
-                            + (status == null ? "" : " AND " + BaseSchema.STATUS + (exclude ? " != " : " = ") + status.id)
+                            + (status == null ? "" : " AND " + BaseSchema.STATUS + (exclude ? " != " : " = ") +
+                            status.id)
                             + (TextUtils.isEmpty(orderSQL) ? "" : " ORDER BY " + orderSQL),
                     new String[]{});
             models = getList(cursor);
@@ -149,7 +158,8 @@ public abstract class BaseStore<T extends Model> {
             cursor = database.rawQuery(" SELECT COUNT(*) AS count FROM " + tableName +
                             " WHERE " + BaseSchema.USER_ID + " = " + userId
                             + (TextUtils.isEmpty(whereSQL) ? "" : " AND " + whereSQL)
-                            + (status == null ? "" : " AND " + BaseSchema.STATUS + (exclude ? " != " : " = ") + status.id),
+                            + (status == null ? "" : " AND " + BaseSchema.STATUS + (exclude ? " != " : " = ") +
+                            status.id),
                     new String[]{});
             if (cursor != null && cursor.moveToFirst()) {
                 do {
@@ -170,7 +180,8 @@ public abstract class BaseStore<T extends Model> {
         try {
             cursor = database.rawQuery(" SELECT * FROM " + tableName
                             + " WHERE " + BaseSchema.USER_ID + " = ? "
-                            + (status == null ? "" : " AND " + BaseSchema.STATUS + (exclude ? " != " : " = ") + status.id)
+                            + (status == null ? "" : " AND " + BaseSchema.STATUS + (exclude ? " != " : " = ") +
+                            status.id)
                             + (TextUtils.isEmpty(orderSQL) ? "" : " ORDER BY " + orderSQL)
                             + " LIMIT ?, ? ",
                     new String[]{String.valueOf(userId), String.valueOf(index), String.valueOf(pageCount)});
@@ -221,7 +232,8 @@ public abstract class BaseStore<T extends Model> {
         database.beginTransaction();
         try {
             database.execSQL(" UPDATE " + tableName
-                            + " SET " + BaseSchema.STATUS + " = " + toStatus.id + " , " + BaseSchema.LAST_MODIFIED_TIME + " = ? "
+                            + " SET " + BaseSchema.STATUS + " = " + toStatus.id + " , " + BaseSchema.LAST_MODIFIED_TIME
+                            + " = ? "
                             + " WHERE " + BaseSchema.CODE + " = " + model.getCode()
                             + " AND " + BaseSchema.USER_ID + " = " + userId,
                     new String[]{String.valueOf(System.currentTimeMillis())});

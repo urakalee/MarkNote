@@ -272,7 +272,6 @@ class NotesFragment : BaseFragment<FragmentNotesBinding>(),
         val fragmentNonNull = fragmentManager ?: return
         NotebookPickerDialog.newInstance().setOnItemSelectedListener { dialog, targetNotebook, _ ->
             if (note.notebook!!.title == targetNotebook.title) return@setOnItemSelectedListener
-            note.treePath = targetNotebook.treePath + "|" + note.code
             update(note)
             dialog.dismiss()
         }.show(fragmentNonNull, "Notebook picker")

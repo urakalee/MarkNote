@@ -3,9 +3,6 @@ package me.urakalee.next2.model
 import android.net.Uri
 import me.shouheng.notepal.model.Model
 import me.shouheng.notepal.model.Notebook
-import me.shouheng.notepal.provider.annotation.Column
-import me.shouheng.notepal.provider.annotation.Table
-import me.shouheng.notepal.provider.schema.NoteSchema
 import me.urakalee.next2.config.TimeConfig
 import me.urakalee.next2.storage.getFile
 import org.joda.time.LocalDate
@@ -14,39 +11,24 @@ import java.io.File
 /**
  * @author Uraka.Lee
  */
-@Table(name = NoteSchema.TABLE_NAME)
 class Note : Model() {
 
-    @Column(name = NoteSchema.TREE_PATH)
-    var treePath: String? = null
-
-    @Column(name = NoteSchema.TITLE)
-    var title: String? = null
-
-    @Column(name = NoteSchema.CONTENT_CODE)
-    var attachmentCode: Long = 0
-
-    @Column(name = NoteSchema.TAGS)
-    var tags: String? = null
-
-    @Column(name = NoteSchema.PREVIEW_IMAGE)
-    var previewImage: Uri? = null
-
-    @Column(name = NoteSchema.PREVIEW_CONTENT)
-    var previewContent: String? = null
-
-    // region Android端字段，不计入数据库
-
     var notebook: Notebook? = null
+    var title: String? = null
     var content: String? = null
-    var tagsName: String? = null
 
     var timePath: String? = null
     var dayPrefix: Int = 0
     var originTitle: String? = null
     var originFile: File? = null
 
-    //endregion
+    var previewImage: Uri? = null
+    var previewContent: String? = null
+
+    var tags: String? = null
+    var tagsName: String? = null
+
+    var attachmentCode: Long = 0
 
     val fileName: String?
         get() {
@@ -157,8 +139,7 @@ class Note : Model() {
 
     override fun toString(): String {
         return "Note{" +
-                "treePath='" + treePath + '\''.toString() +
-                ", title='" + title + '\''.toString() +
+                "title='" + title + '\''.toString() +
                 ", attachmentCode=" + attachmentCode +
                 ", tags='" + tags + '\''.toString() +
                 ", previewImage=" + previewImage +

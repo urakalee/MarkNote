@@ -4,13 +4,10 @@ import android.content.ContentValues
 import android.content.Context
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
-import android.net.Uri
-import android.text.TextUtils
 import me.shouheng.notepal.PalmApp
 import me.shouheng.notepal.model.Notebook
 import me.shouheng.notepal.model.enums.ItemStatus
 import me.shouheng.notepal.provider.BaseStore
-import me.shouheng.notepal.provider.schema.NoteSchema
 import me.urakalee.next2.model.Note
 import java.io.File
 
@@ -19,51 +16,28 @@ import java.io.File
  */
 class NoteStore private constructor(context: Context) : BaseStore<Note>(context) {
 
-    override fun afterDBCreated(db: SQLiteDatabase) {}
+    override fun isDbStore(): Boolean {
+        return false
+    }
+
+    override fun onCreate(db: SQLiteDatabase?) {
+        throw UnsupportedOperationException()
+    }
+
+    override fun afterDBCreated(db: SQLiteDatabase) {
+        throw UnsupportedOperationException()
+    }
 
     public override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
-        when (oldVersion) {
-            1, 2 -> {
-                db.execSQL("ALTER TABLE gt_note ADD COLUMN " + NoteSchema.PREVIEW_IMAGE + " TEXT")
-                db.execSQL("ALTER TABLE gt_note ADD COLUMN " + NoteSchema.PREVIEW_CONTENT + " TEXT")
-            }
-            4 -> db.execSQL("ALTER TABLE gt_note ADD COLUMN " + NoteSchema.PREVIEW_CONTENT + " TEXT")
-            5 -> {
-                // 判断指定的两个列是否存在，如果不存在的话就创建列
-                var cursor: Cursor? = null
-                try {
-                    cursor = db.rawQuery("SELECT * FROM $tableName LIMIT 0 ", null)
-                    val isExist = cursor != null && cursor.getColumnIndex(NoteSchema.PREVIEW_IMAGE) != -1
-                    if (!isExist) {
-                        db.execSQL("ALTER TABLE gt_note ADD COLUMN " + NoteSchema.PREVIEW_IMAGE + " TEXT")
-                    }
-                } finally {
-                    if (null != cursor && !cursor.isClosed) {
-                        closeCursor(cursor)
-                    }
-                }
-            }
-        }
+        throw UnsupportedOperationException()
     }
 
     public override fun fillModel(note: Note, cursor: Cursor) {
-        note.title = cursor.getString(cursor.getColumnIndex(NoteSchema.TITLE))
-        note.attachmentCode = cursor.getLong(cursor.getColumnIndex(NoteSchema.CONTENT_CODE))
-        note.tags = cursor.getString(cursor.getColumnIndex(NoteSchema.TAGS))
-        note.treePath = cursor.getString(cursor.getColumnIndex(NoteSchema.TREE_PATH))
-        val preUri = cursor.getString(cursor.getColumnIndex(NoteSchema.PREVIEW_IMAGE))
-        note.previewImage = if (TextUtils.isEmpty(preUri)) null else Uri.parse(preUri)
-        note.previewContent = cursor.getString(cursor.getColumnIndex(NoteSchema.PREVIEW_CONTENT))
+        throw UnsupportedOperationException()
     }
 
     override fun fillContentValues(values: ContentValues, note: Note) {
-        values.put(NoteSchema.TITLE, note.title)
-        values.put(NoteSchema.CONTENT_CODE, note.attachmentCode)
-        values.put(NoteSchema.TAGS, note.tags)
-        values.put(NoteSchema.TREE_PATH, note.treePath)
-        val uri = note.previewImage
-        values.put(NoteSchema.PREVIEW_IMAGE, uri?.toString())
-        values.put(NoteSchema.PREVIEW_CONTENT, note.previewContent)
+        throw UnsupportedOperationException()
     }
 
     fun getNotes(notebook: Notebook): List<Note> {

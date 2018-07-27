@@ -349,7 +349,6 @@ class NoteEditFragment : BaseModelFragment<Note, FragmentNoteBinding>() {
     private fun showNotebookPicker() {
         fragmentManager?.let {
             NotebookPickerDialog.newInstance().setOnItemSelectedListener { dialog, value, _ ->
-                note.treePath = value.treePath + "|" + value.code
                 binding?.main?.tvFolder?.text = value.title
                 binding?.main?.tvFolder?.setTextColor(value.color)
                 contentChanged = true

@@ -506,15 +506,6 @@ public class MainActivity extends CommonActivity<ActivityMainBinding> implements
 
         boolean isNotes = isNotesFragment();
 
-        /* Add notebook filed according to current fragment */
-        Notebook notebook;
-        if (isNotes && (notebook = ((NotesFragment) getCurrentFragment()).getNotebook()) != null) {
-            note.setTreePath(notebook.getTreePath() + "|" + note.getCode());
-        } else {
-            // The default tree path of note is itself
-            note.setTreePath(String.valueOf(note.getCode()));
-        }
-
         /* Add category field according to current fragment */
         Category category;
         if (isNotes && (category = ((NotesFragment) getCurrentFragment()).getCategory()) != null) {
