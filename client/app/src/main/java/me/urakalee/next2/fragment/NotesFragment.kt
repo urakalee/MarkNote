@@ -21,7 +21,6 @@ import me.shouheng.notepal.dialog.picker.NotebookPickerDialog
 import me.shouheng.notepal.fragment.base.BaseFragment
 import me.shouheng.notepal.listener.OnMainActivityInteraction
 import me.shouheng.notepal.model.Category
-import me.urakalee.next2.model.Note
 import me.shouheng.notepal.model.Notebook
 import me.shouheng.notepal.model.data.LoadStatus
 import me.shouheng.notepal.model.enums.ItemStatus
@@ -33,6 +32,7 @@ import me.shouheng.notepal.widget.tools.CustomItemAnimator
 import me.shouheng.notepal.widget.tools.DividerItemDecoration
 import me.urakalee.next2.activity.ContentActivity
 import me.urakalee.next2.config.FeatureConfig
+import me.urakalee.next2.model.Note
 import me.urakalee.next2.viewmodel.NoteViewModel
 import me.urakalee.next2.viewmodel.NotebookViewModel
 import me.urakalee.ranger.extension.isVisible
@@ -271,7 +271,7 @@ class NotesFragment : BaseFragment<FragmentNotesBinding>(),
     private fun moveNote(note: Note) {
         val fragmentNonNull = fragmentManager ?: return
         NotebookPickerDialog.newInstance().setOnItemSelectedListener { dialog, targetNotebook, _ ->
-            if (note.notebook.title == targetNotebook.title) return@setOnItemSelectedListener
+            if (note.notebook!!.title == targetNotebook.title) return@setOnItemSelectedListener
             note.treePath = targetNotebook.treePath + "|" + note.code
             update(note)
             dialog.dismiss()

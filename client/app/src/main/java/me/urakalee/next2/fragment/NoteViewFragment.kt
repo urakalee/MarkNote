@@ -22,13 +22,12 @@ import me.shouheng.notepal.dialog.OpenResolver
 import me.shouheng.notepal.fragment.base.BaseFragment
 import me.shouheng.notepal.model.Attachment
 import me.shouheng.notepal.model.ModelFactory
-import me.urakalee.next2.model.Note
 import me.shouheng.notepal.provider.CategoryStore
 import me.shouheng.notepal.provider.LocationsStore
 import me.shouheng.notepal.util.*
 import me.shouheng.notepal.viewmodel.CategoryViewModel
 import me.urakalee.next2.activity.ContentActivity
-import me.urakalee.next2.storage.getFile
+import me.urakalee.next2.model.Note
 import org.apache.commons.io.FileUtils
 import java.io.File
 import java.io.IOException
@@ -126,7 +125,7 @@ class NoteViewFragment : BaseFragment<FragmentNoteViewBinding>() {
         isPreview = argsNonNull.getBoolean(EXTRA_IS_PREVIEW)
         if (!isPreview) {
             val noteNonNull = note!!
-            val noteFile = getFile(noteNonNull.notebook.title, noteNonNull.timePath, noteNonNull.fileName)
+            val noteFile = noteNonNull.file
             LogUtils.d("noteFile: $noteFile")
             if (noteFile == null) {
                 ToastUtils.makeToast(R.string.note_failed_to_get_note_content)

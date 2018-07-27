@@ -14,11 +14,11 @@ import java.util.List;
 
 import me.shouheng.notepal.PalmApp;
 import me.shouheng.notepal.R;
-import me.urakalee.next2.model.Note;
 import me.shouheng.notepal.model.Notebook;
 import me.shouheng.notepal.util.ColorUtils;
 import me.shouheng.notepal.util.FileHelper;
 import me.shouheng.notepal.widget.tools.BubbleTextGetter;
+import me.urakalee.next2.model.Note;
 
 /**
  * Created by wang shouheng on 2017/12/23.
@@ -61,7 +61,7 @@ public class NotesAdapter extends BaseMultiItemQuickAdapter<NotesAdapter.MultiIt
                 R.color.dark_theme_background : R.color.light_theme_background));
         holder.setText(R.id.tv_note_title, note.getTitle());
         holder.setText(R.id.tv_content, note.getPreviewContent());
-        holder.setText(R.id.tv_time, note.getCreateTime());
+        holder.setText(R.id.tv_time, note.getCreateTimeStr());
         holder.setTextColor(R.id.tv_time, accentColor);
         if (note.getPreviewImage() != null) {
             holder.getView(R.id.iv_image).setVisibility(View.VISIBLE);

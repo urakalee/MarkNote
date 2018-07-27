@@ -7,11 +7,11 @@ import android.database.sqlite.SQLiteDatabase
 import android.net.Uri
 import android.text.TextUtils
 import me.shouheng.notepal.PalmApp
-import me.urakalee.next2.model.Note
 import me.shouheng.notepal.model.Notebook
 import me.shouheng.notepal.model.enums.ItemStatus
 import me.shouheng.notepal.provider.BaseStore
 import me.shouheng.notepal.provider.schema.NoteSchema
+import me.urakalee.next2.model.Note
 import java.io.File
 
 /**
@@ -72,23 +72,28 @@ class NoteStore private constructor(context: Context) : BaseStore<Note>(context)
 
     override fun saveModel(note: Note) {
         val noteFile = noteFile(note) ?: return
+        val content = note.content ?: throw IllegalArgumentException("content is null")
         // TODO: 检查重名, 如果有, 则修改 title, 并通知上层更新
-        if (note.isNewNote) {
-            if (noteFile.exists()) {
-                throw RuntimeException("${note.title} already exists")
+        when {
+            note.isNewNote -> {
+                if (noteFile.exists()) {
+                    throw RuntimeException("${note.title} already exists")
+                }
+                noteFile.parentFile.mkdirs()
+                noteFile.writeText(content)
+                note.finishNew()
             }
-            noteFile.parentFile.mkdirs()
-            noteFile.writeText(note.content)
-            note.finishNew()
-        } else if (note.needRename()) {
-            if (noteFile.exists()) {
-                throw RuntimeException("${note.title} already exists")
+            note.needRename() -> {
+                if (noteFile.exists()) {
+                    throw RuntimeException("${note.title} already exists")
+                }
+                noteFile.writeText(content)
+                note.originFile!!.delete()
+                note.finishRename()
             }
-            noteFile.writeText(note.content)
-            note.originFile.delete()
-            note.finishRename()
-        } else {
-            noteFile.writeText(note.content)
+            else -> {
+                noteFile.writeText(content)
+            }
         }
     }
 

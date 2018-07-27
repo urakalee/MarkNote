@@ -34,7 +34,6 @@ import me.shouheng.notepal.fragment.base.BaseModelFragment
 import me.shouheng.notepal.model.Attachment
 import me.shouheng.notepal.model.Category
 import me.shouheng.notepal.model.Location
-import me.urakalee.next2.model.Note
 import me.shouheng.notepal.model.data.LoadStatus
 import me.shouheng.notepal.model.enums.ModelType
 import me.shouheng.notepal.util.*
@@ -46,7 +45,7 @@ import me.shouheng.notepal.widget.FlowLayout
 import me.shouheng.notepal.widget.MDItemView
 import me.urakalee.next2.activity.ContentActivity
 import me.urakalee.next2.config.FeatureConfig
-import me.urakalee.next2.storage.getFile
+import me.urakalee.next2.model.Note
 import me.urakalee.next2.viewmodel.NoteViewModel
 import me.urakalee.next2.viewmodel.NotebookViewModel
 import me.urakalee.ranger.extension.dp
@@ -238,7 +237,7 @@ class NoteEditFragment : BaseModelFragment<Note, FragmentNoteBinding>() {
 
     private fun fetchContentIfNeed(note: Note) {
         if (!note.isNewNote && note.content == null) {
-            val noteFile = getFile(note.notebook.title, note.timePath, note.fileName)
+            val noteFile = note.file
             try {
                 note.content = FileUtils.readFileToString(noteFile, "utf-8")
             } catch (e: IOException) {
