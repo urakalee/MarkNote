@@ -4,6 +4,7 @@ import me.shouheng.notepal.model.Note
 import me.shouheng.notepal.model.Notebook
 import me.urakalee.next2.config.TimeConfig.MONTH_FORMAT
 import org.joda.time.LocalDate
+import java.io.File
 import java.util.*
 
 /**
@@ -26,4 +27,24 @@ fun listNotebook(): List<Notebook> {
         }
     }
     return notebooks
+}
+
+fun listNote(notebook: Notebook): List<Note> {
+    val noteRoot = File(storageRoot(), notebook.title)
+    val notes = LinkedList<Note>()
+    val filesInDirs = listFilesInSubDirs(noteRoot)
+    for (dirName in filesInDirs.keys.sortedByDescending { it }) {
+        val files = filesInDirs[dirName] ?: continue
+        for (file in files) {
+            val note = Note()
+            note.setTitleByFileName(file.name)
+            note.notebook = notebook
+            note.timePath = dirName
+            notes.add(note)
+        }
+        notes.sortWith(kotlin.Comparator { o1, o2 ->
+            o2.dayPrefix - o1.dayPrefix
+        })
+    }
+    return notes
 }

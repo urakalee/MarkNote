@@ -20,6 +20,8 @@ public class Note extends Model {
 
     public static final String DEFAULT_SUFFIX = ".md";
 
+    private static final String DAY_SEPARATOR = "_";
+
     @Column(name = NoteSchema.TREE_PATH)
     private String treePath;
 
@@ -45,23 +47,47 @@ public class Note extends Model {
     private String tagsName;
 
     private String timePath;
+    private int dayPrefix;
     private String originTitle;
     private File originFile;
 
-    public String getFileName() {
-        if (title.endsWith(DEFAULT_SUFFIX)) {
-            return title;
+    private String getFileNameWithDayPrefix(String name) {
+        if (dayPrefix > 0) {
+            return String.format("%02d%s%s", dayPrefix, DAY_SEPARATOR, name);
         } else {
-            return title + DEFAULT_SUFFIX;
+            return name;
         }
     }
 
-    public void setTitleByFileName(@NonNull String name) {
-        if (name.endsWith(DEFAULT_SUFFIX)) {
-            title = name.substring(0, name.length() - DEFAULT_SUFFIX.length());
+    public String getFileName() {
+        String result;
+        if (title.endsWith(DEFAULT_SUFFIX)) {
+            result = title;
         } else {
-            title = name;
+            result = title + DEFAULT_SUFFIX;
         }
+        return getFileNameWithDayPrefix(result);
+    }
+
+    public void setTitleByFileName(@NonNull String name) {
+        String result;
+        if (name.endsWith(DEFAULT_SUFFIX)) {
+            result = name.substring(0, name.length() - DEFAULT_SUFFIX.length());
+        } else {
+            result = name;
+        }
+        String[] parts = result.split(DAY_SEPARATOR, 2);
+        if (parts.length == 2) {
+            try {
+                setDayPrefix(Integer.parseInt(parts[0]));
+                title = parts[1];
+                return;
+            } catch (NumberFormatException e) {
+                // ignore
+            }
+        }
+        setDayPrefix(0);
+        title = result;
     }
 
     public Notebook getNotebook() {
@@ -96,8 +122,34 @@ public class Note extends Model {
         this.timePath = timePath;
     }
 
+    public int getDayPrefix() {
+        return dayPrefix;
+    }
+
+    public void setDayPrefix(int day) {
+        this.dayPrefix = day;
+    }
+
     public void generateTimePath() {
-        setTimePath(LocalDate.now().toString(TimeConfig.MONTH_FORMAT));
+        LocalDate today = LocalDate.now();
+        setTimePath(today.toString(TimeConfig.MONTH_FORMAT));
+        setDayPrefix(today.dayOfMonth().get());
+    }
+
+    public String getCreateTime() {
+        if (dayPrefix > 0) {
+            // 验证 dayPrefix 的有效性
+            LocalDate firstDay = LocalDate.parse(String.format("%s-01", timePath));
+            int month = firstDay.getMonthOfYear();
+            LocalDate createDay = firstDay.plusDays(dayPrefix - 1);
+            if (createDay.getMonthOfYear() == month) {
+                return createDay.toString("yyyy-MM-dd");
+            } else {
+                return timePath;
+            }
+        } else {
+            return timePath;
+        }
     }
 
     public String getOriginTitle() {
@@ -105,11 +157,13 @@ public class Note extends Model {
     }
 
     public String getOriginFileName() {
+        String result;
         if (originTitle.endsWith(DEFAULT_SUFFIX)) {
-            return originTitle;
+            result = originTitle;
         } else {
-            return originTitle + DEFAULT_SUFFIX;
+            result = originTitle + DEFAULT_SUFFIX;
         }
+        return getFileNameWithDayPrefix(result);
     }
 
     public void setOriginTitle(String originTitle) {

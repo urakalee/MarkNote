@@ -18,7 +18,6 @@ import me.shouheng.notepal.model.Note;
 import me.shouheng.notepal.model.Notebook;
 import me.shouheng.notepal.util.ColorUtils;
 import me.shouheng.notepal.util.FileHelper;
-import me.shouheng.notepal.util.TimeUtils;
 import me.shouheng.notepal.widget.tools.BubbleTextGetter;
 
 /**
@@ -62,7 +61,7 @@ public class NotesAdapter extends BaseMultiItemQuickAdapter<NotesAdapter.MultiIt
                 R.color.dark_theme_background : R.color.light_theme_background));
         holder.setText(R.id.tv_note_title, note.getTitle());
         holder.setText(R.id.tv_content, note.getPreviewContent());
-        holder.setText(R.id.tv_time, TimeUtils.getPrettyTime(note.getAddedTime()));
+        holder.setText(R.id.tv_time, note.getCreateTime());
         holder.setTextColor(R.id.tv_time, accentColor);
         if (note.getPreviewImage() != null) {
             holder.getView(R.id.iv_image).setVisibility(View.VISIBLE);
