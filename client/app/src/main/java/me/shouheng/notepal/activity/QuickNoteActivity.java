@@ -23,7 +23,7 @@ import me.shouheng.notepal.model.Attachment;
 import me.shouheng.notepal.model.MindSnagging;
 import me.shouheng.notepal.model.Model;
 import me.shouheng.notepal.model.ModelFactory;
-import me.shouheng.notepal.model.Note;
+import me.urakalee.next2.model.Note;
 import me.shouheng.notepal.model.data.Resource;
 import me.shouheng.notepal.util.AppWidgetUtils;
 import me.shouheng.notepal.util.AttachmentHelper;

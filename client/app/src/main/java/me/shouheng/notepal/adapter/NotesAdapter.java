@@ -14,7 +14,7 @@ import java.util.List;
 
 import me.shouheng.notepal.PalmApp;
 import me.shouheng.notepal.R;
-import me.shouheng.notepal.model.Note;
+import me.urakalee.next2.model.Note;
 import me.shouheng.notepal.model.Notebook;
 import me.shouheng.notepal.util.ColorUtils;
 import me.shouheng.notepal.util.FileHelper;

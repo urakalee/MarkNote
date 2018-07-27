@@ -4,7 +4,7 @@ import android.support.annotation.MainThread;
 
 import java.util.List;
 
-import me.shouheng.notepal.model.Note;
+import me.urakalee.next2.model.Note;
 import me.shouheng.notepal.model.enums.ItemStatus;
 import me.shouheng.notepal.provider.schema.BaseSchema;
 import me.shouheng.notepal.provider.schema.NoteSchema;

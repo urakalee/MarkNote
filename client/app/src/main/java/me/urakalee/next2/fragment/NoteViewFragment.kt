@@ -22,7 +22,7 @@ import me.shouheng.notepal.dialog.OpenResolver
 import me.shouheng.notepal.fragment.base.BaseFragment
 import me.shouheng.notepal.model.Attachment
 import me.shouheng.notepal.model.ModelFactory
-import me.shouheng.notepal.model.Note
+import me.urakalee.next2.model.Note
 import me.shouheng.notepal.provider.CategoryStore
 import me.shouheng.notepal.provider.LocationsStore
 import me.shouheng.notepal.util.*

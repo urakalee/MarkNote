@@ -18,6 +18,7 @@ import me.shouheng.notepal.util.LogUtils
 import me.shouheng.notepal.util.ModelHelper
 import me.shouheng.notepal.util.preferences.NotePreferences
 import me.shouheng.notepal.viewmodel.BaseViewModel
+import me.urakalee.next2.model.Note
 import me.urakalee.next2.storage.NoteStore
 import org.apache.commons.io.FileUtils
 import java.io.IOException

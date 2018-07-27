@@ -13,6 +13,7 @@ import me.shouheng.notepal.model.enums.Portrait;
 import me.shouheng.notepal.model.enums.WeatherType;
 import me.shouheng.notepal.util.ColorUtils;
 import me.shouheng.notepal.util.LogUtils;
+import me.urakalee.next2.model.Note;
 
 /**
  * Created by wangshouheng on 2017/11/17.

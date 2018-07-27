@@ -55,7 +55,7 @@ import me.shouheng.notepal.model.Category;
 import me.shouheng.notepal.model.MindSnagging;
 import me.shouheng.notepal.model.Model;
 import me.shouheng.notepal.model.ModelFactory;
-import me.shouheng.notepal.model.Note;
+import me.urakalee.next2.model.Note;
 import me.shouheng.notepal.model.Notebook;
 import me.shouheng.notepal.model.data.LoadStatus;
 import me.shouheng.notepal.model.enums.FabSortItem;

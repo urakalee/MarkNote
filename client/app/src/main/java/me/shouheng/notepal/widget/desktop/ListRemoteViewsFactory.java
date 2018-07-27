@@ -17,7 +17,7 @@ import java.util.List;
 import me.shouheng.notepal.PalmApp;
 import me.shouheng.notepal.R;
 import me.shouheng.notepal.config.Constants;
-import me.shouheng.notepal.model.Note;
+import me.urakalee.next2.model.Note;
 import me.shouheng.notepal.model.Notebook;
 import me.urakalee.next2.storage.NoteStore;
 import me.shouheng.notepal.provider.schema.NoteSchema;

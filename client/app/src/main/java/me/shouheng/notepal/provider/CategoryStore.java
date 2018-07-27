@@ -10,7 +10,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import me.shouheng.notepal.model.Category;
-import me.shouheng.notepal.model.Note;
+import me.urakalee.next2.model.Note;
 import me.shouheng.notepal.model.enums.Portrait;
 import me.shouheng.notepal.model.enums.ItemStatus;
 import me.shouheng.notepal.provider.schema.BaseSchema;

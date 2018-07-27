@@ -34,7 +34,7 @@ import me.shouheng.notepal.fragment.base.BaseModelFragment
 import me.shouheng.notepal.model.Attachment
 import me.shouheng.notepal.model.Category
 import me.shouheng.notepal.model.Location
-import me.shouheng.notepal.model.Note
+import me.urakalee.next2.model.Note
 import me.shouheng.notepal.model.data.LoadStatus
 import me.shouheng.notepal.model.enums.ModelType
 import me.shouheng.notepal.util.*

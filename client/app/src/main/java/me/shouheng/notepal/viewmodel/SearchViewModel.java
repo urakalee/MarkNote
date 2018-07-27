@@ -9,7 +9,7 @@ import java.util.List;
 
 import me.shouheng.notepal.async.ResourceAsyncTask;
 import me.shouheng.notepal.model.MindSnagging;
-import me.shouheng.notepal.model.Note;
+import me.urakalee.next2.model.Note;
 import me.shouheng.notepal.model.data.Resource;
 import me.shouheng.notepal.repository.QueryRepository;
 import me.shouheng.notepal.util.tools.SearchConditions;

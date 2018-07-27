@@ -1,6 +1,6 @@
 package me.urakalee.next2.storage
 
-import me.shouheng.notepal.model.Note
+import me.urakalee.next2.model.Note
 import me.shouheng.notepal.model.Notebook
 import me.urakalee.next2.config.TimeConfig.MONTH_FORMAT
 import org.joda.time.LocalDate

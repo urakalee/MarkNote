@@ -13,7 +13,7 @@ import me.shouheng.notepal.PalmApp;
 import me.shouheng.notepal.async.ResourceAsyncTask;
 import me.shouheng.notepal.model.Attachment;
 import me.shouheng.notepal.model.ModelFactory;
-import me.shouheng.notepal.model.Note;
+import me.urakalee.next2.model.Note;
 import me.shouheng.notepal.model.data.Resource;
 import me.shouheng.notepal.model.enums.ModelType;
 import me.shouheng.notepal.provider.AttachmentsStore;

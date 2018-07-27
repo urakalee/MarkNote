@@ -21,7 +21,7 @@ import me.shouheng.notepal.dialog.picker.NotebookPickerDialog
 import me.shouheng.notepal.fragment.base.BaseFragment
 import me.shouheng.notepal.listener.OnMainActivityInteraction
 import me.shouheng.notepal.model.Category
-import me.shouheng.notepal.model.Note
+import me.urakalee.next2.model.Note
 import me.shouheng.notepal.model.Notebook
 import me.shouheng.notepal.model.data.LoadStatus
 import me.shouheng.notepal.model.enums.ItemStatus

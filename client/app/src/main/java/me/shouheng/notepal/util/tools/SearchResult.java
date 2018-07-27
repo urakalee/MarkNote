@@ -4,7 +4,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import me.shouheng.notepal.model.MindSnagging;
-import me.shouheng.notepal.model.Note;
+import me.urakalee.next2.model.Note;
 
 /**
  * Created by shouh on 2018/3/18.*/

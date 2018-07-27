@@ -22,7 +22,7 @@ import me.shouheng.notepal.activity.base.CommonActivity;
 import me.shouheng.notepal.adapter.SearchItemsAdapter;
 import me.shouheng.notepal.adapter.SearchItemsAdapter.OnItemSelectedListener;
 import me.shouheng.notepal.databinding.ActivitySearchBinding;
-import me.shouheng.notepal.model.Note;
+import me.urakalee.next2.model.Note;
 import me.shouheng.notepal.util.GsonUtils;
 import me.shouheng.notepal.util.LogUtils;
 import me.shouheng.notepal.util.ToastUtils;

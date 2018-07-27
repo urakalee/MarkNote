@@ -3,7 +3,7 @@ package me.shouheng.notepal.viewmodel;
 import android.arch.lifecycle.LiveData;
 
 import me.shouheng.notepal.model.Location;
-import me.shouheng.notepal.model.Note;
+import me.urakalee.next2.model.Note;
 import me.shouheng.notepal.model.data.Resource;
 import me.shouheng.notepal.repository.BaseRepository;
 import me.shouheng.notepal.repository.LocationRepository;

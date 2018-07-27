@@ -1,4 +1,4 @@
-package me.shouheng.notepal.model;
+package me.urakalee.next2.model;
 
 import android.net.Uri;
 import android.support.annotation.NonNull;
@@ -7,6 +7,8 @@ import org.joda.time.LocalDate;
 
 import java.io.File;
 
+import me.shouheng.notepal.model.Model;
+import me.shouheng.notepal.model.Notebook;
 import me.shouheng.notepal.provider.annotation.Column;
 import me.shouheng.notepal.provider.annotation.Table;
 import me.shouheng.notepal.provider.schema.NoteSchema;

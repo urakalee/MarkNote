@@ -15,7 +15,7 @@ import me.shouheng.notepal.databinding.ActivityContentBinding
 import me.shouheng.notepal.fragment.base.BaseModelFragment
 import me.shouheng.notepal.fragment.base.CommonFragment
 import me.shouheng.notepal.model.ModelFactory
-import me.shouheng.notepal.model.Note
+import me.urakalee.next2.model.Note
 import me.urakalee.next2.storage.NoteStore
 import me.shouheng.notepal.util.FragmentHelper
 import me.shouheng.notepal.util.LogUtils

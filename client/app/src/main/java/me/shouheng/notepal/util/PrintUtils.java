@@ -4,7 +4,7 @@ import android.content.Context;
 import android.print.PrintManager;
 import android.webkit.WebView;
 
-import me.shouheng.notepal.model.Note;
+import me.urakalee.next2.model.Note;
 
 /**
  * Created by wang shouheng on 2017/12/28.*/
