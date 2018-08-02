@@ -9,15 +9,9 @@ public interface MdParseStrategy {
 
     void h1(String source, int selectionStart, int selectionEnd, String selection, EditText editor);
 
-    void h2(String source, int selectionStart, int selectionEnd, String selection, EditText editor);
+    void list(String source, int selectionStart, int selectionEnd, EditText editor);
 
-    void h3(String source, int selectionStart, int selectionEnd, String selection, EditText editor);
-
-    void h4(String source, int selectionStart, int selectionEnd, String selection, EditText editor);
-
-    void h5(String source, int selectionStart, int selectionEnd, String selection, EditText editor);
-
-    void h6(String source, int selectionStart, int selectionEnd, String selection, EditText editor);
+    void todo(String source, int selectionStart, int selectionEnd, EditText editor);
 
     void indent(String source, int selectionStart, int selectionEnd, String selection, EditText editor);
 
@@ -41,15 +35,9 @@ public interface MdParseStrategy {
 
     void table(String source, int selectionStart, int selectionEnd, int rows, int cols, EditText editor);
 
-    void normalList(String source, int selectionStart, int selectionEnd, EditText editor);
-
-    void numberList(String source, int selectionStart, int selectionEnd, EditText editor);
-
     void image(String source, int selectionStart, int selectionEnd, String title, String imgUri, EditText editor);
 
     void mark(String source, int selectionStart, int selectionEnd, String selection, EditText editor);
-
-    void checkbox(String source, int selectionStart, int selectionEnd, String name, boolean isChecked, EditText editor);
 
     void mathJax(String source, int selectionStart, int selectionEnd, String exp, boolean isSingleLine, EditText editor);
 

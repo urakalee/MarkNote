@@ -377,10 +377,7 @@ class NoteEditFragment : BaseModelFragment<Note, FragmentNoteBinding>() {
             mdItemView.setPadding(padding, padding, padding, padding)
             binding?.main?.llContainer?.addView(mdItemView)
             mdItemView.setOnClickListener {
-                if (markdownFormat == MarkdownFormat.CHECKBOX
-                        || markdownFormat == MarkdownFormat.CHECKBOX_OUTLINE) {
-                    binding?.main?.etContent?.addCheckbox("", markdownFormat == MarkdownFormat.CHECKBOX)
-                } else if (markdownFormat == MarkdownFormat.MATH_JAX) {
+                if (markdownFormat == MarkdownFormat.MATH_JAX) {
                     showMathJaxEditor()
                 } else {
                     binding?.main?.etContent?.addEffect(markdownFormat)

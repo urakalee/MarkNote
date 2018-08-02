@@ -16,11 +16,11 @@ class DayOneStrategy : DefaultStrategy() {
         handlePrecedingMark(source, Mark.H, selectionStart, selectionEnd, editor)
     }
 
-    override fun normalList(source: String, selectionStart: Int, selectionEnd: Int, editor: EditText?) {
+    override fun list(source: String, selectionStart: Int, selectionEnd: Int, editor: EditText?) {
         handlePrecedingMark(source, Mark.LI, selectionStart, selectionEnd, editor)
     }
 
-    override fun checkbox(source: String, selectionStart: Int, selectionEnd: Int, name: String?, isChecked: Boolean, editor: EditText?) {
+    override fun todo(source: String, selectionStart: Int, selectionEnd: Int, editor: EditText) {
         handlePrecedingMark(source, Mark.TD, selectionStart, selectionEnd, editor)
     }
 

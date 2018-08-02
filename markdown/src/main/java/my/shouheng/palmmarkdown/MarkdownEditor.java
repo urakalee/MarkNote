@@ -68,20 +68,11 @@ public class MarkdownEditor extends android.support.v7.widget.AppCompatEditText 
             case H1:
                 mdParseStrategy.h1(source, selectionStart, selectionEnd, selection, this);
                 break;
-            case H2:
-                mdParseStrategy.h2(source, selectionStart, selectionEnd, selection, this);
+            case LIST:
+                mdParseStrategy.list(source, selectionStart, selectionEnd, this);
                 break;
-            case H3:
-                mdParseStrategy.h3(source, selectionStart, selectionEnd, selection, this);
-                break;
-            case H4:
-                mdParseStrategy.h4(source, selectionStart, selectionEnd, selection, this);
-                break;
-            case H5:
-                mdParseStrategy.h5(source, selectionStart, selectionEnd, selection, this);
-                break;
-            case H6:
-                mdParseStrategy.h6(source, selectionStart, selectionEnd, selection, this);
+            case TODO:
+                mdParseStrategy.todo(source, selectionStart, selectionEnd, this);
                 break;
             case INDENT:
                 mdParseStrategy.indent(source, selectionStart, selectionEnd, selection, this);
@@ -116,12 +107,6 @@ public class MarkdownEditor extends android.support.v7.widget.AppCompatEditText 
             case TABLE:
                 mdParseStrategy.h1(source, selectionStart, selectionEnd, selection, this);
                 break;
-            case NORMAL_LIST:
-                mdParseStrategy.normalList(source, selectionStart, selectionEnd, this);
-                break;
-            case NUMBER_LIST:
-                mdParseStrategy.numberList(source, selectionStart, selectionEnd, this);
-                break;
             case SUB_SCRIPT:
                 mdParseStrategy.sub(source, selectionStart, selectionEnd, selection, this);
                 break;
@@ -153,13 +138,6 @@ public class MarkdownEditor extends android.support.v7.widget.AppCompatEditText 
                 mdParseStrategy.image(source, selectionStart, selectionEnd, title, link, this);
                 break;
         }
-    }
-
-    public final void addCheckbox(String content, boolean isChecked) {
-        String source = this.getText().toString();
-        int selectionStart = getSelectionStart();
-        int selectionEnd = getSelectionEnd();
-        mdParseStrategy.checkbox(source, selectionStart, selectionEnd, content, isChecked, this);
     }
 
     public final void addMathJax(String exp, boolean isSingleLine) {
