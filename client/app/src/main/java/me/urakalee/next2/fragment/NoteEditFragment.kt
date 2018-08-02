@@ -383,6 +383,10 @@ class NoteEditFragment : BaseModelFragment<Note, FragmentNoteBinding>() {
                     binding?.main?.etContent?.addEffect(markdownFormat)
                 }
             }
+            mdItemView.setOnLongClickListener {
+                binding?.main?.etContent?.addLongClickEffect(markdownFormat)
+                true
+            }
         }
     }
 

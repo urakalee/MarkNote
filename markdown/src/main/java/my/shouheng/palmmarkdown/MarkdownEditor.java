@@ -9,8 +9,9 @@ import android.util.AttributeSet;
 
 import java.util.Stack;
 
-import me.urakalee.markdown.action.DayOneStrategy;
 import me.urakalee.markdown.action.ActionStrategy;
+import me.urakalee.markdown.action.DayOneStrategy;
+import me.urakalee.markdown.action.LongClickStrategy;
 import my.shouheng.palmmarkdown.tools.MarkdownFormat;
 
 /**
@@ -32,6 +33,7 @@ public class MarkdownEditor extends android.support.v7.widget.AppCompatEditText 
     private boolean flag = false;
 
     private ActionStrategy actionStrategy = new DayOneStrategy();
+    private ActionStrategy longClickStrategy = new LongClickStrategy();
 
     public MarkdownEditor(Context context) {
         super(context);
@@ -59,12 +61,12 @@ public class MarkdownEditor extends android.support.v7.widget.AppCompatEditText 
     protected void onTextChanged(Editable s) {
     }
 
-    public final void addEffect(MarkdownFormat markdownEffect) {
+    public final void addEffect(MarkdownFormat action) {
         String source = this.getText().toString();
         int selectionStart = getSelectionStart();
         int selectionEnd = getSelectionEnd();
         String selection = source.substring(selectionStart, selectionEnd);
-        switch (markdownEffect) {
+        switch (action) {
             case H1:
                 actionStrategy.h1(source, selectionStart, selectionEnd, selection, this);
                 break;
@@ -115,6 +117,18 @@ public class MarkdownEditor extends android.support.v7.widget.AppCompatEditText 
                 break;
             case MARK:
                 actionStrategy.mark(source, selectionStart, selectionEnd, selection, this);
+                break;
+        }
+    }
+
+    public final void addLongClickEffect(MarkdownFormat action) {
+        String source = this.getText().toString();
+        int selectionStart = getSelectionStart();
+        int selectionEnd = getSelectionEnd();
+        String selection = source.substring(selectionStart, selectionEnd);
+        switch (action) {
+            case STRIKE:
+                longClickStrategy.strike(source, selectionStart, selectionEnd, selection, this);
                 break;
         }
     }

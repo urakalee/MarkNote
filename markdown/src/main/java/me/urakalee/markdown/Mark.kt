@@ -5,28 +5,45 @@ import me.urakalee.markdown.handler.*
 /**
  * @author Uraka.Lee
  */
-enum class Mark(val pattern: Regex, val defaultMark: String, val handler: MarkHandler) {
+enum class Mark(val type: MarkType, val pattern: Regex, val defaultMark: String, val handler: MarkHandler) {
 
-    NONE(Regex(""), "", NoneHandler),
-    H(Regex("#+"), "#".repeat(HeaderHandler.MIN_LEVEL), HeaderHandler),
-    LI(Regex("[-*]"), "-", ListHandler),
-    LO(Regex("\\d\\."), "1.", ListHandler),
-    LA(Regex("[a-z]\\."), "a.", ListHandler),
-    TD(Regex("- \\[[x ]]", RegexOption.IGNORE_CASE), TodoHandler.UNCHECKED, TodoHandler),
-    QT(Regex(">"), ">", QuoteHandler);
+    NONE(MarkType.ANY, Regex(""), "", NoneHandler),
+
+    H(MarkType.PRECEDING, Regex("#+"), "#".repeat(HeaderHandler.MIN_LEVEL), HeaderHandler),
+    //region list
+    LI(MarkType.PRECEDING, Regex("[-*]"), "-", ListHandler),
+    LO(MarkType.PRECEDING, Regex("\\d\\."), "1.", ListHandler),
+    LA(MarkType.PRECEDING, Regex("[a-z]\\."), "a.", ListHandler),
+    //endregion
+    TD(MarkType.PRECEDING, Regex("- \\[[x ]]", RegexOption.IGNORE_CASE), TodoHandler.UNCHECKED, TodoHandler),
+    QT(MarkType.PRECEDING, Regex(">"), ">", QuoteHandler),
+
+    STRIKE(MarkType.TEXT, Regex("~~.*~~"), "~~", StrikeHandler);
 
     companion object {
 
         private fun fromString(s: String): Mark {
-            return values().firstOrNull {
+            return values().filter {
+                it.type == MarkType.PRECEDING
+            }.firstOrNull {
                 s.matches(it.pattern)
             } ?: NONE
         }
 
-        fun handle(inputMark: Mark, source: String): String {
+        fun handlePrecedingMark(inputMark: Mark, source: String): String {
             return Mark.fromString(source).let {
                 it.handler.handleMark(inputMark, source, it)
             }
         }
+
+        fun handleTextMarkLongClick(inputMark: Mark, source: String): String {
+            return inputMark.handler.handleMarkLongClick(inputMark, source, NONE)
+        }
     }
+}
+
+enum class MarkType {
+    ANY,
+    PRECEDING,
+    TEXT
 }

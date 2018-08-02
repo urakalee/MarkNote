@@ -1,5 +1,7 @@
 package me.urakalee.markdown
 
+import me.urakalee.markdown.handler.StrikeHandler
+
 /**
  * @author Uraka.Lee
  */
@@ -46,6 +48,16 @@ interface MarkHandler {
             Mark.LI -> handleList(inputMark, source, sourceMark)
             Mark.TD -> handleTodo(inputMark, source, sourceMark)
             Mark.QT -> handleQuote(inputMark, source, sourceMark)
+            else -> source
+        }
+    }
+
+    /**
+     * @return modified source
+     */
+    fun handleMarkLongClick(inputMark: Mark, source: String, sourceMark: Mark): String {
+        return when (inputMark) {
+            Mark.STRIKE -> StrikeHandler.handleLongClick(source)
             else -> source
         }
     }
