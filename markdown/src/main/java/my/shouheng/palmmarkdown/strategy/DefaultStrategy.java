@@ -3,18 +3,12 @@ package my.shouheng.palmmarkdown.strategy;
 import android.text.TextUtils;
 import android.widget.EditText;
 
+import me.urakalee.markdown.action.ActionStrategy;
+
 /**
  * Created by wangshouheng on 2017/10/7.
  */
-public abstract class DefaultStrategy implements MdParseStrategy {
-
-    @Override
-    public void indent(String source, int selectionStart, int selectionEnd, String selection, EditText editor) {
-    }
-
-    @Override
-    public void dedent(String source, int selectionStart, int selectionEnd, String selection, EditText editor) {
-    }
+public abstract class DefaultStrategy implements ActionStrategy {
 
     @Override
     public void quote(String source, int selectionStart, int selectionEnd, String selection, EditText editor) {

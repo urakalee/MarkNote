@@ -1,4 +1,4 @@
-package my.shouheng.palmmarkdown.strategy
+package me.urakalee.markdown.action
 
 import android.widget.EditText
 import me.urakalee.markdown.Indent
@@ -6,17 +6,18 @@ import me.urakalee.markdown.Mark
 import me.urakalee.markdown.handler.TodoHandler
 import me.urakalee.ranger.extension.isIndent
 import me.urakalee.ranger.extension.selectedLine
+import my.shouheng.palmmarkdown.strategy.DefaultStrategy
 
 /**
  * @author Uraka.Lee
  */
 class DayOneStrategy : DefaultStrategy() {
 
-    override fun h1(source: String, selectionStart: Int, selectionEnd: Int, selection: String?, editor: EditText?) {
+    override fun h1(source: String, selectionStart: Int, selectionEnd: Int, selection: String, editor: EditText) {
         handlePrecedingMark(source, Mark.H, selectionStart, selectionEnd, editor)
     }
 
-    override fun list(source: String, selectionStart: Int, selectionEnd: Int, editor: EditText?) {
+    override fun list(source: String, selectionStart: Int, selectionEnd: Int, editor: EditText) {
         handlePrecedingMark(source, Mark.LI, selectionStart, selectionEnd, editor)
     }
 
@@ -24,7 +25,7 @@ class DayOneStrategy : DefaultStrategy() {
         handlePrecedingMark(source, Mark.TD, selectionStart, selectionEnd, editor)
     }
 
-    override fun indent(source: String, selectionStart: Int, selectionEnd: Int, selection: String?, editor: EditText?) {
+    override fun indent(source: String, selectionStart: Int, selectionEnd: Int, selection: String, editor: EditText) {
         val (targetLine, start, end) = source.selectedLine(selectionStart, selectionEnd)
         // parse 出前面格式(header, list, task, quote)之外的文字
         val (mark, indent, content) = detectPrecedingMark(targetLine)
@@ -32,11 +33,11 @@ class DayOneStrategy : DefaultStrategy() {
         val firstNonIndent = start + indent.length
         val originalIndentLength = indent.length
         indent.indent()
-        editor?.text?.replace(start, firstNonIndent, indent.content)
-        editor?.setSelection(end + indent.length - originalIndentLength) // 简单处理, 光标放在行尾
+        editor.text?.replace(start, firstNonIndent, indent.content)
+        editor.setSelection(end + indent.length - originalIndentLength) // 简单处理, 光标放在行尾
     }
 
-    override fun dedent(source: String, selectionStart: Int, selectionEnd: Int, selection: String?, editor: EditText?) {
+    override fun dedent(source: String, selectionStart: Int, selectionEnd: Int, selection: String, editor: EditText) {
         val (targetLine, start, end) = source.selectedLine(selectionStart, selectionEnd)
         // parse 出前面格式(header, list, task, quote)之外的文字
         val (mark, indent, content) = detectPrecedingMark(targetLine)
@@ -44,24 +45,24 @@ class DayOneStrategy : DefaultStrategy() {
         val firstNonIndent = start + indent.length
         val originalIndentLength = indent.length
         indent.dedent()
-        editor?.text?.replace(start, firstNonIndent, indent.content)
-        editor?.setSelection(end + indent.length - originalIndentLength) // 简单处理, 光标放在行尾
+        editor.text?.replace(start, firstNonIndent, indent.content)
+        editor.setSelection(end + indent.length - originalIndentLength) // 简单处理, 光标放在行尾
     }
 
-    override fun quote(source: String, selectionStart: Int, selectionEnd: Int, selection: String?, editor: EditText?) {
+    override fun quote(source: String, selectionStart: Int, selectionEnd: Int, selection: String, editor: EditText) {
         handlePrecedingMark(source, Mark.QT, selectionStart, selectionEnd, editor)
     }
 
     private fun handlePrecedingMark(source: String, inputMark: Mark,
-                                    selectionStart: Int, selectionEnd: Int, editor: EditText?) {
+                                    selectionStart: Int, selectionEnd: Int, editor: EditText) {
         val (targetLine, start, end) = source.selectedLine(selectionStart, selectionEnd)
         val (mark, indent, content) = detectPrecedingMark(targetLine)
         val newMark = Mark.handle(inputMark, mark)
         val firstNonIndent = start + indent.length
         // 如果 newMark.isEmpty, 一定是删除原有标记, 也就是说 mark 有效且后面有空格, length + 1
         val replaceLength = if (newMark.isEmpty()) mark.length + 1 else mark.length
-        editor?.text?.replace(firstNonIndent, firstNonIndent + replaceLength, newMark)
-        editor?.setSelection(end + newMark.length - replaceLength) // 简单处理, 光标放在行尾
+        editor.text?.replace(firstNonIndent, firstNonIndent + replaceLength, newMark)
+        editor.setSelection(end + newMark.length - replaceLength) // 简单处理, 光标放在行尾
     }
 
     /**

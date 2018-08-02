@@ -9,8 +9,8 @@ import android.util.AttributeSet;
 
 import java.util.Stack;
 
-import my.shouheng.palmmarkdown.strategy.DayOneStrategy;
-import my.shouheng.palmmarkdown.strategy.MdParseStrategy;
+import me.urakalee.markdown.action.DayOneStrategy;
+import me.urakalee.markdown.action.ActionStrategy;
 import my.shouheng.palmmarkdown.tools.MarkdownFormat;
 
 /**
@@ -31,7 +31,7 @@ public class MarkdownEditor extends android.support.v7.widget.AppCompatEditText 
 
     private boolean flag = false;
 
-    private MdParseStrategy mdParseStrategy = new DayOneStrategy();
+    private ActionStrategy actionStrategy = new DayOneStrategy();
 
     public MarkdownEditor(Context context) {
         super(context);
@@ -66,55 +66,55 @@ public class MarkdownEditor extends android.support.v7.widget.AppCompatEditText 
         String selection = source.substring(selectionStart, selectionEnd);
         switch (markdownEffect) {
             case H1:
-                mdParseStrategy.h1(source, selectionStart, selectionEnd, selection, this);
+                actionStrategy.h1(source, selectionStart, selectionEnd, selection, this);
                 break;
             case LIST:
-                mdParseStrategy.list(source, selectionStart, selectionEnd, this);
+                actionStrategy.list(source, selectionStart, selectionEnd, this);
                 break;
             case TODO:
-                mdParseStrategy.todo(source, selectionStart, selectionEnd, this);
+                actionStrategy.todo(source, selectionStart, selectionEnd, this);
                 break;
             case INDENT:
-                mdParseStrategy.indent(source, selectionStart, selectionEnd, selection, this);
+                actionStrategy.indent(source, selectionStart, selectionEnd, selection, this);
                 break;
             case DEDENT:
-                mdParseStrategy.dedent(source, selectionStart, selectionEnd, selection, this);
+                actionStrategy.dedent(source, selectionStart, selectionEnd, selection, this);
                 break;
             case QUOTE:
-                mdParseStrategy.quote(source, selectionStart, selectionEnd, selection, this);
+                actionStrategy.quote(source, selectionStart, selectionEnd, selection, this);
                 break;
             case BOLD:
-                mdParseStrategy.bold(source, selectionStart, selectionEnd, selection, this);
+                actionStrategy.bold(source, selectionStart, selectionEnd, selection, this);
                 break;
             case ITALIC:
-                mdParseStrategy.italic(source, selectionStart, selectionEnd, selection, this);
+                actionStrategy.italic(source, selectionStart, selectionEnd, selection, this);
                 break;
             case CODE_BLOCK:
-                mdParseStrategy.codeBlock(source, selectionStart, selectionEnd, selection, this);
+                actionStrategy.codeBlock(source, selectionStart, selectionEnd, selection, this);
                 break;
             case STRIKE:
-                mdParseStrategy.strike(source, selectionStart, selectionEnd, selection, this);
+                actionStrategy.strike(source, selectionStart, selectionEnd, selection, this);
                 break;
             case HORIZONTAL_LINE:
-                mdParseStrategy.horizontalLine(source, selectionStart, selectionEnd, selection, this);
+                actionStrategy.horizontalLine(source, selectionStart, selectionEnd, selection, this);
                 break;
             case XML:
-                mdParseStrategy.xml(source, selectionStart, selectionEnd, selection, this);
+                actionStrategy.xml(source, selectionStart, selectionEnd, selection, this);
                 break;
             case LINK:
-                mdParseStrategy.h1(source, selectionStart, selectionEnd, selection, this);
+                actionStrategy.h1(source, selectionStart, selectionEnd, selection, this);
                 break;
             case TABLE:
-                mdParseStrategy.h1(source, selectionStart, selectionEnd, selection, this);
+                actionStrategy.h1(source, selectionStart, selectionEnd, selection, this);
                 break;
             case SUB_SCRIPT:
-                mdParseStrategy.sub(source, selectionStart, selectionEnd, selection, this);
+                actionStrategy.sub(source, selectionStart, selectionEnd, selection, this);
                 break;
             case SUPER_SCRIPT:
-                mdParseStrategy.sup(source, selectionStart, selectionEnd, selection, this);
+                actionStrategy.sup(source, selectionStart, selectionEnd, selection, this);
                 break;
             case MARK:
-                mdParseStrategy.mark(source, selectionStart, selectionEnd, selection, this);
+                actionStrategy.mark(source, selectionStart, selectionEnd, selection, this);
                 break;
         }
     }
@@ -123,7 +123,7 @@ public class MarkdownEditor extends android.support.v7.widget.AppCompatEditText 
         String source = this.getText().toString();
         int selectionStart = getSelectionStart();
         int selectionEnd = getSelectionEnd();
-        mdParseStrategy.table(source, selectionStart, selectionEnd, rows, cols, this);
+        actionStrategy.table(source, selectionStart, selectionEnd, rows, cols, this);
     }
 
     public final void addLinkEffect(MarkdownFormat markdownEffect, String title, String link) {
@@ -132,10 +132,10 @@ public class MarkdownEditor extends android.support.v7.widget.AppCompatEditText 
         int selectionEnd = getSelectionEnd();
         switch (markdownEffect) {
             case LINK:
-                mdParseStrategy.link(source, selectionStart, selectionEnd, title, link, this);
+                actionStrategy.link(source, selectionStart, selectionEnd, title, link, this);
                 break;
             case ATTACHMENT:
-                mdParseStrategy.image(source, selectionStart, selectionEnd, title, link, this);
+                actionStrategy.image(source, selectionStart, selectionEnd, title, link, this);
                 break;
         }
     }
@@ -144,7 +144,7 @@ public class MarkdownEditor extends android.support.v7.widget.AppCompatEditText 
         String source = this.getText().toString();
         int selectionStart = getSelectionStart();
         int selectionEnd = getSelectionEnd();
-        mdParseStrategy.mathJax(source, selectionStart, selectionEnd, exp, isSingleLine, this);
+        actionStrategy.mathJax(source, selectionStart, selectionEnd, exp, isSingleLine, this);
     }
 
     public final void clearHistory() {
@@ -211,8 +211,8 @@ public class MarkdownEditor extends android.support.v7.widget.AppCompatEditText 
         flag = false;
     }
 
-    public void setMdParseStrategy(MdParseStrategy mdParseStrategy) {
-        this.mdParseStrategy = mdParseStrategy;
+    public void setActionStrategy(ActionStrategy actionStrategy) {
+        this.actionStrategy = actionStrategy;
     }
 
     private class InputTextWatcher implements TextWatcher {
