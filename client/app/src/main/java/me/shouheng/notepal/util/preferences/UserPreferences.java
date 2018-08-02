@@ -42,11 +42,12 @@ public class UserPreferences extends BasePreferences {
         defaultMarkdownFormats.add(MarkdownFormat.INDENT);
         defaultMarkdownFormats.add(MarkdownFormat.DEDENT);
         defaultMarkdownFormats.add(MarkdownFormat.QUOTE);
-        defaultMarkdownFormats.add(MarkdownFormat.XML);
-        defaultMarkdownFormats.add(MarkdownFormat.CODE_BLOCK);
 
         defaultMarkdownFormats.add(MarkdownFormat.STRIKE);
         defaultMarkdownFormats.add(MarkdownFormat.HORIZONTAL_LINE);
+
+        defaultMarkdownFormats.add(MarkdownFormat.XML);
+        defaultMarkdownFormats.add(MarkdownFormat.CODE_BLOCK);
 
         defaultMarkdownFormats.add(MarkdownFormat.ITALIC); // not standard markdown
         defaultMarkdownFormats.add(MarkdownFormat.BOLD);

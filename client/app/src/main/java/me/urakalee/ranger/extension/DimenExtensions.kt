@@ -12,3 +12,6 @@ val Int.dp: Int
 
 val Float.dp: Float
     inline get() = this * PalmApp.getContext().resources.displayMetrics.density
+
+val Int.pixel: Int
+    inline get() = PalmApp.getContext().resources.getDimensionPixelSize(this)

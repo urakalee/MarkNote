@@ -14,15 +14,14 @@ public class MDItemView extends AppCompatImageView {
 
     public MDItemView(Context context) {
         super(context);
-
     }
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        setMeasuredDimension(getDefaultSize(0, widthMeasureSpec), getDefaultSize(0, heightMeasureSpec));
-        int childWidthSize = getMeasuredWidth();
-        int childHeightSize = getMeasuredHeight();
-        heightMeasureSpec = widthMeasureSpec = MeasureSpec.makeMeasureSpec(childHeightSize, MeasureSpec.EXACTLY);
+//        setMeasuredDimension(getDefaultSize(0, widthMeasureSpec), getDefaultSize(0, heightMeasureSpec));
+//        int childWidthSize = getMeasuredWidth();
+//        int childHeightSize = getMeasuredHeight();
+//        heightMeasureSpec = widthMeasureSpec = MeasureSpec.makeMeasureSpec(childHeightSize, MeasureSpec.EXACTLY);
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
     }
 

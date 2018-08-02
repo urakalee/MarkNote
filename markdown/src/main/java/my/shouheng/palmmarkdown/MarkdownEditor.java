@@ -85,15 +85,6 @@ public class MarkdownEditor extends android.support.v7.widget.AppCompatEditText 
             case QUOTE:
                 actionStrategy.quote(source, selectionStart, selectionEnd, selection, this);
                 break;
-            case BOLD:
-                actionStrategy.bold(source, selectionStart, selectionEnd, selection, this);
-                break;
-            case ITALIC:
-                actionStrategy.italic(source, selectionStart, selectionEnd, selection, this);
-                break;
-            case CODE_BLOCK:
-                actionStrategy.codeBlock(source, selectionStart, selectionEnd, selection, this);
-                break;
             case STRIKE:
                 actionStrategy.strike(source, selectionStart, selectionEnd, selection, this);
                 break;
@@ -103,20 +94,23 @@ public class MarkdownEditor extends android.support.v7.widget.AppCompatEditText 
             case XML:
                 actionStrategy.xml(source, selectionStart, selectionEnd, selection, this);
                 break;
-            case LINK:
-                actionStrategy.h1(source, selectionStart, selectionEnd, selection, this);
+            case CODE_BLOCK:
+                actionStrategy.codeBlock(source, selectionStart, selectionEnd, selection, this);
                 break;
-            case TABLE:
-                actionStrategy.h1(source, selectionStart, selectionEnd, selection, this);
+            case BOLD:
+                actionStrategy.bold(source, selectionStart, selectionEnd, selection, this);
+                break;
+            case ITALIC:
+                actionStrategy.italic(source, selectionStart, selectionEnd, selection, this);
+                break;
+            case MARK:
+                actionStrategy.mark(source, selectionStart, selectionEnd, selection, this);
                 break;
             case SUB_SCRIPT:
                 actionStrategy.sub(source, selectionStart, selectionEnd, selection, this);
                 break;
             case SUPER_SCRIPT:
                 actionStrategy.sup(source, selectionStart, selectionEnd, selection, this);
-                break;
-            case MARK:
-                actionStrategy.mark(source, selectionStart, selectionEnd, selection, this);
                 break;
         }
     }

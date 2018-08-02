@@ -16,11 +16,12 @@ public enum MarkdownFormat {
     INDENT(25, R.drawable.ic_format_indent_increase_white_24dp, true),
     DEDENT(26, R.drawable.ic_format_indent_decrease_white_24dp, true),
     QUOTE(2, R.drawable.ic_format_quote_black_24dp, true),
-    XML(12, R.drawable.ic_shortcut_xml, true),
-    CODE_BLOCK(3, R.drawable.ic_shortcut_console, true),
 
     STRIKE(4, R.drawable.ic_strikethrough_s_black_24dp, true),
     HORIZONTAL_LINE(5, R.drawable.ic_remove_black_24dp, true),
+
+    XML(12, R.drawable.ic_shortcut_xml, true),
+    CODE_BLOCK(3, R.drawable.ic_shortcut_console, true),
 
     MARK(18, R.drawable.ic_font_download_black_24dp, true),
     ITALIC(0, R.drawable.ic_format_italic_black_24dp, true),

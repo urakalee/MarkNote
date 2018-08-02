@@ -12,10 +12,7 @@ import android.support.v4.widget.DrawerLayout
 import android.support.v7.app.AppCompatActivity
 import android.text.Editable
 import android.text.TextWatcher
-import android.view.Menu
-import android.view.MenuInflater
-import android.view.MenuItem
-import android.view.View
+import android.view.*
 import com.afollestad.materialdialogs.MaterialDialog
 import com.balysv.materialmenu.MaterialMenuDrawable
 import me.shouheng.notepal.PalmApp
@@ -51,6 +48,7 @@ import me.urakalee.next2.viewmodel.NotebookViewModel
 import me.urakalee.ranger.extension.dp
 import me.urakalee.ranger.extension.isGone
 import me.urakalee.ranger.extension.isVisible
+import me.urakalee.ranger.extension.pixel
 import my.shouheng.palmmarkdown.tools.MarkdownFormat
 import org.apache.commons.io.FileUtils
 import org.polaric.colorful.BaseActivity
@@ -369,13 +367,16 @@ class NoteEditFragment : BaseModelFragment<Note, FragmentNoteBinding>() {
 
     private fun addFormatBar() {
         binding?.main?.llContainer?.removeAllViews()
-        val padding = 12.dp
+        val verticalPadding = 12.dp
+        val horizontalPadding = 6.dp
+        val itemHeight = R.dimen.note_bottom_menu_height.pixel
+        val layoutParams = ViewGroup.LayoutParams(itemHeight - (verticalPadding - horizontalPadding) * 2, itemHeight)
         val markdownFormats = UserPreferences.getInstance().markdownFormats
         for (markdownFormat in markdownFormats) {
             val mdItemView = MDItemView(context)
             mdItemView.markdownFormat = markdownFormat
-            mdItemView.setPadding(padding, padding, padding, padding)
-            binding?.main?.llContainer?.addView(mdItemView)
+            mdItemView.setPadding(horizontalPadding, verticalPadding, horizontalPadding, verticalPadding)
+            binding?.main?.llContainer?.addView(mdItemView, layoutParams)
             mdItemView.setOnClickListener {
                 if (markdownFormat == MarkdownFormat.MATH_JAX) {
                     showMathJaxEditor()
