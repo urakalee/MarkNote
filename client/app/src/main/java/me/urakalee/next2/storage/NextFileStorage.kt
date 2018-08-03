@@ -35,16 +35,18 @@ fun listNote(notebook: Notebook): List<Note> {
     val filesInDirs = listFilesInSubDirs(noteRoot)
     for (dirName in filesInDirs.keys.sortedByDescending { it }) {
         val files = filesInDirs[dirName] ?: continue
+        val notesInDir = LinkedList<Note>()
         for (file in files) {
             val note = Note()
             note.setTitleByFileName(file.name)
             note.notebook = notebook
             note.timePath = dirName
-            notes.add(note)
+            notesInDir.add(note)
         }
-        notes.sortWith(kotlin.Comparator { o1, o2 ->
+        notesInDir.sortWith(kotlin.Comparator { o1, o2 ->
             o2.dayPrefix - o1.dayPrefix
         })
+        notes.addAll(notesInDir)
     }
     return notes
 }
