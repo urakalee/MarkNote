@@ -3,15 +3,16 @@ package me.shouheng.notepal.widget;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Color;
-import android.preference.Preference;
+import android.support.v7.preference.Preference;
+import android.support.v7.preference.PreferenceViewHolder;
 import android.util.AttributeSet;
-import android.view.View;
 
 import me.shouheng.notepal.R;
 import me.shouheng.notepal.util.ColorUtils;
 
 /**
- * Created by wang shouheng on 2017/12/23. */
+ * Created by wang shouheng on 2017/12/23.
+ */
 public class ColorPreference extends Preference {
 
     private int value;
@@ -39,9 +40,9 @@ public class ColorPreference extends Preference {
     }
 
     @Override
-    protected void onBindView(View view) {
-        super.onBindView(view);
-        CircleImageView previewView = view.findViewById(R.id.color_view);
+    public void onBindViewHolder(PreferenceViewHolder holder) {
+        super.onBindViewHolder(holder);
+        CircleImageView previewView = (CircleImageView) holder.findViewById(R.id.color_view);
         previewView.setFillingCircleColor(getValue());
     }
 

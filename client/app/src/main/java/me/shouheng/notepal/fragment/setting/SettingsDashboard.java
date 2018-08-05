@@ -33,7 +33,8 @@ import me.shouheng.notepal.util.ToastUtils;
 import me.shouheng.notepal.util.preferences.DashboardPreferences;
 
 /**
- * Created by shouh on 2018/3/18. */
+ * Created by shouh on 2018/3/18.
+ */
 public class SettingsDashboard extends BaseFragment implements OnAttachingFileListener {
 
     private DashboardPreferences dashboardPreferences;
@@ -49,6 +50,10 @@ public class SettingsDashboard extends BaseFragment implements OnAttachingFileLi
         addPreferencesFromResource(R.xml.preferences_dashboard_personalize);
 
         setPreferenceClickListeners();
+    }
+
+    @Override
+    public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
     }
 
     private void configToolbar() {
@@ -115,7 +120,7 @@ public class SettingsDashboard extends BaseFragment implements OnAttachingFileLi
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == Activity.RESULT_OK) {
-            AttachmentHelper.resolveResult(SettingsDashboard.this, requestCode, data);
+            AttachmentHelper.resolveFragmentResult(SettingsDashboard.this, requestCode, data);
         }
         super.onActivityResult(requestCode, resultCode, data);
     }

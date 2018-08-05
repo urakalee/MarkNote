@@ -1,9 +1,9 @@
 package me.shouheng.notepal.activity;
 
 import android.app.Activity;
-import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.Toolbar;
@@ -74,7 +74,7 @@ public class FabSortActivity extends CommonActivity<ActivityFabSortBinding> {
         oldFabSortItems = userPreferences.getFabSortResult();
         FabSortItem[] allItems = FabSortItem.values();
         for (FabSortItem fabSortItem : allItems) {
-            if (!oldFabSortItems.contains(fabSortItem)){
+            if (!oldFabSortItems.contains(fabSortItem)) {
                 oldFabSortItems.add(fabSortItem);
             }
         }
@@ -111,9 +111,9 @@ public class FabSortActivity extends CommonActivity<ActivityFabSortBinding> {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()){
+        switch (item.getItemId()) {
             case android.R.id.home:
-                if (!saved){
+                if (!saved) {
                     back();
                 } else {
                     setResult();
@@ -131,14 +131,14 @@ public class FabSortActivity extends CommonActivity<ActivityFabSortBinding> {
 
     @Override
     public void onBackPressed() {
-        if (!saved){
+        if (!saved) {
             back();
         } else {
             setResult();
         }
     }
 
-    private void saveFabOrders(){
+    private void saveFabOrders() {
         saved = true;
         everSaved = true;
         List<FabSortItem> fabSortItems = mAdapter.getFabSortItems();
@@ -146,7 +146,7 @@ public class FabSortActivity extends CommonActivity<ActivityFabSortBinding> {
         ToastUtils.makeToast(R.string.fab_sort_save_successfully);
     }
 
-    private void resetFabOrders(){
+    private void resetFabOrders() {
         saved = true;
         mAdapter.setFabSortItems(oldFabSortItems);
         mAdapter.notifyDataSetChanged();
@@ -162,7 +162,7 @@ public class FabSortActivity extends CommonActivity<ActivityFabSortBinding> {
         }
     }
 
-    private void back(){
+    private void back() {
         new MaterialDialog.Builder(this)
                 .title(R.string.fab_sort_save)
                 .content(R.string.fab_sort_save_or_lose)

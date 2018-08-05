@@ -29,7 +29,8 @@ import me.shouheng.notepal.util.preferences.PersistPreferences;
 import top.zibin.luban.Luban;
 
 /**
- * Created by Wang Shouheng on 2017/12/30.*/
+ * Created by Wang Shouheng on 2017/12/30.
+ */
 public class AttachmentHelper {
 
     private static String filePath;
@@ -95,8 +96,8 @@ public class AttachmentHelper {
     // endregion
 
     // region Resolve attachment picking result.
-    public static<T extends Fragment & OnAttachingFileListener> void resolveResult(T fragment, int requestCode, Intent data) {
-        switch (requestCode){
+    public static <T extends Fragment & OnAttachingFileListener> void resolveFragmentResult(T fragment, int requestCode, Intent data) {
+        switch (requestCode) {
             case RequestCodes.REQUEST_TAKE_PHOTO:
                 getPhoto(fragment.getContext(), Constants.MIME_TYPE_IMAGE, new OnAttachingFileListener() {
                     @Override
@@ -131,44 +132,8 @@ public class AttachmentHelper {
         }
     }
 
-    public static<T extends android.app.Fragment & OnAttachingFileListener> void resolveResult(T fragment, int requestCode, Intent data) {
-        switch (requestCode){
-            case RequestCodes.REQUEST_TAKE_PHOTO:
-                getPhoto(fragment.getActivity(), Constants.MIME_TYPE_IMAGE, new OnAttachingFileListener() {
-                    @Override
-                    public void onAttachingFileErrorOccurred(Attachment attachment) {
-                        fragment.onAttachingFileErrorOccurred(attachment);
-                    }
-
-                    @Override
-                    public void onAttachingFileFinished(Attachment attachment) {
-                        if (PalmUtils.isAlive(fragment)) {
-                            fragment.onAttachingFileFinished(attachment);
-                        }
-                    }
-                });
-                break;
-            case RequestCodes.REQUEST_SELECT_IMAGE:
-                startTask(fragment, data);
-                break;
-            case RequestCodes.REQUEST_TAKE_VIDEO:
-                if (PalmUtils.isAlive(fragment)) {
-                    fragment.onAttachingFileFinished(getVideo(data));
-                }
-                break;
-            case RequestCodes.REQUEST_FILES:
-                startTask(fragment, data);
-                break;
-            case RequestCodes.REQUEST_SKETCH:
-                if (PalmUtils.isAlive(fragment)) {
-                    fragment.onAttachingFileFinished(getSketch(Constants.MIME_TYPE_SKETCH));
-                }
-                break;
-        }
-    }
-
-    public static<T extends Activity & OnAttachingFileListener> void resolveResult(T activity, int requestCode, Intent data) {
-        switch (requestCode){
+    public static <T extends Activity & OnAttachingFileListener> void resolveActivityResult(T activity, int requestCode, Intent data) {
+        switch (requestCode) {
             case RequestCodes.REQUEST_TAKE_PHOTO:
                 getPhoto(activity, Constants.MIME_TYPE_IMAGE, new OnAttachingFileListener() {
                     @Override
@@ -349,7 +314,7 @@ public class AttachmentHelper {
     @Nullable
     private static Intent captureIntent(Context context) {
         File file = FileHelper.createNewAttachmentFile(context, Constants.MIME_TYPE_IMAGE_EXTENSION);
-        if (file == null){
+        if (file == null) {
             ToastUtils.makeToast(R.string.failed_to_create_file);
             return null;
         }

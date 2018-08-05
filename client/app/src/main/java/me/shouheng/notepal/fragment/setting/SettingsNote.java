@@ -10,7 +10,8 @@ import me.shouheng.notepal.listener.OnFragmentDestroyListener;
 import me.shouheng.notepal.listener.SettingChangeType;
 
 /**
- * Created by shouh on 2018/3/21.*/
+ * Created by shouh on 2018/3/21.
+ */
 public class SettingsNote extends BaseFragment {
 
     @Override
@@ -22,6 +23,10 @@ public class SettingsNote extends BaseFragment {
         addPreferencesFromResource(R.xml.preferences_note);
 
         setPreferenceClickListeners();
+    }
+
+    @Override
+    public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
     }
 
     private void configToolbar() {

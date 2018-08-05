@@ -75,7 +75,7 @@ public abstract class BaseFragment<V extends ViewDataBinding> extends CommonFrag
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == Activity.RESULT_OK) {
-            AttachmentHelper.resolveResult(this, requestCode, data);
+            AttachmentHelper.resolveFragmentResult(this, requestCode, data);
         }
         super.onActivityResult(requestCode, resultCode, data);
     }

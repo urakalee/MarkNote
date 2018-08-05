@@ -15,22 +15,22 @@ import android.text.TextWatcher
 import android.view.*
 import com.afollestad.materialdialogs.MaterialDialog
 import com.balysv.materialmenu.MaterialMenuDrawable
+import kotlinx.android.synthetic.main.fragment_note.*
+import kotlinx.android.synthetic.main.fragment_note_main.*
+import kotlinx.android.synthetic.main.note_edit_right_drawer.*
 import me.shouheng.notepal.PalmApp
 import me.shouheng.notepal.R
 import me.shouheng.notepal.activity.MenuSortActivity
 import me.shouheng.notepal.activity.base.CommonActivity
 import me.shouheng.notepal.async.CreateAttachmentTask
 import me.shouheng.notepal.config.Constants
-import me.shouheng.notepal.databinding.FragmentNoteBinding
 import me.shouheng.notepal.dialog.AttachmentPickerDialog
 import me.shouheng.notepal.dialog.LinkInputDialog
 import me.shouheng.notepal.dialog.MathJaxEditor
 import me.shouheng.notepal.dialog.TableInputDialog
 import me.shouheng.notepal.dialog.picker.NotebookPickerDialog
-import me.shouheng.notepal.fragment.base.BaseModelFragment
 import me.shouheng.notepal.model.Attachment
 import me.shouheng.notepal.model.Category
-import me.shouheng.notepal.model.Location
 import me.shouheng.notepal.model.data.LoadStatus
 import me.shouheng.notepal.model.enums.ModelType
 import me.shouheng.notepal.util.*
@@ -41,13 +41,12 @@ import me.shouheng.notepal.viewmodel.LocationViewModel
 import me.shouheng.notepal.widget.FlowLayout
 import me.shouheng.notepal.widget.MDItemView
 import me.urakalee.next2.activity.ContentActivity
+import me.urakalee.next2.base.fragment.BaseModelFragment
 import me.urakalee.next2.config.FeatureConfig
 import me.urakalee.next2.model.Note
 import me.urakalee.next2.viewmodel.NoteViewModel
 import me.urakalee.next2.viewmodel.NotebookViewModel
 import me.urakalee.ranger.extension.dp
-import me.urakalee.ranger.extension.isGone
-import me.urakalee.ranger.extension.isVisible
 import me.urakalee.ranger.extension.pixel
 import my.shouheng.palmmarkdown.tools.MarkdownFormat
 import org.apache.commons.io.FileUtils
@@ -58,7 +57,7 @@ import java.io.IOException
 /**
  * @author Uraka.Lee
  */
-class NoteEditFragment : BaseModelFragment<Note, FragmentNoteBinding>() {
+class NoteEditFragment : BaseModelFragment<Note>() {
 
     private var materialMenu: MaterialMenuDrawable? = null
 
@@ -71,9 +70,8 @@ class NoteEditFragment : BaseModelFragment<Note, FragmentNoteBinding>() {
     private lateinit var attachmentViewModel: AttachmentViewModel
     private lateinit var locationViewModel: LocationViewModel
 
-    override fun getLayoutResId(): Int {
-        return R.layout.fragment_note
-    }
+    override val layoutResId: Int
+        get() = R.layout.fragment_note
 
     //region lifecycle
 
@@ -215,8 +213,8 @@ class NoteEditFragment : BaseModelFragment<Note, FragmentNoteBinding>() {
 
         materialMenu = MaterialMenuDrawable(contextNonNull, primaryColor(), MaterialMenuDrawable.Stroke.THIN)
         materialMenu?.iconState = MaterialMenuDrawable.IconState.ARROW
-        binding?.main?.toolbar?.navigationIcon = materialMenu
-        (activityNonNull as AppCompatActivity).setSupportActionBar(binding?.main?.toolbar)
+        toolbar.navigationIcon = materialMenu
+        (activityNonNull as AppCompatActivity).setSupportActionBar(toolbar)
         val actionBar = activityNonNull.supportActionBar
         actionBar?.setDisplayHomeAsUpEnabled(true)
         actionBar?.title = ""
@@ -230,7 +228,6 @@ class NoteEditFragment : BaseModelFragment<Note, FragmentNoteBinding>() {
         fetchContentIfNeed(note)
         fetchCategories(note)
         fetchAttachment(note)
-        fetchLocation(note)
     }
 
     private fun fetchContentIfNeed(note: Note) {
@@ -280,26 +277,10 @@ class NoteEditFragment : BaseModelFragment<Note, FragmentNoteBinding>() {
                     when (contentResource.status) {
                         LoadStatus.SUCCESS -> {
                             note.content = contentResource.data
-                            binding?.main?.etContent?.tag = true
-                            binding?.main?.etContent?.setText(note.content)
+                            et_content.tag = true
+                            et_content.setText(note.content)
                         }
                         LoadStatus.FAILED -> ToastUtils.makeToast(R.string.note_failed_to_read_file)
-                        else -> {
-                            // pass
-                        }
-                    }
-                })
-    }
-
-    private fun fetchLocation(note: Note) {
-        locationViewModel.getLocation(note)
-                ?.observe(this, Observer { locationResource ->
-                    if (locationResource == null) {
-                        ToastUtils.makeToast(R.string.text_failed_to_load_data)
-                        return@Observer
-                    }
-                    when (locationResource.status) {
-                        LoadStatus.SUCCESS -> showLocationInfo(locationResource.data)
                         else -> {
                             // pass
                         }
@@ -311,32 +292,32 @@ class NoteEditFragment : BaseModelFragment<Note, FragmentNoteBinding>() {
     // region Config main board
 
     private fun configMain(note: Note) {
-        binding?.main?.etTitle?.setText(note.title)
-        binding?.main?.etTitle?.setTextColor(primaryColor())
-        binding?.main?.etTitle?.addTextChangedListener(titleWatcher)
+        et_title.setText(note.title)
+        et_title.setTextColor(primaryColor())
+        et_title.addTextChangedListener(titleWatcher)
 
-        binding?.main?.etContent?.setText(note.content)
-        binding?.main?.etContent?.addTextChangedListener(contentWatcher)
+        et_content.setText(note.content)
+        et_content.addTextChangedListener(contentWatcher)
 
-        binding?.main?.llFolder?.setOnClickListener { showNotebookPicker() }
-        binding?.main?.llFolder?.isEnabled = FeatureConfig.MOVE_NOTE
+        ll_folder.setOnClickListener { showNotebookPicker() }
+        ll_folder.isEnabled = FeatureConfig.MOVE_NOTE
         note.notebook?.let {
-            binding?.main?.tvFolder?.text = it.title
+            tv_folder.text = it.title
         }
 
         val ids = intArrayOf(R.id.iv_redo, R.id.iv_undo, R.id.iv_insert_picture, R.id.iv_insert_link, R.id.iv_table)
         for (id in ids) {
-            binding.root.findViewById<View>(id).setOnClickListener { this.onBottomBarClick(it) }
+            rl_bottom_menu.findViewById<View>(id).setOnClickListener { this.onBottomBarClick(it) }
         }
 
         addFormatBar()
 
-        binding?.main?.ivSetting?.setOnClickListener { MenuSortActivity.start(this@NoteEditFragment, REQ_MENU_SORT) }
+        iv_setting.setOnClickListener { MenuSortActivity.start(this@NoteEditFragment, REQ_MENU_SORT) }
 
-        binding?.main?.fssv?.fastScrollDelegate?.setThumbSize(16, 40)
-        binding?.main?.fssv?.fastScrollDelegate?.setThumbDynamicHeight(false)
+        fssv.fastScrollDelegate?.setThumbSize(16, 40)
+        fssv.fastScrollDelegate?.setThumbDynamicHeight(false)
         if (context != null) {
-            binding?.main?.fssv?.fastScrollDelegate?.setThumbDrawable(
+            fssv.fastScrollDelegate?.setThumbDrawable(
                     PalmApp.getDrawableCompact(
                             if (isDarkTheme) R.drawable.fast_scroll_bar_dark
                             else R.drawable.fast_scroll_bar_light
@@ -347,8 +328,8 @@ class NoteEditFragment : BaseModelFragment<Note, FragmentNoteBinding>() {
     private fun showNotebookPicker() {
         fragmentManager?.let {
             NotebookPickerDialog.newInstance().setOnItemSelectedListener { dialog, value, _ ->
-                binding?.main?.tvFolder?.text = value.title
-                binding?.main?.tvFolder?.setTextColor(value.color)
+                tv_folder.text = value.title
+                tv_folder.setTextColor(value.color)
                 contentChanged = true
                 dialog.dismiss()
             }.show(it, "NOTEBOOK_PICKER")
@@ -357,8 +338,8 @@ class NoteEditFragment : BaseModelFragment<Note, FragmentNoteBinding>() {
 
     private fun onBottomBarClick(v: View) {
         when (v.id) {
-            R.id.iv_undo -> binding?.main?.etContent?.undo()
-            R.id.iv_redo -> binding?.main?.etContent?.redo()
+            R.id.iv_undo -> et_content.undo()
+            R.id.iv_redo -> et_content.redo()
             R.id.iv_insert_picture -> showAttachmentPicker()
             R.id.iv_insert_link -> showLinkEditor()
             R.id.iv_table -> showTableEditor()
@@ -366,7 +347,7 @@ class NoteEditFragment : BaseModelFragment<Note, FragmentNoteBinding>() {
     }
 
     private fun addFormatBar() {
-        binding?.main?.llContainer?.removeAllViews()
+        ll_container.removeAllViews()
         val verticalPadding = 12.dp
         val horizontalPadding = 6.dp
         val itemHeight = R.dimen.note_bottom_menu_height.pixel
@@ -376,16 +357,16 @@ class NoteEditFragment : BaseModelFragment<Note, FragmentNoteBinding>() {
             val mdItemView = MDItemView(context)
             mdItemView.markdownFormat = markdownFormat
             mdItemView.setPadding(horizontalPadding, verticalPadding, horizontalPadding, verticalPadding)
-            binding?.main?.llContainer?.addView(mdItemView, layoutParams)
+            ll_container.addView(mdItemView, layoutParams)
             mdItemView.setOnClickListener {
                 if (markdownFormat == MarkdownFormat.MATH_JAX) {
                     showMathJaxEditor()
                 } else {
-                    binding?.main?.etContent?.addEffect(markdownFormat)
+                    et_content.addEffect(markdownFormat)
                 }
             }
             mdItemView.setOnLongClickListener {
-                binding?.main?.etContent?.addLongClickEffect(markdownFormat)
+                et_content.addLongClickEffect(markdownFormat)
                 true
             }
         }
@@ -394,7 +375,7 @@ class NoteEditFragment : BaseModelFragment<Note, FragmentNoteBinding>() {
     private fun showMathJaxEditor() {
         fragmentManager?.let {
             MathJaxEditor.newInstance { exp, isSingleLine ->
-                binding?.main?.etContent?.addMathJax(exp, isSingleLine)
+                et_content.addMathJax(exp, isSingleLine)
             }.show(it, "MATH JAX EDITOR")
         }
     }
@@ -415,7 +396,7 @@ class NoteEditFragment : BaseModelFragment<Note, FragmentNoteBinding>() {
     private fun addImageLink() {
         fragmentManager?.let {
             LinkInputDialog.getInstance { title, link ->
-                binding?.main?.etContent?.addLinkEffect(MarkdownFormat.ATTACHMENT, title, link)
+                et_content.addLinkEffect(MarkdownFormat.ATTACHMENT, title, link)
             }.show(it, "Link Image")
         }
     }
@@ -423,7 +404,7 @@ class NoteEditFragment : BaseModelFragment<Note, FragmentNoteBinding>() {
     private fun showLinkEditor() {
         fragmentManager?.let {
             LinkInputDialog.getInstance { title, link ->
-                binding?.main?.etContent?.addLinkEffect(MarkdownFormat.LINK, title, link)
+                et_content.addLinkEffect(MarkdownFormat.LINK, title, link)
             }.show(it, "LINK INPUT")
         }
     }
@@ -433,7 +414,7 @@ class NoteEditFragment : BaseModelFragment<Note, FragmentNoteBinding>() {
             TableInputDialog.getInstance { rowsStr, colsStr ->
                 val rows = StringUtils.parseInteger(rowsStr, 3)
                 val cols = StringUtils.parseInteger(colsStr, 3)
-                binding?.main?.etContent?.addTableEffect(rows, cols)
+                et_content.addTableEffect(rows, cols)
             }.show(it, "TABLE INPUT")
         }
     }
@@ -442,44 +423,42 @@ class NoteEditFragment : BaseModelFragment<Note, FragmentNoteBinding>() {
     // region Config drawer board
 
     private fun configDrawer(note: Note) {
-        binding.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
+        drawer_layout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
 
-        binding?.drawer?.drawerToolbar?.setNavigationOnClickListener { binding.drawerLayout.closeDrawer(GravityCompat.END) }
+        drawer_toolbar.setNavigationOnClickListener { drawer_layout.closeDrawer(GravityCompat.END) }
         if (isDarkTheme) {
-            binding?.drawer?.drawerToolbar?.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp)
-            binding?.drawer?.root?.setBackgroundResource(R.color.dark_theme_background)
+            drawer_toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp)
+            drawer.setBackgroundResource(R.color.dark_theme_background)
         }
 
         updateCharsInfo()
-        binding?.drawer?.tvTimeInfo?.text = ModelHelper.getTimeInfo(note)
+        tv_time_info.text = ModelHelper.getTimeInfo(note)
 
-        binding?.drawer?.flLabels?.setOnClickListener { showCategoriesPicker(categories) }
-        binding?.drawer?.tvAddLabels?.setOnClickListener { showCategoriesPicker(categories) }
+        fl_labels.setOnClickListener { showCategoriesPicker(categories) }
+        tv_add_labels.setOnClickListener { showCategoriesPicker(categories) }
 
-        binding?.drawer?.tvAddLocation?.setOnClickListener { tryToLocate() }
-
-        binding?.drawer?.tvCopyLink?.setOnClickListener {
+        tv_copy_link.setOnClickListener {
             activity?.let {
                 ModelHelper.copyLink(it, note)
             }
         }
 
-        binding?.drawer?.tvCopyText?.setOnClickListener {
-            note.content = binding?.main?.etContent?.text.toString()
+        tv_copy_text.setOnClickListener {
+            note.content = et_content.text.toString()
             activity?.let {
-                ModelHelper.copyToClipboard(it, binding?.main?.etContent?.text.toString())
+                ModelHelper.copyToClipboard(it, et_content.text.toString())
                 ToastUtils.makeToast(R.string.content_was_copied_to_clipboard)
             }
         }
 
-        binding?.drawer?.tvAddToHomeScreen?.setOnClickListener { addShortcut() }
+        tv_add_to_home_screen.setOnClickListener { addShortcut() }
 
-        binding?.drawer?.tvStatistics?.setOnClickListener { showStatistics() }
+        tv_statistics.setOnClickListener { showStatistics() }
     }
 
     private fun updateCharsInfo() {
-        val charsInfo = getString(R.string.text_chars_number) + " : " + binding?.main?.etContent?.text.toString().length
-        binding?.drawer?.tvCharsInfo?.text = charsInfo
+        val charsInfo = getString(R.string.text_chars_number) + " : " + et_content.text.toString().length
+        tv_chars_info.text = charsInfo
     }
 
     private fun addShortcut() {
@@ -508,7 +487,7 @@ class NoteEditFragment : BaseModelFragment<Note, FragmentNoteBinding>() {
     // endregion
 
     private fun showStatistics() {
-        note.content = binding?.main?.etContent?.text.toString()
+        note.content = et_content.text.toString()
         activity?.let {
             ModelHelper.showStatistic(it, note)
         }
@@ -526,30 +505,8 @@ class NoteEditFragment : BaseModelFragment<Note, FragmentNoteBinding>() {
         contentChanged = true
     }
 
-    override fun getTagsLayout(): FlowLayout? {
-        return binding?.drawer?.flLabels
-    }
-
-    override fun onGetLocation(location: Location) {
-        location.modelCode = note.code
-        location.modelType = ModelType.NOTE
-        showLocationInfo(location)
-        locationViewModel.saveModel(location)
-    }
-
-    /**
-     * Show location information, if the location is null, hide the widget else show it.
-     *
-     * @param location location info
-     */
-    private fun showLocationInfo(location: Location?) {
-        if (location == null) {
-            binding?.drawer?.tvLocationInfo?.isGone = true
-            return
-        }
-        binding?.drawer?.tvLocationInfo?.isVisible = true
-        binding?.drawer?.tvLocationInfo?.text = ModelHelper.getFormatLocation(location)
-    }
+    override val tagsLayout: FlowLayout?
+        get() = fl_labels
 
     //endregion
     //region override BaseFragment
@@ -565,9 +522,9 @@ class NoteEditFragment : BaseModelFragment<Note, FragmentNoteBinding>() {
 
         if (Constants.MIME_TYPE_IMAGE.equals(attachment.mineType, true)
                 || Constants.MIME_TYPE_SKETCH.equals(attachment.mineType, true)) {
-            binding?.main?.etContent?.addLinkEffect(MarkdownFormat.ATTACHMENT, title, attachment.uri.toString())
+            et_content.addLinkEffect(MarkdownFormat.ATTACHMENT, title, attachment.uri.toString())
         } else {
-            binding?.main?.etContent?.addLinkEffect(MarkdownFormat.LINK, title, attachment.uri.toString())
+            et_content.addLinkEffect(MarkdownFormat.LINK, title, attachment.uri.toString())
         }
     }
 
@@ -608,11 +565,11 @@ class NoteEditFragment : BaseModelFragment<Note, FragmentNoteBinding>() {
     }
 
     private fun beforeSaveOrUpdate(handler: ((Boolean) -> Unit)?) {
-        val noteContent = binding?.main?.etContent?.text.toString()
+        val noteContent = et_content.text.toString()
         note.content = noteContent
 
         // Get note title from title editor or note content
-        val inputTitle = binding?.main?.etTitle?.text.toString()
+        val inputTitle = et_title.text.toString()
         note.title = ModelHelper.getNoteTitle(inputTitle, noteContent)
 
         // Get preview image from note content
@@ -681,7 +638,7 @@ class NoteEditFragment : BaseModelFragment<Note, FragmentNoteBinding>() {
         AppWidgetUtils.notifyAppWidgets()
 
         materialMenu!!.animateIconState(MaterialMenuDrawable.IconState.ARROW)
-        note.content = binding?.main?.etContent?.text.toString()
+        note.content = et_content.text.toString()
 
         val args = arguments ?: return
         if (args.getBoolean(EXTRA_IS_THIRD_PART)
@@ -742,10 +699,10 @@ class NoteEditFragment : BaseModelFragment<Note, FragmentNoteBinding>() {
                 if (contentChanged) saveOrUpdateData(null)
                 else setResult()
             }
-            R.id.action_more -> binding.drawerLayout.openDrawer(GravityCompat.END, true)
+            R.id.action_more -> drawer_layout.openDrawer(GravityCompat.END, true)
             R.id.action_preview -> {
-                note.title = binding?.main?.etTitle?.text.toString()
-                note.content = binding?.main?.etContent?.text.toString()
+                note.title = et_title.text.toString()
+                note.content = et_content.text.toString()
                 ContentActivity.viewNote(this, note, true, 0)
             }
         }
@@ -775,9 +732,9 @@ class NoteEditFragment : BaseModelFragment<Note, FragmentNoteBinding>() {
 
         override fun afterTextChanged(s: Editable) {
             // Ignore the text change if the tag is true
-            if (binding?.main?.etContent?.tag != null
-                    || binding?.main?.etContent?.tag is Boolean && binding?.main?.etContent?.tag as Boolean) {
-                binding?.main?.etContent?.tag = null
+            if (et_content.tag != null
+                    || et_content.tag is Boolean && et_content.tag as Boolean) {
+                et_content.tag = null
             } else {
                 note.content = s.toString()
                 contentChanged = true

@@ -1,11 +1,10 @@
 package me.shouheng.notepal.fragment.setting;
 
 import android.os.Bundle;
-import android.preference.CheckBoxPreference;
-import android.preference.Preference;
+import android.support.v7.preference.CheckBoxPreference;
+import android.support.v7.preference.Preference;
 
 import me.shouheng.notepal.R;
-import me.shouheng.notepal.activity.base.CommonActivity;
 import me.shouheng.notepal.activity.base.ThemedActivity;
 import me.shouheng.notepal.config.Constants;
 import me.shouheng.notepal.dialog.FeedbackDialog;
@@ -16,7 +15,8 @@ import me.shouheng.notepal.util.IntentUtils;
 import me.shouheng.notepal.widget.ColorPreference;
 
 /**
- * Created by wang shouheng on 2017/12/21.*/
+ * Created by wang shouheng on 2017/12/21.
+ */
 public class SettingsFragment extends BaseFragment {
 
     private CheckBoxPreference isDarkTheme, coloredNavigationBar;
@@ -24,7 +24,8 @@ public class SettingsFragment extends BaseFragment {
     private ColorPreference primaryColor, accentColor;
 
     /**
-     * Used to transfer click message to the activity. */
+     * Used to transfer click message to the activity.
+     */
     private Preference.OnPreferenceClickListener listener = preference -> {
         if (getActivity() != null && getActivity() instanceof OnPreferenceClickListener) {
             ((OnPreferenceClickListener) getActivity()).onPreferenceClick(preference.getKey());
@@ -48,6 +49,10 @@ public class SettingsFragment extends BaseFragment {
         setPreferenceClickListeners();
     }
 
+    @Override
+    public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
+    }
+
     private void setPreferenceClickListeners() {
         isDarkTheme.setOnPreferenceClickListener(preference -> {
             updateThemeSettings();
@@ -67,7 +72,7 @@ public class SettingsFragment extends BaseFragment {
             return true;
         });
         findPreference(R.string.key_support_develop).setOnPreferenceClickListener(preference -> {
-            NoticeDialog.newInstance().show(((CommonActivity) getActivity()).getSupportFragmentManager(), "Notice");
+            NoticeDialog.newInstance().show((getActivity()).getSupportFragmentManager(), "Notice");
             return true;
         });
 
@@ -83,7 +88,7 @@ public class SettingsFragment extends BaseFragment {
 
     private void showFeedbackEditor() {
         FeedbackDialog.newInstance(getActivity(), (dialog, feedback) -> sendFeedback(feedback))
-                .show(((CommonActivity) getActivity()).getSupportFragmentManager(), "Feedback Editor");
+                .show((getActivity()).getSupportFragmentManager(), "Feedback Editor");
     }
 
     private void sendFeedback(Feedback feedback) {

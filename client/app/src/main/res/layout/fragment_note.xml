@@ -3,19 +3,19 @@
 
     <android.support.v4.widget.DrawerLayout
         android:id="@+id/drawer_layout"
-        android:fitsSystemWindows="true"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" >
+        android:layout_height="match_parent"
+        android:fitsSystemWindows="true">
 
-        <include android:id="@+id/main" layout="@layout/fragment_note_main"/>
+        <include layout="@layout/fragment_note_main" />
 
         <FrameLayout
-            android:layout_gravity="end"
-            android:fitsSystemWindows="true"
             android:layout_width="285dp"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:layout_gravity="end"
+            android:fitsSystemWindows="true">
 
-            <include android:id="@+id/drawer" layout="@layout/note_edit_right_drawer" />
+            <include layout="@layout/note_edit_right_drawer" />
 
         </FrameLayout>
 

@@ -94,7 +94,7 @@ public class SettingsActivity extends CommonActivity<ActivitySettingsBinding> im
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()){
+        switch (item.getItemId()) {
             case android.R.id.home:
                 onBackPressed();
                 break;
@@ -124,8 +124,8 @@ public class SettingsActivity extends CommonActivity<ActivitySettingsBinding> im
         return getCurrentFragment() instanceof SettingsFragment;
     }
 
-    private android.app.Fragment getCurrentFragment() {
-        return getFragmentManager().findFragmentById(R.id.fragment_container);
+    private Fragment getCurrentFragment() {
+        return getSupportFragmentManager().findFragmentById(R.id.fragment_container);
     }
 
     @Override
@@ -190,7 +190,7 @@ public class SettingsActivity extends CommonActivity<ActivitySettingsBinding> im
 
             int len = changedTypes.size();
             int[] types = new int[len];
-            for (int i=0;i<len;i++) {
+            for (int i = 0; i < len; i++) {
                 types[i] = changedTypes.get(i);
             }
 

@@ -1,7 +1,5 @@
 package me.shouheng.notepal.activity;
 
-import static android.support.v7.widget.RecyclerView.SCROLL_STATE_IDLE;
-
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -55,7 +53,6 @@ import me.shouheng.notepal.model.Category;
 import me.shouheng.notepal.model.MindSnagging;
 import me.shouheng.notepal.model.Model;
 import me.shouheng.notepal.model.ModelFactory;
-import me.urakalee.next2.model.Note;
 import me.shouheng.notepal.model.Notebook;
 import me.shouheng.notepal.model.data.LoadStatus;
 import me.shouheng.notepal.model.enums.FabSortItem;
@@ -72,8 +69,11 @@ import me.shouheng.notepal.viewmodel.CategoryViewModel;
 import me.shouheng.notepal.widget.tools.CustomRecyclerScrollViewListener;
 import me.urakalee.next2.activity.ContentActivity;
 import me.urakalee.next2.fragment.NotesFragment;
+import me.urakalee.next2.model.Note;
 import me.urakalee.next2.viewmodel.NoteViewModel;
 import me.urakalee.next2.viewmodel.NotebookViewModel;
+
+import static android.support.v7.widget.RecyclerView.SCROLL_STATE_IDLE;
 
 public class MainActivity extends CommonActivity<ActivityMainBinding> implements
         NotesFragment.OnNotesInteractListener,
@@ -213,7 +213,7 @@ public class MainActivity extends CommonActivity<ActivityMainBinding> implements
     }
 
     private void handleAttachmentResult(int requestCode, Intent data) {
-        AttachmentHelper.resolveResult(this, requestCode, data);
+        AttachmentHelper.resolveActivityResult(this, requestCode, data);
     }
 
     private void updateListIfNecessary() {

@@ -37,13 +37,17 @@ public class SettingsPreferences extends BaseFragment {
             return true;
         });
         findPreference(R.string.key_note_editor_menu_sort).setOnPreferenceClickListener(preference -> {
-            MenuSortActivity.start(SettingsPreferences.this,  1);
+            MenuSortActivity.start(SettingsPreferences.this, 1);
             return true;
         });
         findPreference(R.string.key_fast_scroller).setOnPreferenceClickListener(preference -> {
             notifyDashboardChanged(SettingChangeType.FAST_SCROLLER);
             return false;
         });
+    }
+
+    @Override
+    public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
     }
 
     private void configToolbar() {

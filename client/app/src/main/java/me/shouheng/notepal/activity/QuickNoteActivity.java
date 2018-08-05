@@ -23,12 +23,12 @@ import me.shouheng.notepal.model.Attachment;
 import me.shouheng.notepal.model.MindSnagging;
 import me.shouheng.notepal.model.Model;
 import me.shouheng.notepal.model.ModelFactory;
-import me.urakalee.next2.model.Note;
 import me.shouheng.notepal.model.data.Resource;
 import me.shouheng.notepal.util.AppWidgetUtils;
 import me.shouheng.notepal.util.AttachmentHelper;
 import me.shouheng.notepal.util.LogUtils;
 import me.shouheng.notepal.util.ToastUtils;
+import me.urakalee.next2.model.Note;
 import me.urakalee.next2.viewmodel.NoteViewModel;
 
 public class QuickNoteActivity extends BaseActivity implements OnAttachingFileListener {
@@ -121,7 +121,8 @@ public class QuickNoteActivity extends BaseActivity implements OnAttachingFileLi
                     case FAILED:
                         ToastUtils.makeToast(R.string.text_failed_to_modify_data);
                         break;
-                    case LOADING:break;
+                    case LOADING:
+                        break;
                 }
             }
         });
@@ -138,7 +139,7 @@ public class QuickNoteActivity extends BaseActivity implements OnAttachingFileLi
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == Activity.RESULT_OK) {
-            AttachmentHelper.resolveResult(this, requestCode, data);
+            AttachmentHelper.resolveActivityResult(this, requestCode, data);
         }
     }
 
