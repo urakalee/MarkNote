@@ -15,14 +15,14 @@ import me.shouheng.notepal.databinding.ActivityContentBinding
 import me.shouheng.notepal.fragment.base.BaseModelFragment
 import me.shouheng.notepal.fragment.base.CommonFragment
 import me.shouheng.notepal.model.ModelFactory
-import me.urakalee.next2.model.Note
-import me.urakalee.next2.storage.NoteStore
 import me.shouheng.notepal.util.FragmentHelper
 import me.shouheng.notepal.util.LogUtils
 import me.shouheng.notepal.util.ToastUtils
 import me.urakalee.next2.fragment.NoteEditFragment
 import me.urakalee.next2.fragment.NoteEditFragment.OnNoteInteractListener
 import me.urakalee.next2.fragment.NoteViewFragment
+import me.urakalee.next2.model.Note
+import me.urakalee.next2.storage.NoteStore
 import me.urakalee.ranger.extension.getFromBundle
 import me.urakalee.ranger.extension.hasExtraInBundle
 import me.urakalee.ranger.extension.isVisible
@@ -53,6 +53,8 @@ class ContentActivity : CommonActivity<ActivityContentBinding>(),
     override fun onBackPressed() {
         val currentFragment = getCurrentFragment(R.id.fragment_container)
         if (currentFragment is CommonFragment<*>) {
+            currentFragment.onBackPressed()
+        } else if (currentFragment is me.urakalee.next2.base.fragment.CommonFragment) {
             currentFragment.onBackPressed()
         } else {
             super.onBackPressed()
