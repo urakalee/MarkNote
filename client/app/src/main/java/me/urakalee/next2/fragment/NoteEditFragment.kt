@@ -277,8 +277,8 @@ class NoteEditFragment : BaseModelFragment<Note>() {
                     when (contentResource.status) {
                         LoadStatus.SUCCESS -> {
                             note.content = contentResource.data
-                            et_content.tag = true
-                            et_content.setText(note.content)
+                            noteContent.tag = true
+                            noteContent.setText(note.content)
                         }
                         LoadStatus.FAILED -> ToastUtils.makeToast(R.string.note_failed_to_read_file)
                         else -> {
@@ -292,32 +292,32 @@ class NoteEditFragment : BaseModelFragment<Note>() {
     // region Config main board
 
     private fun configMain(note: Note) {
-        et_title.setText(note.title)
-        et_title.setTextColor(primaryColor())
-        et_title.addTextChangedListener(titleWatcher)
+        noteTitle.setText(note.title)
+        noteTitle.setTextColor(primaryColor())
+        noteTitle.addTextChangedListener(titleWatcher)
 
-        et_content.setText(note.content)
-        et_content.addTextChangedListener(contentWatcher)
+        noteContent.setText(note.content)
+        noteContent.addTextChangedListener(contentWatcher)
 
-        ll_folder.setOnClickListener { showNotebookPicker() }
-        ll_folder.isEnabled = FeatureConfig.MOVE_NOTE
+        notebook.setOnClickListener { showNotebookPicker() }
+        notebook.isEnabled = FeatureConfig.MOVE_NOTE
         note.notebook?.let {
-            tv_folder.text = it.title
+            notebookName.text = it.title
         }
 
-        val ids = intArrayOf(R.id.iv_redo, R.id.iv_undo, R.id.iv_insert_picture, R.id.iv_insert_link, R.id.iv_table)
-        for (id in ids) {
-            rl_bottom_menu.findViewById<View>(id).setOnClickListener { this.onBottomBarClick(it) }
+        val views = listOf(insertPicture, insertLink, insertTable, undo, redo)
+        for (view in views) {
+            view.setOnClickListener { this.onBottomBarClick(it) }
         }
 
         addFormatBar()
 
-        iv_setting.setOnClickListener { MenuSortActivity.start(this@NoteEditFragment, REQ_MENU_SORT) }
+        btnSetting.setOnClickListener { MenuSortActivity.start(this@NoteEditFragment, REQ_MENU_SORT) }
 
-        fssv.fastScrollDelegate?.setThumbSize(16, 40)
-        fssv.fastScrollDelegate?.setThumbDynamicHeight(false)
+        fastScrollView.fastScrollDelegate?.setThumbSize(16, 40)
+        fastScrollView.fastScrollDelegate?.setThumbDynamicHeight(false)
         if (context != null) {
-            fssv.fastScrollDelegate?.setThumbDrawable(
+            fastScrollView.fastScrollDelegate?.setThumbDrawable(
                     PalmApp.getDrawableCompact(
                             if (isDarkTheme) R.drawable.fast_scroll_bar_dark
                             else R.drawable.fast_scroll_bar_light
@@ -328,8 +328,8 @@ class NoteEditFragment : BaseModelFragment<Note>() {
     private fun showNotebookPicker() {
         fragmentManager?.let {
             NotebookPickerDialog.newInstance().setOnItemSelectedListener { dialog, value, _ ->
-                tv_folder.text = value.title
-                tv_folder.setTextColor(value.color)
+                notebookName.text = value.title
+                notebookName.setTextColor(value.color)
                 contentChanged = true
                 dialog.dismiss()
             }.show(it, "NOTEBOOK_PICKER")
@@ -337,17 +337,17 @@ class NoteEditFragment : BaseModelFragment<Note>() {
     }
 
     private fun onBottomBarClick(v: View) {
-        when (v.id) {
-            R.id.iv_undo -> et_content.undo()
-            R.id.iv_redo -> et_content.redo()
-            R.id.iv_insert_picture -> showAttachmentPicker()
-            R.id.iv_insert_link -> showLinkEditor()
-            R.id.iv_table -> showTableEditor()
+        when (v) {
+            undo -> noteContent.undo()
+            redo -> noteContent.redo()
+            insertPicture -> showAttachmentPicker()
+            insertLink -> showLinkEditor()
+            insertTable -> showTableEditor()
         }
     }
 
     private fun addFormatBar() {
-        ll_container.removeAllViews()
+        markContainer.removeAllViews()
         val verticalPadding = 12.dp
         val horizontalPadding = 6.dp
         val itemHeight = R.dimen.note_bottom_menu_height.pixel
@@ -357,16 +357,16 @@ class NoteEditFragment : BaseModelFragment<Note>() {
             val mdItemView = MDItemView(context)
             mdItemView.markdownFormat = markdownFormat
             mdItemView.setPadding(horizontalPadding, verticalPadding, horizontalPadding, verticalPadding)
-            ll_container.addView(mdItemView, layoutParams)
+            markContainer.addView(mdItemView, layoutParams)
             mdItemView.setOnClickListener {
                 if (markdownFormat == MarkdownFormat.MATH_JAX) {
                     showMathJaxEditor()
                 } else {
-                    et_content.addEffect(markdownFormat)
+                    noteContent.addEffect(markdownFormat)
                 }
             }
             mdItemView.setOnLongClickListener {
-                et_content.addLongClickEffect(markdownFormat)
+                noteContent.addLongClickEffect(markdownFormat)
                 true
             }
         }
@@ -375,7 +375,7 @@ class NoteEditFragment : BaseModelFragment<Note>() {
     private fun showMathJaxEditor() {
         fragmentManager?.let {
             MathJaxEditor.newInstance { exp, isSingleLine ->
-                et_content.addMathJax(exp, isSingleLine)
+                noteContent.addMathJax(exp, isSingleLine)
             }.show(it, "MATH JAX EDITOR")
         }
     }
@@ -396,7 +396,7 @@ class NoteEditFragment : BaseModelFragment<Note>() {
     private fun addImageLink() {
         fragmentManager?.let {
             LinkInputDialog.getInstance { title, link ->
-                et_content.addLinkEffect(MarkdownFormat.ATTACHMENT, title, link)
+                noteContent.addLinkEffect(MarkdownFormat.ATTACHMENT, title, link)
             }.show(it, "Link Image")
         }
     }
@@ -404,7 +404,7 @@ class NoteEditFragment : BaseModelFragment<Note>() {
     private fun showLinkEditor() {
         fragmentManager?.let {
             LinkInputDialog.getInstance { title, link ->
-                et_content.addLinkEffect(MarkdownFormat.LINK, title, link)
+                noteContent.addLinkEffect(MarkdownFormat.LINK, title, link)
             }.show(it, "LINK INPUT")
         }
     }
@@ -414,7 +414,7 @@ class NoteEditFragment : BaseModelFragment<Note>() {
             TableInputDialog.getInstance { rowsStr, colsStr ->
                 val rows = StringUtils.parseInteger(rowsStr, 3)
                 val cols = StringUtils.parseInteger(colsStr, 3)
-                et_content.addTableEffect(rows, cols)
+                noteContent.addTableEffect(rows, cols)
             }.show(it, "TABLE INPUT")
         }
     }
@@ -423,42 +423,40 @@ class NoteEditFragment : BaseModelFragment<Note>() {
     // region Config drawer board
 
     private fun configDrawer(note: Note) {
-        drawer_layout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
+        drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
 
-        drawer_toolbar.setNavigationOnClickListener { drawer_layout.closeDrawer(GravityCompat.END) }
+        drawerToolbar.setNavigationOnClickListener { drawerLayout.closeDrawer(GravityCompat.END) }
         if (isDarkTheme) {
-            drawer_toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp)
+            drawerToolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp)
             drawer.setBackgroundResource(R.color.dark_theme_background)
         }
 
         updateCharsInfo()
-        tv_time_info.text = ModelHelper.getTimeInfo(note)
+        timeInfo.text = ModelHelper.getTimeInfo(note)
 
-        fl_labels.setOnClickListener { showCategoriesPicker(categories) }
-        tv_add_labels.setOnClickListener { showCategoriesPicker(categories) }
+        labelsLayout.setOnClickListener { showCategoriesPicker(categories) }
+        addLabel.setOnClickListener { showCategoriesPicker(categories) }
 
-        tv_copy_link.setOnClickListener {
+        copyLink.setOnClickListener {
             activity?.let {
                 ModelHelper.copyLink(it, note)
             }
         }
 
-        tv_copy_text.setOnClickListener {
-            note.content = et_content.text.toString()
+        copyText.setOnClickListener {
+            note.content = noteContent.text.toString()
             activity?.let {
-                ModelHelper.copyToClipboard(it, et_content.text.toString())
+                ModelHelper.copyToClipboard(it, noteContent.text.toString())
                 ToastUtils.makeToast(R.string.content_was_copied_to_clipboard)
             }
         }
 
-        tv_add_to_home_screen.setOnClickListener { addShortcut() }
-
-        tv_statistics.setOnClickListener { showStatistics() }
+        addLauncher.setOnClickListener { addShortcut() }
     }
 
     private fun updateCharsInfo() {
-        val charsInfo = getString(R.string.text_chars_number) + " : " + et_content.text.toString().length
-        tv_chars_info.text = charsInfo
+        val charsInfo = getString(R.string.text_chars_number) + " : " + noteContent.text.toString().length
+        wordCount.text = charsInfo
     }
 
     private fun addShortcut() {
@@ -486,13 +484,6 @@ class NoteEditFragment : BaseModelFragment<Note>() {
 
     // endregion
 
-    private fun showStatistics() {
-        note.content = et_content.text.toString()
-        activity?.let {
-            ModelHelper.showStatistic(it, note)
-        }
-    }
-
     // endregion
     //region override BaseModelFragment
 
@@ -506,7 +497,7 @@ class NoteEditFragment : BaseModelFragment<Note>() {
     }
 
     override val tagsLayout: FlowLayout?
-        get() = fl_labels
+        get() = labelsLayout
 
     //endregion
     //region override BaseFragment
@@ -522,9 +513,9 @@ class NoteEditFragment : BaseModelFragment<Note>() {
 
         if (Constants.MIME_TYPE_IMAGE.equals(attachment.mineType, true)
                 || Constants.MIME_TYPE_SKETCH.equals(attachment.mineType, true)) {
-            et_content.addLinkEffect(MarkdownFormat.ATTACHMENT, title, attachment.uri.toString())
+            noteContent.addLinkEffect(MarkdownFormat.ATTACHMENT, title, attachment.uri.toString())
         } else {
-            et_content.addLinkEffect(MarkdownFormat.LINK, title, attachment.uri.toString())
+            noteContent.addLinkEffect(MarkdownFormat.LINK, title, attachment.uri.toString())
         }
     }
 
@@ -565,11 +556,11 @@ class NoteEditFragment : BaseModelFragment<Note>() {
     }
 
     private fun beforeSaveOrUpdate(handler: ((Boolean) -> Unit)?) {
-        val noteContent = et_content.text.toString()
+        val noteContent = noteContent.text.toString()
         note.content = noteContent
 
         // Get note title from title editor or note content
-        val inputTitle = et_title.text.toString()
+        val inputTitle = noteTitle.text.toString()
         note.title = ModelHelper.getNoteTitle(inputTitle, noteContent)
 
         // Get preview image from note content
@@ -638,7 +629,7 @@ class NoteEditFragment : BaseModelFragment<Note>() {
         AppWidgetUtils.notifyAppWidgets()
 
         materialMenu!!.animateIconState(MaterialMenuDrawable.IconState.ARROW)
-        note.content = et_content.text.toString()
+        note.content = noteContent.text.toString()
 
         val args = arguments ?: return
         if (args.getBoolean(EXTRA_IS_THIRD_PART)
@@ -699,10 +690,10 @@ class NoteEditFragment : BaseModelFragment<Note>() {
                 if (contentChanged) saveOrUpdateData(null)
                 else setResult()
             }
-            R.id.action_more -> drawer_layout.openDrawer(GravityCompat.END, true)
+            R.id.action_more -> drawerLayout.openDrawer(GravityCompat.END, true)
             R.id.action_preview -> {
-                note.title = et_title.text.toString()
-                note.content = et_content.text.toString()
+                note.title = noteTitle.text.toString()
+                note.content = noteContent.text.toString()
                 ContentActivity.viewNote(this, note, true, 0)
             }
         }
@@ -732,9 +723,9 @@ class NoteEditFragment : BaseModelFragment<Note>() {
 
         override fun afterTextChanged(s: Editable) {
             // Ignore the text change if the tag is true
-            if (et_content.tag != null
-                    || et_content.tag is Boolean && et_content.tag as Boolean) {
-                et_content.tag = null
+            if (noteContent.tag != null
+                    || noteContent.tag is Boolean && noteContent.tag as Boolean) {
+                noteContent.tag = null
             } else {
                 note.content = s.toString()
                 contentChanged = true
