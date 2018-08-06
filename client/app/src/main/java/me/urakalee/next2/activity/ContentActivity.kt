@@ -14,12 +14,10 @@ import me.shouheng.notepal.config.Constants
 import me.shouheng.notepal.databinding.ActivityContentBinding
 import me.shouheng.notepal.fragment.base.BaseModelFragment
 import me.shouheng.notepal.fragment.base.CommonFragment
-import me.shouheng.notepal.model.ModelFactory
 import me.shouheng.notepal.util.FragmentHelper
 import me.shouheng.notepal.util.LogUtils
 import me.shouheng.notepal.util.ToastUtils
 import me.urakalee.next2.fragment.NoteEditFragment
-import me.urakalee.next2.fragment.NoteEditFragment.OnNoteInteractListener
 import me.urakalee.next2.fragment.NoteViewFragment
 import me.urakalee.next2.model.Note
 import me.urakalee.next2.storage.NoteStore
@@ -32,7 +30,7 @@ import me.urakalee.ranger.extension.putToBundle
  * @author Uraka.Lee
  */
 class ContentActivity : CommonActivity<ActivityContentBinding>(),
-        ColorCallback, OnNoteInteractListener {
+        ColorCallback {
 
     /**
      * Current working note
@@ -103,12 +101,7 @@ class ContentActivity : CommonActivity<ActivityContentBinding>(),
             val noteNonNull = note!!
             val requestCode = intent.getIntExtra(Constants.EXTRA_REQUEST_CODE, -1)
             val isEdit = (intent.getStringExtra(Constants.EXTRA_START_TYPE) == Constants.VALUE_START_EDIT)
-            toNoteFragment(noteNonNull, if (requestCode == -1) null else requestCode, isEdit, false)
-        } else if (intent.action == Constants.ACTION_TO_NOTE_FROM_THIRD_PART) {
-            val noteNonNull = note ?: ModelFactory.newNote()
-            note = noteNonNull
-            val isEdit = (intent.getStringExtra(Constants.EXTRA_START_TYPE) == Constants.VALUE_START_EDIT)
-            toNoteFragment(noteNonNull, null, isEdit, true)
+            toNoteFragment(noteNonNull, if (requestCode == -1) null else requestCode, isEdit)
         }
 
         // The case below mainly used for the intent from shortcut
@@ -123,17 +116,17 @@ class ContentActivity : CommonActivity<ActivityContentBinding>(),
                 return
             }
             val isEdit = (intent.getStringExtra(Constants.EXTRA_START_TYPE) == Constants.VALUE_START_EDIT)
-            toNoteFragment(note!!, if (requestCode == -1) null else requestCode, isEdit, false)
+            toNoteFragment(note!!, if (requestCode == -1) null else requestCode, isEdit)
         }
     }
 
-    private fun toNoteFragment(note: Note, requestCode: Int?, isEdit: Boolean, isThirdPart: Boolean) {
+    private fun toNoteFragment(note: Note, requestCode: Int?, isEdit: Boolean) {
         val action = if (intent.action.isNullOrBlank()) null else intent.action
         var fragment: Fragment?
         if (isEdit) {
             fragment = supportFragmentManager.findFragmentByTag(TAG_NOTE_FRAGMENT)
             if (fragment == null) {
-                fragment = NoteEditFragment.newInstance(note, requestCode, isThirdPart, action)
+                fragment = NoteEditFragment.newInstance(note, requestCode, action)
             } else {
                 fragment.arguments?.putBoolean(NoteEditFragment.KEY_ARGS_RESTORE, true)
             }
@@ -170,13 +163,6 @@ class ContentActivity : CommonActivity<ActivityContentBinding>(),
     }
 
     override fun onColorChooserDismissed(colorChooserDialog: ColorChooserDialog) {}
-
-    //region delegate
-
-    override val intentForThirdPart: Intent
-        get() = intent
-
-    //endregion
 
     companion object {
 
@@ -225,16 +211,6 @@ class ContentActivity : CommonActivity<ActivityContentBinding>(),
         }
 
         // endregion
-
-        fun resolveThirdPart(activity: Activity, intent: Intent, requestCode: Int) {
-            intent.setClass(activity, ContentActivity::class.java)
-            intent.putExtra(Constants.EXTRA_IS_GOOGLE_NOW, Constants.INTENT_GOOGLE_NOW == intent.action)
-            intent.action = Constants.ACTION_TO_NOTE_FROM_THIRD_PART
-            intent.putExtra(Constants.EXTRA_FRAGMENT, Constants.VALUE_FRAGMENT_NOTE)
-            intent.putExtra(Constants.EXTRA_REQUEST_CODE, requestCode)
-            intent.putExtra(Constants.EXTRA_START_TYPE, Constants.VALUE_START_EDIT)
-            activity.startActivity(intent)
-        }
 
         fun resolveAction(activity: Activity, note: Note, action: String, requestCode: Int) {
             val intent = Intent(activity, ContentActivity::class.java)

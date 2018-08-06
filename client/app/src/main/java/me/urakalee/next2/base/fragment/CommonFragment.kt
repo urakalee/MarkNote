@@ -36,10 +36,10 @@ abstract class CommonFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        doCreateView(savedInstanceState)
+        afterViewCreated(savedInstanceState)
     }
 
-    protected abstract fun doCreateView(savedInstanceState: Bundle?)
+    protected abstract fun afterViewCreated(savedInstanceState: Bundle?)
 
     open fun onBackPressed() {
         val activity = activity

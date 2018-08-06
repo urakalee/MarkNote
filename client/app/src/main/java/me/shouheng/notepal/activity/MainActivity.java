@@ -60,7 +60,6 @@ import me.shouheng.notepal.model.enums.ItemStatus;
 import me.shouheng.notepal.util.AttachmentHelper;
 import me.shouheng.notepal.util.ColorUtils;
 import me.shouheng.notepal.util.FragmentHelper;
-import me.shouheng.notepal.util.IntentUtils;
 import me.shouheng.notepal.util.LogUtils;
 import me.shouheng.notepal.util.ToastUtils;
 import me.shouheng.notepal.util.preferences.DashboardPreferences;
@@ -300,11 +299,6 @@ public class MainActivity extends CommonActivity<ActivityMainBinding> implements
             case Constants.ACTION_WIDGET_LAUNCH_APP:
                 // do nothing just open the app.
                 break;
-            case Intent.ACTION_SEND:
-            case Intent.ACTION_SEND_MULTIPLE:
-            case Constants.INTENT_GOOGLE_NOW:
-                PermissionUtils.checkStoragePermission(this, this::handleThirdPart);
-                break;
             case Constants.ACTION_RESTART_APP:
                 // Recreate
                 recreate();
@@ -315,16 +309,6 @@ public class MainActivity extends CommonActivity<ActivityMainBinding> implements
 //            case Constants.ACTION_ADD_SKETCH:
 //                startAddSketch();
 //                break;
-        }
-    }
-
-    private void handleThirdPart() {
-        Intent i = getIntent();
-        if (IntentUtils.checkAction(i,
-                Intent.ACTION_SEND,
-                Intent.ACTION_SEND_MULTIPLE,
-                Constants.INTENT_GOOGLE_NOW) && i.getType() != null) {
-            ContentActivity.Companion.resolveThirdPart(this, i, REQUEST_ADD_NOTE);
         }
     }
 

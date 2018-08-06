@@ -4,8 +4,6 @@ import android.app.Activity
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
-import android.net.Uri
-import android.os.AsyncTask
 import android.os.Bundle
 import android.support.v4.view.GravityCompat
 import android.support.v4.widget.DrawerLayout
@@ -22,7 +20,6 @@ import me.shouheng.notepal.PalmApp
 import me.shouheng.notepal.R
 import me.shouheng.notepal.activity.MenuSortActivity
 import me.shouheng.notepal.activity.base.CommonActivity
-import me.shouheng.notepal.async.CreateAttachmentTask
 import me.shouheng.notepal.config.Constants
 import me.shouheng.notepal.dialog.AttachmentPickerDialog
 import me.shouheng.notepal.dialog.LinkInputDialog
@@ -114,7 +111,7 @@ class NoteEditFragment : BaseModelFragment<Note>() {
     //endregion
     //region init
 
-    override fun doCreateView(savedInstanceState: Bundle?) {
+    override fun afterViewCreated(savedInstanceState: Bundle?) {
         initViewModels()
 
         if (!handleArguments()) {
@@ -123,12 +120,6 @@ class NoteEditFragment : BaseModelFragment<Note>() {
         }
 
         configToolbar()
-
-        // Notify that the content is changed if the note fragment is called from sharing and other third part
-        // The code must be here since the material menu might be null.
-        if (arguments != null && arguments!!.getBoolean(EXTRA_IS_THIRD_PART)) {
-            contentChanged = true
-        }
 
         // Sync methods. Note that the other data may not be fetched for current.
         configMain(note)
@@ -154,57 +145,20 @@ class NoteEditFragment : BaseModelFragment<Note>() {
         this.note = note
         note.originTitle = note.title
 
-        // Handle arguments for intent from third part
-        if (arguments?.getBoolean(EXTRA_IS_THIRD_PART) == true) {
-            handleThirdPart()
-        } else {
-            val action = arguments?.getString(EXTRA_ACTION)
-            when (action) {
-                Constants.ACTION_ADD_SKETCH ->
-                    PermissionUtils.checkStoragePermission(activity as? BaseActivity) { AttachmentHelper.sketch(this) }
-                Constants.ACTION_TAKE_PHOTO ->
-                    PermissionUtils.checkStoragePermission(activity as? BaseActivity) { AttachmentHelper.capture(this) }
-                Constants.ACTION_ADD_FILES ->
-                    PermissionUtils.checkStoragePermission(activity as? BaseActivity) { AttachmentHelper.pickFiles(this) }
-                else ->
-                    // The cases above is new model, don't need to fetch data.
-                    fetchData(note)
-            }
+        val action = arguments?.getString(EXTRA_ACTION)
+        when (action) {
+            Constants.ACTION_ADD_SKETCH ->
+                PermissionUtils.checkStoragePermission(activity as? BaseActivity) { AttachmentHelper.sketch(this) }
+            Constants.ACTION_TAKE_PHOTO ->
+                PermissionUtils.checkStoragePermission(activity as? BaseActivity) { AttachmentHelper.capture(this) }
+            Constants.ACTION_ADD_FILES ->
+                PermissionUtils.checkStoragePermission(activity as? BaseActivity) { AttachmentHelper.pickFiles(this) }
+            else ->
+                // The cases above is new model, don't need to fetch data.
+                fetchData(note)
         }
 
         return true
-    }
-
-    private fun handleThirdPart() {
-        if (activity !is OnNoteInteractListener) return
-
-        val intent = (activity as OnNoteInteractListener).intentForThirdPart
-
-        val title = intent.getStringExtra(Intent.EXTRA_SUBJECT)
-        note.title = title
-
-        var content = intent.getStringExtra(Intent.EXTRA_TEXT)
-        if (!content.isNullOrEmpty()) {
-            content = content.replace("\t", TAB_REPLACEMENT)
-        }
-        note.content = content
-
-        // Single attachment data
-        val uri = intent.getParcelableExtra<Uri>(Intent.EXTRA_STREAM)
-
-        // Due to the fact that Google Now passes intent as text but with
-        // audio recording attached the case must be handled in specific way
-        if (uri != null && Constants.INTENT_GOOGLE_NOW != intent.action) {
-            CreateAttachmentTask(this, uri, this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR)
-        }
-
-        // Multiple attachment data
-        val uris = intent.getParcelableArrayListExtra<Uri>(Intent.EXTRA_STREAM)
-        if (uris != null) {
-            for (item in uris) {
-                CreateAttachmentTask(this, item, this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR)
-            }
-        }
     }
 
     private fun configToolbar() {
@@ -632,8 +586,7 @@ class NoteEditFragment : BaseModelFragment<Note>() {
         note.content = noteContent.text.toString()
 
         val args = arguments ?: return
-        if (args.getBoolean(EXTRA_IS_THIRD_PART)
-                || args.getString(EXTRA_ACTION) == Constants.ACTION_ADD_SKETCH
+        if (args.getString(EXTRA_ACTION) == Constants.ACTION_ADD_SKETCH
                 || args.getString(EXTRA_ACTION) == Constants.ACTION_TAKE_PHOTO
                 || args.getString(EXTRA_ACTION) == Constants.ACTION_ADD_FILES) {
             sendNoteChangeBroadcast()
@@ -734,24 +687,18 @@ class NoteEditFragment : BaseModelFragment<Note>() {
         }
     }
 
-    interface OnNoteInteractListener {
-        val intentForThirdPart: Intent
-    }
-
     companion object {
 
         const val KEY_ARGS_RESTORE = "key_args_restore"
 
-        private const val EXTRA_IS_THIRD_PART = "extra_is_third_part"
         private const val EXTRA_ACTION = "extra_action"
 
         private const val REQ_MENU_SORT = 0x0101
 
         private const val TAB_REPLACEMENT = "    "
 
-        fun newInstance(note: Note, requestCode: Int?, isThirdPart: Boolean, action: String?): NoteEditFragment {
+        fun newInstance(note: Note, requestCode: Int?, action: String?): NoteEditFragment {
             val args = Bundle()
-            args.putBoolean(EXTRA_IS_THIRD_PART, isThirdPart)
             args.putSerializable(Constants.EXTRA_MODEL, note)
             if (requestCode != null) args.putInt(Constants.EXTRA_REQUEST_CODE, requestCode)
             if (action != null) args.putString(EXTRA_ACTION, action)
