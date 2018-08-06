@@ -580,8 +580,6 @@ class NoteEditFragment : BaseModelFragment<Note>() {
     }
 
     private fun afterSaveOrUpdate() {
-        AppWidgetUtils.notifyAppWidgets()
-
         materialMenu!!.animateIconState(MaterialMenuDrawable.IconState.ARROW)
         note.content = noteContent.text.toString()
 

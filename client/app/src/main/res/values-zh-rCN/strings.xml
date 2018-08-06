@@ -6,7 +6,6 @@
     <string name="text_accept">接受</string>
     <string name="text_tags">标签</string>
     <string name="text_add_tags">添加标签</string>
-    <string name="text_add_location">添加位置</string>
     <string name="text_clear">清除</string>
     <string name="text_copy_text">复制文本</string>
     <string name="text_copy_link">复制链接</string>
@@ -142,7 +141,6 @@
     <string name="notebook_name">笔记本名称</string>
     <string name="pick_notebook_color">选择笔记本的颜色</string>
     <string name="note_capture_note">笔记截图</string>
-    <string name="all_notes">全部笔记</string>
 
     <string name="notes_list_empty">笔记列表为空</string>
     <string name="notes_list_empty_sub_normal">点击主界面的 + 按钮添加笔记</string>
@@ -388,8 +386,6 @@
     <!--endregion-->
 
     <!--regionv1.1.2-->
-    <string name="text_config_widget">自定义桌面小控件</string>
-
     <string name="auto_compress_image_title">自动压缩图片</string>
     <string name="auto_compress_image_sub_title">压缩后的图片可以节省大量的存储空间和上传流量</string>
     <!--endregion-->

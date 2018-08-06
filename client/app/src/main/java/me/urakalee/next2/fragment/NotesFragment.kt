@@ -24,7 +24,6 @@ import me.shouheng.notepal.model.Category
 import me.shouheng.notepal.model.Notebook
 import me.shouheng.notepal.model.data.LoadStatus
 import me.shouheng.notepal.model.enums.ItemStatus
-import me.shouheng.notepal.util.AppWidgetUtils
 import me.shouheng.notepal.util.LogUtils
 import me.shouheng.notepal.util.ToastUtils
 import me.shouheng.notepal.util.preferences.UserPreferences
@@ -518,8 +517,6 @@ class NotesFragment : BaseFragment<FragmentNotesBinding>(),
     }
 
     private fun onDataChanged() {
-        // Notify app widget that the list is changed.
-        AppWidgetUtils.notifyAppWidgets()
         // Notify the attached activity that the list is changed.
         if (activity is OnNotesInteractListener) {
             (activity as OnNotesInteractListener).markNoteDataChanged()

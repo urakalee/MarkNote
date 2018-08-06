@@ -6,7 +6,6 @@
     <string name="text_accept">Accept</string>
     <string name="text_tags">Tags</string>
     <string name="text_add_tags">Add Tags</string>
-    <string name="text_add_location">Add location</string>
     <string name="text_clear">Clear</string>
     <string name="text_copy_text">Copy content</string>
     <string name="text_copy_link">Copy link</string>
@@ -142,7 +141,6 @@
     <string name="notebook_name">Notebook name</string>
     <string name="pick_notebook_color">Select the color of notebook</string>
     <string name="note_capture_note">Capture note</string>
-    <string name="all_notes">All notes</string>
 
     <string name="notes_list_empty">Empty notes list</string>
     <string name="notes_list_empty_sub_normal">add note by clicking + in dashboard</string>
@@ -388,8 +386,6 @@
     <!--endregion-->
 
     <!--region v1.1.2-->
-    <string name="text_config_widget">Widget configuration</string>
-
     <string name="auto_compress_image_title">Auto compress image</string>
     <string name="auto_compress_image_sub_title">The compressed image will save a lot of storage and data usage</string>
     <!--endregion-->
