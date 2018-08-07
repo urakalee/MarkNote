@@ -84,6 +84,7 @@ class Note : Model() {
             0
         }
         title = if (dayPrefix > 0) parts[1] else result
+        originTitle = title
     }
 
     //endregion

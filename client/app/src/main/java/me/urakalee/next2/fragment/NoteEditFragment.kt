@@ -143,7 +143,6 @@ class NoteEditFragment : BaseModelFragment<Note>() {
             return false
         }
         this.note = note
-        note.originTitle = note.title
 
         val action = arguments?.getString(EXTRA_ACTION)
         when (action) {
