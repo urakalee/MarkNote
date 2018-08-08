@@ -16,7 +16,7 @@ import android.view.View;
 import me.shouheng.notepal.R;
 import me.shouheng.notepal.databinding.ActivityListBaseWithDrawerBinding;
 import me.shouheng.notepal.fragment.CategoriesFragment;
-import me.urakalee.next2.fragment.NotesFragment;
+import me.urakalee.next2.notelist.NotesFragment;
 import me.shouheng.notepal.model.data.LoadStatus;
 import me.shouheng.notepal.util.FragmentHelper;
 

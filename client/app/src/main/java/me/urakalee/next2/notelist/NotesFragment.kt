@@ -1,4 +1,4 @@
-package me.urakalee.next2.fragment
+package me.urakalee.next2.notelist
 
 import android.app.Activity
 import android.arch.lifecycle.Observer
@@ -13,8 +13,7 @@ import android.view.MenuItem
 import android.view.View
 import com.afollestad.materialdialogs.MaterialDialog
 import me.shouheng.notepal.R
-import me.shouheng.notepal.adapter.NotesAdapter
-import me.shouheng.notepal.adapter.NotesAdapter.MultiItem
+import me.urakalee.next2.notelist.NotesAdapter.MultiItem
 import me.shouheng.notepal.databinding.FragmentNotesBinding
 import me.shouheng.notepal.dialog.NotebookEditDialog
 import me.shouheng.notepal.dialog.picker.NotebookPickerDialog

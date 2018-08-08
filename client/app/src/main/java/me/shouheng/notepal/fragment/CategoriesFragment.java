@@ -33,7 +33,7 @@ import me.shouheng.notepal.viewmodel.CategoryViewModel;
 import me.shouheng.notepal.widget.tools.CustomItemAnimator;
 import me.shouheng.notepal.widget.tools.CustomItemTouchHelper;
 import me.shouheng.notepal.widget.tools.DividerItemDecoration;
-import me.urakalee.next2.fragment.NotesFragment;
+import me.urakalee.next2.notelist.NotesFragment;
 
 /**
  * Created by wangshouheng on 2017/3/29.
