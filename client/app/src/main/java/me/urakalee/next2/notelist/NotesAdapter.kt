@@ -1,8 +1,10 @@
 package me.urakalee.next2.notelist
 
 import android.content.Context
+import android.os.AsyncTask
 import android.view.View
 import android.widget.ImageView
+import android.widget.TextView
 import com.bumptech.glide.Glide
 import com.chad.library.adapter.base.BaseMultiItemQuickAdapter
 import com.chad.library.adapter.base.BaseViewHolder
@@ -14,6 +16,7 @@ import me.shouheng.notepal.util.ColorUtils
 import me.shouheng.notepal.util.FileHelper
 import me.shouheng.notepal.widget.tools.BubbleTextGetter
 import me.urakalee.next2.model.Note
+import me.urakalee.next2.storage.NoteStore
 
 /**
  * @author Uraka.Lee
@@ -50,6 +53,12 @@ class NotesAdapter(private val context: Context, data: List<NotesAdapter.MultiIt
                     R.color.light_theme_background)
         )
         holder.setText(R.id.noteTitle, note.title)
+        if (note.previewContent == null) {
+            holder.setText(R.id.noteContent, "")
+            LoadPreviewContentTask(holder, note).execute()
+        } else {
+            holder.setText(R.id.noteContent, note.previewContent)
+        }
         holder.setText(R.id.noteContent, note.previewContent)
         holder.setText(R.id.noteTime, note.createTimeStr)
         holder.setTextColor(R.id.noteTime, accentColor)
@@ -63,6 +72,22 @@ class NotesAdapter(private val context: Context, data: List<NotesAdapter.MultiIt
                     .into(holder.getView<View>(R.id.noteImage) as ImageView)
         } else {
             holder.getView<View>(R.id.noteImage).visibility = View.GONE
+        }
+    }
+
+    private class LoadPreviewContentTask(
+            val holder: BaseViewHolder,
+            val note: Note) : AsyncTask<Void, Void, Note>() {
+
+        override fun doInBackground(vararg params: Void?): Note {
+            NoteStore.getInstance().getNotePreview(note)
+            return note
+        }
+
+        override fun onPostExecute(result: Note) {
+            if (holder.getView<TextView>(R.id.noteTitle).text == note.title) {
+                holder.setText(R.id.noteContent, note.previewContent)
+            }
         }
     }
 

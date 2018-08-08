@@ -8,6 +8,7 @@ import me.shouheng.notepal.PalmApp
 import me.shouheng.notepal.model.Notebook
 import me.shouheng.notepal.model.enums.ItemStatus
 import me.shouheng.notepal.provider.BaseStore
+import me.urakalee.markdown.action.DayOneStrategy.Companion.removePrecedingMark
 import me.urakalee.next2.model.Note
 import java.io.File
 
@@ -42,6 +43,15 @@ class NoteStore private constructor(context: Context) : BaseStore<Note>(context)
 
     fun getNotes(notebook: Notebook): List<Note> {
         return listNote(notebook)
+    }
+
+    /**
+     * @return note with previewContent
+     */
+    fun getNotePreview(note: Note) {
+        val noteFile = note.file ?: return
+        val firstLine = noteFile.readLines().firstOrNull() ?: return
+        note.previewContent = removePrecedingMark(firstLine)
     }
 
     override fun saveModel(note: Note) {

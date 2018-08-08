@@ -102,6 +102,10 @@ class DayOneStrategy : DefaultStrategy() {
             }
         }
 
+        fun removePrecedingMark(line: String): String {
+            return detectPrecedingMark(line).third
+        }
+
         /**
          * detect [Mark.TD] if start with '-'
          */
