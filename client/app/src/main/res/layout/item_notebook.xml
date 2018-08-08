@@ -9,7 +9,7 @@
     android:orientation="horizontal">
 
     <ImageView
-        android:id="@+id/iv_icon"
+        android:id="@+id/notebookIcon"
         android:layout_width="65dp"
         android:layout_height="65dp"
         android:layout_gravity="center_vertical"
@@ -26,7 +26,7 @@
         android:orientation="vertical">
 
         <me.shouheng.notepal.widget.themed.SupportTextView
-            android:id="@+id/tv_note_title"
+            android:id="@+id/notebookTitle"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:ellipsize="end"
@@ -36,7 +36,7 @@
             tools:text="123123213219\n123hashdiuashd" />
 
         <TextView
-            android:id="@+id/tv_added_time"
+            android:id="@+id/notebookTime"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             tools:text="Added date" />
@@ -44,7 +44,7 @@
     </LinearLayout>
 
     <me.shouheng.notepal.widget.themed.SupportImageView
-        android:id="@+id/iv_more"
+        android:id="@+id/btnMore"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"

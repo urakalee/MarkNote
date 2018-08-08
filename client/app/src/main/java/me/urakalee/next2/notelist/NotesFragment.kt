@@ -206,7 +206,7 @@ class NotesFragment : BaseFragment<FragmentNotesBinding>(),
         adapter?.setOnItemChildClickListener { adapter, view, position ->
             val item = adapter.data[position] as MultiItem
             when (view.id) {
-                R.id.iv_more ->
+                R.id.btnMore ->
                     if (item.itemType == MultiItem.ITEM_TYPE_NOTE) {
                         popNoteMenu(view, item)
                     } else if (item.itemType == MultiItem.ITEM_TYPE_NOTEBOOK) {

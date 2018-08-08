@@ -9,7 +9,7 @@
     android:minHeight="80dp">
 
     <me.shouheng.notepal.widget.themed.SupportImageView
-        android:id="@+id/iv_more"
+        android:id="@+id/btnMore"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
@@ -19,10 +19,10 @@
         android:src="@drawable/ic_more_vert_black" />
 
     <android.support.v7.widget.AppCompatImageView
-        android:id="@+id/iv_image"
+        android:id="@+id/noteImage"
         android:layout_width="120dp"
         android:layout_height="120dp"
-        android:layout_toStartOf="@id/iv_more"
+        android:layout_toStartOf="@id/btnMore"
         android:scaleType="centerCrop"
         android:visibility="gone"
         tools:src="@drawable/ic_google_plus"
@@ -35,11 +35,11 @@
         android:layout_marginEnd="16dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
-        android:layout_toStartOf="@id/iv_image"
+        android:layout_toStartOf="@id/noteImage"
         android:orientation="vertical">
 
         <me.shouheng.notepal.widget.themed.SupportTextView
-            android:id="@+id/tv_note_title"
+            android:id="@+id/noteTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ellipsize="end"
@@ -48,7 +48,7 @@
             tools:text="This is the demo title text which is used to show the title in multiple lines." />
 
         <TextView
-            android:id="@+id/tv_time"
+            android:id="@+id/noteTime"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="12sp"
@@ -56,7 +56,7 @@
             tools:textColor="@color/colorAccent" />
 
         <TextView
-            android:id="@+id/tv_content"
+            android:id="@+id/noteContent"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:maxLines="3"

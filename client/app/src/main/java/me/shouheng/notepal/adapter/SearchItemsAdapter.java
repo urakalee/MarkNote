@@ -12,9 +12,9 @@ import java.util.LinkedList;
 import java.util.List;
 
 import me.shouheng.notepal.R;
-import me.urakalee.next2.model.Note;
 import me.shouheng.notepal.util.ColorUtils;
 import me.shouheng.notepal.util.TimeUtils;
+import me.urakalee.next2.model.Note;
 
 /**
  * Created by wangshouheng on 2017/5/8.
@@ -43,8 +43,8 @@ public class SearchItemsAdapter extends RecyclerView.Adapter<SearchItemsAdapter.
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        return new ViewHolder(LayoutInflater.from(context).inflate(viewType == NOTE ? R.layout.item_notebook
-                : R.layout.item_section_title, parent, false));
+        return new ViewHolder(viewType, LayoutInflater.from(context).inflate(
+                viewType == NOTE ? R.layout.item_notebook : R.layout.item_section_title, parent, false));
     }
 
     @Override
@@ -68,8 +68,6 @@ public class SearchItemsAdapter extends RecyclerView.Adapter<SearchItemsAdapter.
         Note note = (Note) searchResults.get(position);
         holder.tvNoteTitle.setText(note.getTitle());
         holder.tvAddedTime.setText(TimeUtils.getLongDateTime(context, note.getAddedTime()));
-        holder.ivIcon.setImageDrawable(
-                ColorUtils.tintDrawable(context.getResources().getDrawable(R.drawable.ic_doc_text_alpha), accentColor));
     }
 
     @Override
@@ -94,25 +92,33 @@ public class SearchItemsAdapter extends RecyclerView.Adapter<SearchItemsAdapter.
 
         TextView tvSectionTitle;
 
-        ImageView ivIcon;
         TextView tvNoteTitle;
         TextView tvAddedTime;
 
         ImageView ivMore;
 
-        ViewHolder(View itemView) {
+        ViewHolder(int viewType, View itemView) {
             super(itemView);
 
             this.itemView = itemView;
 
-            tvSectionTitle = itemView.findViewById(R.id.tv_section_title);
+            if (viewType == NOTE) {
+                tvSectionTitle = null;
 
-            ivIcon = itemView.findViewById(R.id.iv_icon);
-            tvNoteTitle = itemView.findViewById(R.id.tv_note_title);
-            tvAddedTime = itemView.findViewById(R.id.tv_added_time);
+                tvNoteTitle = itemView.findViewById(R.id.noteTitle);
+                tvAddedTime = itemView.findViewById(R.id.noteTime);
 
-            ivMore = itemView.findViewById(R.id.iv_more);
-            if (ivMore != null) ivMore.setVisibility(View.GONE);
+                ivMore = itemView.findViewById(R.id.btnMore);
+                if (ivMore != null) ivMore.setVisibility(View.GONE);
+            } else {
+                tvSectionTitle = itemView.findViewById(R.id.tv_section_title);
+
+                tvNoteTitle = null;
+                tvAddedTime = null;
+
+                ivMore = itemView.findViewById(R.id.iv_more);
+                if (ivMore != null) ivMore.setVisibility(View.GONE);
+            }
 
             itemView.setOnClickListener(this);
         }

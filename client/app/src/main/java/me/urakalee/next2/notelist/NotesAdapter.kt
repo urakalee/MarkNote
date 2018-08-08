@@ -39,7 +39,7 @@ class NotesAdapter(private val context: Context, data: List<NotesAdapter.MultiIt
             MultiItem.ITEM_TYPE_NOTE -> convertNote(helper, item.note)
             MultiItem.ITEM_TYPE_NOTEBOOK -> convertNotebook(helper, item.notebook)
         }
-        helper.addOnClickListener(R.id.iv_more)
+        helper.addOnClickListener(R.id.btnMore)
     }
 
     private fun convertNote(holder: BaseViewHolder, note: Note) {
@@ -49,29 +49,29 @@ class NotesAdapter(private val context: Context, data: List<NotesAdapter.MultiIt
                 else
                     R.color.light_theme_background)
         )
-        holder.setText(R.id.tv_note_title, note.title)
-        holder.setText(R.id.tv_content, note.previewContent)
-        holder.setText(R.id.tv_time, note.createTimeStr)
-        holder.setTextColor(R.id.tv_time, accentColor)
+        holder.setText(R.id.noteTitle, note.title)
+        holder.setText(R.id.noteContent, note.previewContent)
+        holder.setText(R.id.noteTime, note.createTimeStr)
+        holder.setTextColor(R.id.noteTime, accentColor)
         if (note.previewImage != null) {
-            holder.getView<View>(R.id.iv_image).visibility = View.VISIBLE
+            holder.getView<View>(R.id.noteImage).visibility = View.VISIBLE
             val thumbnailUri = FileHelper.getThumbnailUri(context, note.previewImage)
             Glide.with(PalmApp.getContext())
                     .load(thumbnailUri)
                     .centerCrop()
                     .crossFade()
-                    .into(holder.getView<View>(R.id.iv_image) as ImageView)
+                    .into(holder.getView<View>(R.id.noteImage) as ImageView)
         } else {
-            holder.getView<View>(R.id.iv_image).visibility = View.GONE
+            holder.getView<View>(R.id.noteImage).visibility = View.GONE
         }
     }
 
-    private fun convertNotebook(helper: BaseViewHolder, notebook: Notebook) {
+    private fun convertNotebook(holder: BaseViewHolder, notebook: Notebook) {
         val notebookColor = notebook.color
-        helper.setText(R.id.tv_note_title, notebook.title)
+        holder.setText(R.id.notebookTitle, notebook.title)
         val str = context.resources.getQuantityString(R.plurals.notes_number, notebook.count, notebook.count)
-        helper.setText(R.id.tv_added_time, str)
-        helper.setImageDrawable(R.id.iv_icon, ColorUtils.tintDrawable(
+        holder.setText(R.id.notebookTime, str)
+        holder.setImageDrawable(R.id.notebookIcon, ColorUtils.tintDrawable(
                 context.resources.getDrawable(R.drawable.ic_folder_black_24dp), notebookColor))
     }
 
