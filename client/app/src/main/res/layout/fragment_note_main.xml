@@ -15,114 +15,49 @@
         <RelativeLayout
             android:id="@+id/markBar"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/note_bottom_menu_height_double"
-            android:layout_alignParentBottom="true"
-            android:layout_gravity="bottom">
+            android:layout_height="@dimen/note_bottom_menu_height"
+            android:layout_alignParentBottom="true">
 
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/note_bottom_menu_height">
-
-                <HorizontalScrollView
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/note_bottom_menu_height"
-                    android:layout_alignParentBottom="true"
-                    android:background="@color/note_bottom_editors">
-
-                    <LinearLayout
-                        android:id="@+id/markContainer"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:orientation="horizontal"
-                        android:paddingEnd="60dp" />
-
-                </HorizontalScrollView>
-
-                <View
-                    android:id="@+id/barOverlay"
-                    android:layout_width="@dimen/note_bottom_menu_height"
-                    android:layout_height="@dimen/note_bottom_menu_height"
-                    android:layout_alignParentBottom="true"
-                    android:layout_alignParentEnd="true"
-                    android:background="@color/note_bottom_editors"
-                    android:clickable="true"
-                    android:focusable="true" />
-
-                <android.support.v7.widget.AppCompatImageView
-                    android:id="@+id/btnSetting"
-                    style="@style/style_note_bottom_button"
-                    android:layout_width="@dimen/note_bottom_menu_height"
-                    android:layout_height="@dimen/note_bottom_menu_height"
-                    android:layout_alignParentBottom="true"
-                    android:layout_alignParentEnd="true"
-                    android:src="@drawable/ic_settings_black" />
-
-                <View
-                    android:layout_width="@dimen/note_bottom_menu_height"
-                    android:layout_height="@dimen/note_bottom_menu_height"
-                    android:layout_alignParentBottom="true"
-                    android:layout_toStartOf="@id/barOverlay"
-                    android:background="@drawable/rte_shadow_format"
-                    android:clickable="true"
-                    android:focusable="true" />
-
-            </RelativeLayout>
-
-            <LinearLayout
-                android:id="@+id/mainMenu"
+            <HorizontalScrollView
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/note_bottom_menu_height"
-                android:layout_alignParentBottom="true"
                 android:background="@color/note_bottom_editors">
 
-                <android.support.v7.widget.AppCompatImageView
-                    android:id="@+id/insertPicture"
-                    style="@style/style_note_bottom_button"
-                    android:layout_width="0dp"
+                <LinearLayout
+                    android:id="@+id/markContainer"
+                    android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:src="@drawable/ic_attach_file_white" />
+                    android:orientation="horizontal"
+                    android:paddingEnd="60dp" />
 
-                <android.support.v7.widget.AppCompatImageView
-                    android:id="@+id/insertLink"
-                    style="@style/style_note_bottom_button"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:src="@drawable/ic_link" />
-
-                <android.support.v7.widget.AppCompatImageView
-                    android:id="@+id/insertTable"
-                    style="@style/style_note_bottom_button"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:src="@drawable/ic_grid_on_grey_24dp" />
-
-                <android.support.v7.widget.AppCompatImageView
-                    android:id="@+id/undo"
-                    style="@style/style_note_bottom_button"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:src="@drawable/ab_ink_undo" />
-
-                <android.support.v7.widget.AppCompatImageView
-                    android:id="@+id/redo"
-                    style="@style/style_note_bottom_button"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:src="@drawable/ab_ink_redo" />
-
-            </LinearLayout>
+            </HorizontalScrollView>
 
             <View
-                android:layout_width="match_parent"
-                android:layout_height="5dp"
-                android:layout_above="@id/mainMenu"
-                android:layout_marginEnd="60dp"
-                android:background="@drawable/above_shadow" />
+                android:id="@+id/barOverlay"
+                android:layout_width="@dimen/note_bottom_menu_height"
+                android:layout_height="@dimen/note_bottom_menu_height"
+                android:layout_alignParentEnd="true"
+                android:background="@color/note_bottom_editors"
+                android:clickable="true"
+                android:focusable="true" />
+
+            <android.support.v7.widget.AppCompatImageView
+                android:id="@+id/btnSetting"
+                style="@style/style_note_bottom_button"
+                android:layout_width="@dimen/note_bottom_menu_height"
+                android:layout_height="@dimen/note_bottom_menu_height"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentEnd="true"
+                android:src="@drawable/ic_settings_black" />
+
+            <View
+                android:layout_width="@dimen/note_bottom_menu_height"
+                android:layout_height="@dimen/note_bottom_menu_height"
+                android:layout_alignParentBottom="true"
+                android:layout_toStartOf="@id/barOverlay"
+                android:background="@drawable/rte_shadow_format"
+                android:clickable="true"
+                android:focusable="true" />
 
         </RelativeLayout>
 

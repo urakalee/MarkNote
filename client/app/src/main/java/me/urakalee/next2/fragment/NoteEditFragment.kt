@@ -10,7 +10,10 @@ import android.support.v4.widget.DrawerLayout
 import android.support.v7.app.AppCompatActivity
 import android.text.Editable
 import android.text.TextWatcher
-import android.view.*
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
+import android.view.ViewGroup
 import com.afollestad.materialdialogs.MaterialDialog
 import com.balysv.materialmenu.MaterialMenuDrawable
 import kotlinx.android.synthetic.main.fragment_note.*
@@ -258,10 +261,12 @@ class NoteEditFragment : BaseModelFragment<Note>() {
             notebookName.text = it.title
         }
 
+        /*
         val views = listOf(insertPicture, insertLink, insertTable, undo, redo)
         for (view in views) {
             view.setOnClickListener { this.onBottomBarClick(it) }
         }
+        */
 
         addFormatBar()
 
@@ -289,6 +294,7 @@ class NoteEditFragment : BaseModelFragment<Note>() {
         }
     }
 
+    /*
     private fun onBottomBarClick(v: View) {
         when (v) {
             undo -> noteContent.undo()
@@ -298,6 +304,7 @@ class NoteEditFragment : BaseModelFragment<Note>() {
             insertTable -> showTableEditor()
         }
     }
+    */
 
     private fun addFormatBar() {
         markContainer.removeAllViews()
