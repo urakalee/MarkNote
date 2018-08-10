@@ -7,6 +7,9 @@
     <string name="text_tags">标签</string>
     <string name="text_add_tags">添加标签</string>
     <string name="text_clear">清除</string>
+    <string name="text_insert_file">插入图片或文件</string>
+    <string name="text_insert_link">插入链接</string>
+    <string name="text_insert_table">插入表格</string>
     <string name="text_copy_text">复制文本</string>
     <string name="text_copy_link">复制链接</string>
     <string name="text_cancel">取消</string>

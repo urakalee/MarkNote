@@ -84,6 +84,43 @@
                     android:layout_height="1dp" />
 
                 <TextView
+                    android:id="@+id/insertFile"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:background="?attr/selectableItemBackground"
+                    android:drawablePadding="13dp"
+                    android:drawableStart="@drawable/ic_attach_file_grey"
+                    android:gravity="center_vertical"
+                    android:paddingStart="13dp"
+                    android:text="@string/text_insert_file" />
+
+                <TextView
+                    android:id="@+id/insertLink"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:background="?attr/selectableItemBackground"
+                    android:drawablePadding="13dp"
+                    android:drawableStart="@drawable/ic_insert_link_grey_24dp"
+                    android:gravity="center_vertical"
+                    android:paddingStart="13dp"
+                    android:text="@string/text_insert_link" />
+
+                <TextView
+                    android:id="@+id/insertTable"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:background="?attr/selectableItemBackground"
+                    android:drawablePadding="13dp"
+                    android:drawableStart="@drawable/ic_grid_on_grey_24dp"
+                    android:gravity="center_vertical"
+                    android:paddingStart="13dp"
+                    android:text="@string/text_insert_table" />
+
+                <me.shouheng.notepal.widget.themed.Divider
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp" />
+
+                <TextView
                     android:id="@+id/copyLink"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"

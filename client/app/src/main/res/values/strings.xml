@@ -5,8 +5,11 @@
     <string name="text_add_to_home_screen">Add shortcut</string>
     <string name="text_accept">Accept</string>
     <string name="text_tags">Tags</string>
-    <string name="text_add_tags">Add Tags</string>
+    <string name="text_add_tags">Add tags</string>
     <string name="text_clear">Clear</string>
+    <string name="text_insert_file">Insert picture or file</string>
+    <string name="text_insert_link">Insert link</string>
+    <string name="text_insert_table">Insert table</string>
     <string name="text_copy_text">Copy content</string>
     <string name="text_copy_link">Copy link</string>
     <string name="text_cancel">Cancel</string>

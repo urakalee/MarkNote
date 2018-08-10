@@ -10,14 +10,11 @@ import android.support.v4.widget.DrawerLayout
 import android.support.v7.app.AppCompatActivity
 import android.text.Editable
 import android.text.TextWatcher
-import android.view.Menu
-import android.view.MenuInflater
-import android.view.MenuItem
-import android.view.ViewGroup
+import android.view.*
 import com.afollestad.materialdialogs.MaterialDialog
 import com.balysv.materialmenu.MaterialMenuDrawable
-import kotlinx.android.synthetic.main.fragment_note.*
-import kotlinx.android.synthetic.main.fragment_note_main.*
+import kotlinx.android.synthetic.main.fragment_note_edit.*
+import kotlinx.android.synthetic.main.include_note_edit.*
 import kotlinx.android.synthetic.main.note_edit_right_drawer.*
 import me.shouheng.notepal.PalmApp
 import me.shouheng.notepal.R
@@ -71,7 +68,7 @@ class NoteEditFragment : BaseModelFragment<Note>() {
     private lateinit var locationViewModel: LocationViewModel
 
     override val layoutResId: Int
-        get() = R.layout.fragment_note
+        get() = R.layout.fragment_note_edit
 
     //region lifecycle
 
@@ -261,13 +258,6 @@ class NoteEditFragment : BaseModelFragment<Note>() {
             notebookName.text = it.title
         }
 
-        /*
-        val views = listOf(insertPicture, insertLink, insertTable, undo, redo)
-        for (view in views) {
-            view.setOnClickListener { this.onBottomBarClick(it) }
-        }
-        */
-
         addFormatBar()
 
         btnSetting.setOnClickListener { MenuSortActivity.start(this@NoteEditFragment, REQ_MENU_SORT) }
@@ -293,18 +283,6 @@ class NoteEditFragment : BaseModelFragment<Note>() {
             }.show(it, "NOTEBOOK_PICKER")
         }
     }
-
-    /*
-    private fun onBottomBarClick(v: View) {
-        when (v) {
-            undo -> noteContent.undo()
-            redo -> noteContent.redo()
-            insertPicture -> showAttachmentPicker()
-            insertLink -> showLinkEditor()
-            insertTable -> showTableEditor()
-        }
-    }
-    */
 
     private fun addFormatBar() {
         markContainer.removeAllViews()
@@ -340,6 +318,61 @@ class NoteEditFragment : BaseModelFragment<Note>() {
         }
     }
 
+    // endregion
+    // region Config drawer board
+
+    private fun configDrawer(note: Note) {
+        drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
+
+        drawerToolbar.setNavigationOnClickListener { drawerLayout.closeDrawer(GravityCompat.END) }
+        if (isDarkTheme) {
+            drawerToolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp)
+            drawer.setBackgroundResource(R.color.dark_theme_background)
+        }
+
+        updateCharsInfo()
+        timeInfo.text = ModelHelper.getTimeInfo(note)
+
+        labelsLayout.setOnClickListener { showCategoriesPicker(categories) }
+        addLabel.setOnClickListener { showCategoriesPicker(categories) }
+
+        val views = listOf(insertFile, insertLink, insertTable)
+        for (view in views) {
+            view.setOnClickListener { this.onDrawerClick(it) }
+        }
+
+        copyLink.setOnClickListener {
+            activity?.let {
+                ModelHelper.copyLink(it, note)
+            }
+        }
+
+        copyText.setOnClickListener {
+            note.content = noteContent.text.toString()
+            activity?.let {
+                ModelHelper.copyToClipboard(it, noteContent.text.toString())
+                ToastUtils.makeToast(R.string.content_was_copied_to_clipboard)
+            }
+        }
+
+        addLauncher.setOnClickListener { addShortcut() }
+    }
+
+    private fun updateCharsInfo() {
+        val charsInfo = getString(R.string.text_chars_number) + " : " + noteContent.text.toString().length
+        wordCount.text = charsInfo
+    }
+
+    private fun onDrawerClick(v: View) {
+        when (v) {
+            insertFile -> showAttachmentPicker()
+            insertLink -> showLinkEditor()
+            insertTable -> showTableEditor()
+//            undo -> noteContent.undo()
+//            redo -> noteContent.redo()
+        }
+    }
+
     private fun showAttachmentPicker() {
         fragmentManager?.let {
             AttachmentPickerDialog.Builder(this)
@@ -347,7 +380,7 @@ class NoteEditFragment : BaseModelFragment<Note>() {
                     .setVideoVisible(false)
                     .setAddLinkVisible(true)
                     .setFilesVisible(true)
-                    .setOnAddNetUriSelectedListener({ this.addImageLink() })
+                    .setOnAddNetUriSelectedListener { this.addImageLink() }
                     .build()
                     .show(it, "Attachment picker")
         }
@@ -377,46 +410,6 @@ class NoteEditFragment : BaseModelFragment<Note>() {
                 noteContent.addTableEffect(rows, cols)
             }.show(it, "TABLE INPUT")
         }
-    }
-
-    // endregion
-    // region Config drawer board
-
-    private fun configDrawer(note: Note) {
-        drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
-
-        drawerToolbar.setNavigationOnClickListener { drawerLayout.closeDrawer(GravityCompat.END) }
-        if (isDarkTheme) {
-            drawerToolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp)
-            drawer.setBackgroundResource(R.color.dark_theme_background)
-        }
-
-        updateCharsInfo()
-        timeInfo.text = ModelHelper.getTimeInfo(note)
-
-        labelsLayout.setOnClickListener { showCategoriesPicker(categories) }
-        addLabel.setOnClickListener { showCategoriesPicker(categories) }
-
-        copyLink.setOnClickListener {
-            activity?.let {
-                ModelHelper.copyLink(it, note)
-            }
-        }
-
-        copyText.setOnClickListener {
-            note.content = noteContent.text.toString()
-            activity?.let {
-                ModelHelper.copyToClipboard(it, noteContent.text.toString())
-                ToastUtils.makeToast(R.string.content_was_copied_to_clipboard)
-            }
-        }
-
-        addLauncher.setOnClickListener { addShortcut() }
-    }
-
-    private fun updateCharsInfo() {
-        val charsInfo = getString(R.string.text_chars_number) + " : " + noteContent.text.toString().length
-        wordCount.text = charsInfo
     }
 
     private fun addShortcut() {

@@ -7,7 +7,7 @@
         android:layout_height="match_parent"
         android:fitsSystemWindows="true">
 
-        <include layout="@layout/fragment_note_main" />
+        <include layout="@layout/include_note_edit" />
 
         <FrameLayout
             android:layout_width="285dp"
