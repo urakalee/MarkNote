@@ -14,10 +14,10 @@ import com.afollestad.materialdialogs.color.ColorChooserDialog;
 import com.crashlytics.android.Crashlytics;
 
 import io.fabric.sdk.android.Fabric;
-import me.shouheng.notepal.util.ActivityUtils;
 
 /**
- * Created by wang shouheng on 2017/12/21.*/
+ * Created by wang shouheng on 2017/12/21.
+ */
 @SuppressLint("Registered")
 public abstract class CommonActivity<T extends ViewDataBinding> extends ThemedActivity implements
         ColorChooserDialog.ColorCallback {
@@ -26,18 +26,13 @@ public abstract class CommonActivity<T extends ViewDataBinding> extends ThemedAc
 
     protected abstract int getLayoutResId();
 
-    protected abstract void doCreateView(Bundle savedInstanceState);
-
-    protected void beforeSetContentView(){}
-
     @Override
     protected final void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ActivityUtils.addActivity(this);
 
         Fabric.with(this, new Crashlytics());
 
-        if (getLayoutResId() <= 0 ) {
+        if (getLayoutResId() <= 0) {
             throw new AssertionError("Subclass must provide a valid layout resource id");
         }
 
@@ -50,8 +45,21 @@ public abstract class CommonActivity<T extends ViewDataBinding> extends ThemedAc
         doCreateView(savedInstanceState);
     }
 
+    protected void beforeSetContentView() {
+    }
+
+    protected abstract void doCreateView(Bundle savedInstanceState);
+
+    public void superOnBackPressed() {
+        super.onBackPressed();
+    }
+
     protected final T getBinding() {
         return binding;
+    }
+
+    protected Fragment getCurrentFragment(@IdRes int resId) {
+        return getSupportFragmentManager().findFragmentById(resId);
     }
 
     protected <M extends Activity> void startActivity(Class<M> activityClass) {
@@ -62,23 +70,11 @@ public abstract class CommonActivity<T extends ViewDataBinding> extends ThemedAc
         startActivityForResult(new Intent(this, activityClass), requestCode);
     }
 
-    protected Fragment getCurrentFragment(@IdRes int resId) {
-        return getSupportFragmentManager().findFragmentById(resId);
+    @Override
+    public void onColorSelection(@NonNull ColorChooserDialog dialog, int selectedColor) {
     }
 
     @Override
-    public void onColorSelection(@NonNull ColorChooserDialog dialog, int selectedColor) {}
-
-    @Override
-    public void onColorChooserDismissed(@NonNull ColorChooserDialog dialog) {}
-
-    public void superOnBackPressed() {
-        super.onBackPressed();
-    }
-
-    @Override
-    protected void onDestroy() {
-        ActivityUtils.removeActivity(this);
-        super.onDestroy();
+    public void onColorChooserDismissed(@NonNull ColorChooserDialog dialog) {
     }
 }

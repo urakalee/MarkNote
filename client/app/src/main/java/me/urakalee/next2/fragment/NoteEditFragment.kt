@@ -19,7 +19,6 @@ import kotlinx.android.synthetic.main.note_edit_right_drawer.*
 import me.shouheng.notepal.PalmApp
 import me.shouheng.notepal.R
 import me.shouheng.notepal.activity.MenuSortActivity
-import me.shouheng.notepal.activity.base.CommonActivity
 import me.shouheng.notepal.config.Constants
 import me.shouheng.notepal.dialog.AttachmentPickerDialog
 import me.shouheng.notepal.dialog.LinkInputDialog
@@ -38,6 +37,7 @@ import me.shouheng.notepal.viewmodel.LocationViewModel
 import me.shouheng.notepal.widget.FlowLayout
 import me.shouheng.notepal.widget.MDItemView
 import me.urakalee.next2.activity.ContentActivity
+import me.urakalee.next2.base.activity.CommonActivity
 import me.urakalee.next2.base.fragment.BaseModelFragment
 import me.urakalee.next2.config.FeatureConfig
 import me.urakalee.next2.model.Note
@@ -87,7 +87,7 @@ class NoteEditFragment : BaseModelFragment<Note>() {
     }
 
     override fun onBackPressed() {
-        val activityNonNull = activity as? CommonActivity<*> ?: return
+        val activityNonNull = activity as? CommonActivity ?: return
         if (contentChanged) {
             MaterialDialog.Builder(activityNonNull)
                     .title(R.string.text_tips)
@@ -596,7 +596,7 @@ class NoteEditFragment : BaseModelFragment<Note>() {
     }
 
     private fun setResult() {
-        val activityNonNull = activity as? CommonActivity<*> ?: return
+        val activityNonNull = activity as? CommonActivity ?: return
 
         // The model didn't change.
         if (!savedOrUpdated) {

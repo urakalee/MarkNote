@@ -26,7 +26,7 @@ import me.shouheng.notepal.provider.CategoryStore
 import me.shouheng.notepal.provider.LocationsStore
 import me.shouheng.notepal.util.*
 import me.shouheng.notepal.viewmodel.CategoryViewModel
-import me.urakalee.next2.activity.ContentActivity
+import me.urakalee.next2.activity.NoteActivity
 import me.urakalee.next2.model.Note
 import org.apache.commons.io.FileUtils
 import java.io.File
@@ -248,7 +248,7 @@ class NoteViewFragment : BaseFragment<FragmentNoteViewBinding>() {
             }
             R.id.action_edit -> {
                 note?.let {
-                    ContentActivity.editNote(this, it, REQUEST_FOR_EDIT)
+                    NoteActivity.editNote(this, it, REQUEST_FOR_EDIT)
                 }
             }
             R.id.action_share -> share()

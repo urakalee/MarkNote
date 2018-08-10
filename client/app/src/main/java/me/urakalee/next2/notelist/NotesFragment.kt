@@ -13,7 +13,6 @@ import android.view.MenuItem
 import android.view.View
 import com.afollestad.materialdialogs.MaterialDialog
 import me.shouheng.notepal.R
-import me.urakalee.next2.notelist.NotesAdapter.MultiItem
 import me.shouheng.notepal.databinding.FragmentNotesBinding
 import me.shouheng.notepal.dialog.NotebookEditDialog
 import me.shouheng.notepal.dialog.picker.NotebookPickerDialog
@@ -29,8 +28,10 @@ import me.shouheng.notepal.util.preferences.UserPreferences
 import me.shouheng.notepal.widget.tools.CustomItemAnimator
 import me.shouheng.notepal.widget.tools.DividerItemDecoration
 import me.urakalee.next2.activity.ContentActivity
+import me.urakalee.next2.activity.NoteActivity
 import me.urakalee.next2.config.FeatureConfig
 import me.urakalee.next2.model.Note
+import me.urakalee.next2.notelist.NotesAdapter.MultiItem
 import me.urakalee.next2.viewmodel.NoteViewModel
 import me.urakalee.next2.viewmodel.NotebookViewModel
 import me.urakalee.ranger.extension.isVisible
@@ -195,7 +196,7 @@ class NotesFragment : BaseFragment<FragmentNotesBinding>(),
             if (item.itemType == MultiItem.ITEM_TYPE_NOTE) {
                 notebook?.let {
                     item.note.notebook = it
-                    ContentActivity.editNote(this, item.note, REQUEST_NOTE_EDIT)
+                    NoteActivity.editNote(this, item.note, REQUEST_NOTE_EDIT)
                 }
 //                popNoteMenu(view, item)
             } else if (item.itemType == MultiItem.ITEM_TYPE_NOTEBOOK) {
@@ -246,7 +247,7 @@ class NotesFragment : BaseFragment<FragmentNotesBinding>(),
                     if (isNotebookList()) {
                         ToastUtils.makeToast("TODO")
                     } else {
-                        ContentActivity.editNote(this, multiItem.note, REQUEST_NOTE_EDIT)
+                        NoteActivity.editNote(this, multiItem.note, REQUEST_NOTE_EDIT)
                     }
                 }
                 R.id.action_move -> {
