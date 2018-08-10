@@ -66,6 +66,7 @@ import me.shouheng.notepal.util.preferences.UserPreferences;
 import me.shouheng.notepal.viewmodel.CategoryViewModel;
 import me.shouheng.notepal.widget.tools.CustomRecyclerScrollViewListener;
 import me.urakalee.next2.activity.ContentActivity;
+import me.urakalee.next2.activity.NoteActivity;
 import me.urakalee.next2.notelist.NotesFragment;
 import me.urakalee.next2.model.Note;
 import me.urakalee.next2.viewmodel.NoteViewModel;
@@ -451,7 +452,7 @@ public class MainActivity extends CommonActivity<ActivityMainBinding> implements
 
     private void editNote(@NonNull final Note note) {
         PermissionUtils.checkStoragePermission(this, () ->
-                ContentActivity.Companion.editNote(this, note, REQUEST_ADD_NOTE));
+                NoteActivity.Companion.editNote(this, note, REQUEST_ADD_NOTE));
     }
 
     private Note getNewNote() {

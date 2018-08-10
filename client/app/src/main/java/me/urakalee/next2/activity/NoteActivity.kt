@@ -8,8 +8,7 @@ import android.support.annotation.ColorInt
 import android.support.v4.app.Fragment
 import com.afollestad.materialdialogs.color.ColorChooserDialog
 import com.afollestad.materialdialogs.color.ColorChooserDialog.ColorCallback
-import kotlinx.android.synthetic.main.activity_content.*
-import kotlinx.android.synthetic.main.layout_toolbar.*
+import kotlinx.android.synthetic.main.activity_note.*
 import me.shouheng.notepal.R
 import me.shouheng.notepal.config.Constants
 import me.shouheng.notepal.fragment.base.BaseModelFragment
@@ -24,7 +23,6 @@ import me.urakalee.next2.model.Note
 import me.urakalee.next2.storage.NoteStore
 import me.urakalee.ranger.extension.getFromBundle
 import me.urakalee.ranger.extension.hasExtraInBundle
-import me.urakalee.ranger.extension.isVisible
 import me.urakalee.ranger.extension.putToBundle
 
 /**
@@ -39,7 +37,7 @@ class NoteActivity : CommonActivity(),
     private var note: Note? = null
 
     override val layoutResId: Int
-        get() = R.layout.activity_content
+        get() = R.layout.activity_note
 
     //region lifecycle
 
@@ -49,6 +47,7 @@ class NoteActivity : CommonActivity(),
     }
 
     override fun onBackPressed() {
+        // TODO: getCurrentFragment in pager
         val currentFragment = getCurrentFragment(R.id.fragment_container)
         if (currentFragment is CommonFragment) {
             currentFragment.onBackPressed()
@@ -137,13 +136,11 @@ class NoteActivity : CommonActivity(),
     }
 
     private fun configToolbar() {
-        // NoteEditing 由于需要侧滑菜单, 把 toolbar 放在了 layout 里, 因此不显示 activity 的 toolbar
-        if (intent.getBooleanExtra(EXTRA_HAS_TOOLBAR, false)) {
-            bar.isVisible = true
-            setSupportActionBar(toolbar)
-            supportActionBar?.setDisplayHomeAsUpEnabled(true)
-            if (!isDarkTheme) toolbar.popupTheme = R.style.AppTheme_PopupOverlay
-        }
+        toolbar.bringToFront()
+        setSupportActionBar(toolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        if (!isDarkTheme) toolbar.popupTheme = R.style.AppTheme_PopupOverlay
+        setStatusBarColor(resources.getColor(if (isDarkTheme) R.color.dark_theme_foreground else R.color.md_grey_500))
     }
 
     override fun onColorSelection(dialog: ColorChooserDialog, @ColorInt selectedColor: Int) {
@@ -156,8 +153,6 @@ class NoteActivity : CommonActivity(),
     override fun onColorChooserDismissed(dialog: ColorChooserDialog) {}
 
     companion object {
-
-        const val EXTRA_HAS_TOOLBAR = "extra_has_toolbar"
 
         private const val BUNDLE_KEY_NOTE = "key_bundle_note"
         private const val TAG_NOTE_FRAGMENT = "note_fragment_tag"
@@ -188,7 +183,6 @@ class NoteActivity : CommonActivity(),
             intent.putExtra(Constants.EXTRA_REQUEST_CODE, requestCode)
             intent.putExtra(Constants.EXTRA_START_TYPE, Constants.VALUE_START_VIEW)
             intent.putExtra(Constants.EXTRA_FRAGMENT, Constants.VALUE_FRAGMENT_NOTE)
-            intent.putExtra(EXTRA_HAS_TOOLBAR, true)
             return intent
         }
 

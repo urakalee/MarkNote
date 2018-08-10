@@ -1,145 +1,134 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
-    <RelativeLayout
+    <my.shouheng.palmmarkdown.fastscroller.FastScrollScrollView
+        android:id="@+id/fastScrollView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:layout_height="0dp"
+        android:layout_weight="1">
 
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize" />
-
-        <RelativeLayout
-            android:id="@+id/markBar"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/note_bottom_menu_height"
-            android:layout_alignParentBottom="true">
-
-            <HorizontalScrollView
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/note_bottom_menu_height"
-                android:background="@color/note_bottom_editors">
-
-                <LinearLayout
-                    android:id="@+id/markContainer"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:orientation="horizontal"
-                    android:paddingEnd="60dp" />
-
-            </HorizontalScrollView>
-
-            <View
-                android:id="@+id/barOverlay"
-                android:layout_width="@dimen/note_bottom_menu_height"
-                android:layout_height="@dimen/note_bottom_menu_height"
-                android:layout_alignParentEnd="true"
-                android:background="@color/note_bottom_editors"
-                android:clickable="true"
-                android:focusable="true" />
-
-            <android.support.v7.widget.AppCompatImageView
-                android:id="@+id/btnSetting"
-                style="@style/style_note_bottom_button"
-                android:layout_width="@dimen/note_bottom_menu_height"
-                android:layout_height="@dimen/note_bottom_menu_height"
-                android:layout_alignParentBottom="true"
-                android:layout_alignParentEnd="true"
-                android:src="@drawable/ic_settings_black" />
-
-            <View
-                android:layout_width="@dimen/note_bottom_menu_height"
-                android:layout_height="@dimen/note_bottom_menu_height"
-                android:layout_alignParentBottom="true"
-                android:layout_toStartOf="@id/barOverlay"
-                android:background="@drawable/rte_shadow_format"
-                android:clickable="true"
-                android:focusable="true" />
-
-        </RelativeLayout>
-
-        <my.shouheng.palmmarkdown.fastscroller.FastScrollScrollView
-            android:id="@+id/fastScrollView"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_above="@id/markBar"
-            android:layout_below="@id/toolbar"
-            android:fitsSystemWindows="true">
+            android:orientation="vertical">
 
-            <LinearLayout
+            <EditText
+                android:id="@+id/noteTitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:layout_marginStart="32dp"
+                android:background="@android:color/transparent"
+                android:hint="@string/note_note_title"
+                android:maxLength="@integer/title_length"
+                android:padding="16dp"
+                android:textColor="@color/colorPrimary"
+                android:textSize="18sp"
+                android:textStyle="bold" />
 
-                <EditText
-                    android:id="@+id/noteTitle"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@android:color/transparent"
-                    android:hint="@string/note_note_title"
-                    android:maxLength="@integer/title_length"
-                    android:padding="16dp"
-                    android:textColor="@color/colorPrimary"
-                    android:textSize="18sp"
-                    android:textStyle="bold" />
+            <LinearLayout
+                android:id="@+id/notebook"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/note_center_options_height"
+                android:layout_marginEnd="16dp"
+                android:layout_marginStart="8dp"
+                android:background="?attr/selectableItemBackground"
+                android:orientation="horizontal">
 
-                <LinearLayout
-                    android:id="@+id/notebook"
-                    android:layout_width="match_parent"
+                <ImageView
+                    android:id="@+id/notebookIcon"
+                    android:layout_width="@dimen/note_center_options_height"
                     android:layout_height="@dimen/note_center_options_height"
-                    android:layout_marginEnd="16dp"
-                    android:layout_marginStart="8dp"
-                    android:background="?attr/selectableItemBackground"
-                    android:orientation="horizontal">
+                    android:paddingBottom="12dp"
+                    android:paddingEnd="12dp"
+                    android:paddingTop="12dp"
+                    android:src="@drawable/ic_move_to_inbox_black_24dp"
+                    android:tint="@color/md_grey_500" />
 
-                    <ImageView
-                        android:id="@+id/notebookIcon"
-                        android:layout_width="@dimen/note_center_options_height"
-                        android:layout_height="@dimen/note_center_options_height"
-                        android:paddingBottom="12dp"
-                        android:paddingEnd="12dp"
-                        android:paddingTop="12dp"
-                        android:src="@drawable/ic_move_to_inbox_black_24dp"
-                        android:tint="@color/md_grey_500" />
-
-                    <TextView
-                        android:id="@+id/notebookName"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:ellipsize="end"
-                        android:gravity="center_vertical"
-                        android:lines="1"
-                        android:singleLine="true"
-                        android:text="@string/note_default_notebook"
-                        android:textStyle="bold"
-                        tools:text="我的第一个笔记本" />
-
-                </LinearLayout>
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="0.5dp"
-                    android:layout_marginEnd="16dp"
-                    android:layout_marginStart="16dp"
-                    android:background="@color/md_grey_500" />
-
-                <my.shouheng.palmmarkdown.MarkdownEditor
-                    android:id="@+id/noteContent"
+                <TextView
+                    android:id="@+id/notebookName"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:background="@android:color/transparent"
-                    android:gravity="start"
-                    android:hint="@string/note_write_down_what_you_want"
-                    android:padding="16dp"
-                    android:textSize="16sp" />
+                    android:ellipsize="end"
+                    android:gravity="center_vertical"
+                    android:lines="1"
+                    android:singleLine="true"
+                    android:text="@string/note_default_notebook"
+                    android:textStyle="bold"
+                    tools:text="我的第一个笔记本" />
 
             </LinearLayout>
 
-        </my.shouheng.palmmarkdown.fastscroller.FastScrollScrollView>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0.5dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginStart="16dp"
+                android:background="@color/md_grey_500" />
+
+            <my.shouheng.palmmarkdown.MarkdownEditor
+                android:id="@+id/noteContent"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@android:color/transparent"
+                android:gravity="start"
+                android:hint="@string/note_write_down_what_you_want"
+                android:padding="16dp"
+                android:textSize="16sp" />
+
+        </LinearLayout>
+
+    </my.shouheng.palmmarkdown.fastscroller.FastScrollScrollView>
+
+    <RelativeLayout
+        android:id="@+id/markBar"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/note_bottom_menu_height">
+
+        <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/note_bottom_menu_height"
+            android:background="@color/note_bottom_editors">
+
+            <LinearLayout
+                android:id="@+id/markContainer"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:paddingEnd="60dp" />
+
+        </HorizontalScrollView>
+
+        <View
+            android:id="@+id/barOverlay"
+            android:layout_width="@dimen/note_bottom_menu_height"
+            android:layout_height="@dimen/note_bottom_menu_height"
+            android:layout_alignParentEnd="true"
+            android:background="@color/note_bottom_editors"
+            android:clickable="true"
+            android:focusable="true" />
+
+        <android.support.v7.widget.AppCompatImageView
+            android:id="@+id/btnSetting"
+            style="@style/style_note_bottom_button"
+            android:layout_width="@dimen/note_bottom_menu_height"
+            android:layout_height="@dimen/note_bottom_menu_height"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentEnd="true"
+            android:src="@drawable/ic_settings_black" />
+
+        <View
+            android:layout_width="@dimen/note_bottom_menu_height"
+            android:layout_height="@dimen/note_bottom_menu_height"
+            android:layout_alignParentBottom="true"
+            android:layout_toStartOf="@id/barOverlay"
+            android:background="@drawable/rte_shadow_format"
+            android:clickable="true"
+            android:focusable="true" />
 
     </RelativeLayout>
 
-</layout>
+</LinearLayout>

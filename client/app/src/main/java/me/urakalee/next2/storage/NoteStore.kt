@@ -29,11 +29,11 @@ class NoteStore private constructor(context: Context) : BaseStore<Note>(context)
         throw UnsupportedOperationException()
     }
 
-    public override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
+    override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
         throw UnsupportedOperationException()
     }
 
-    public override fun fillModel(note: Note, cursor: Cursor) {
+    override fun fillModel(note: Note, cursor: Cursor) {
         throw UnsupportedOperationException()
     }
 

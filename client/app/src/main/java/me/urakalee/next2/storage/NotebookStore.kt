@@ -13,15 +13,25 @@ import me.shouheng.notepal.provider.BaseStore
  */
 class NotebookStore private constructor() : BaseStore<Notebook>(PalmApp.getContext()) {
 
-    override fun onCreate(db: SQLiteDatabase) {}
+    override fun onCreate(db: SQLiteDatabase) {
+        throw UnsupportedOperationException()
+    }
 
-    override fun afterDBCreated(db: SQLiteDatabase) {}
+    override fun afterDBCreated(db: SQLiteDatabase) {
+        throw UnsupportedOperationException()
+    }
 
-    public override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {}
+    override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
+        throw UnsupportedOperationException()
+    }
 
-    public override fun fillModel(model: Notebook, cursor: Cursor) {}
+    override fun fillModel(model: Notebook, cursor: Cursor) {
+        throw UnsupportedOperationException()
+    }
 
-    override fun fillContentValues(values: ContentValues, model: Notebook) {}
+    override fun fillContentValues(values: ContentValues, model: Notebook) {
+        throw UnsupportedOperationException()
+    }
 
     @Synchronized
     override fun get(whereSQL: String?, orderSQL: String?): List<Notebook> {

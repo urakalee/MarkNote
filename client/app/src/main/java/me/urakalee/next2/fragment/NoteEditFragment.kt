@@ -7,12 +7,14 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.v4.view.GravityCompat
 import android.support.v4.widget.DrawerLayout
-import android.support.v7.app.AppCompatActivity
 import android.text.Editable
 import android.text.TextWatcher
-import android.view.*
+import android.view.MenuItem
+import android.view.View
+import android.view.ViewGroup
 import com.afollestad.materialdialogs.MaterialDialog
 import com.balysv.materialmenu.MaterialMenuDrawable
+import kotlinx.android.synthetic.main.activity_note.*
 import kotlinx.android.synthetic.main.fragment_note_edit.*
 import kotlinx.android.synthetic.main.include_note_edit.*
 import kotlinx.android.synthetic.main.note_edit_right_drawer.*
@@ -37,6 +39,7 @@ import me.shouheng.notepal.viewmodel.LocationViewModel
 import me.shouheng.notepal.widget.FlowLayout
 import me.shouheng.notepal.widget.MDItemView
 import me.urakalee.next2.activity.ContentActivity
+import me.urakalee.next2.activity.NoteActivity
 import me.urakalee.next2.base.activity.CommonActivity
 import me.urakalee.next2.base.fragment.BaseModelFragment
 import me.urakalee.next2.config.FeatureConfig
@@ -161,17 +164,13 @@ class NoteEditFragment : BaseModelFragment<Note>() {
     }
 
     private fun configToolbar() {
-        val activityNonNull = activity ?: return
+        val activityNonNull = activity as? NoteActivity ?: return
         val contextNonNull = context ?: return
 
         materialMenu = MaterialMenuDrawable(contextNonNull, primaryColor(), MaterialMenuDrawable.Stroke.THIN)
         materialMenu?.iconState = MaterialMenuDrawable.IconState.ARROW
-        toolbar.navigationIcon = materialMenu
-        (activityNonNull as AppCompatActivity).setSupportActionBar(toolbar)
-        val actionBar = activityNonNull.supportActionBar
-        actionBar?.setDisplayHomeAsUpEnabled(true)
-        actionBar?.title = ""
-        setStatusBarColor(resources.getColor(if (isDarkTheme) R.color.dark_theme_foreground else R.color.md_grey_500))
+
+        activityNonNull.toolbar.navigationIcon = materialMenu
     }
 
     //endregion
@@ -621,18 +620,6 @@ class NoteEditFragment : BaseModelFragment<Note>() {
 
     //endregion
     //region menu
-
-    override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
-        inflater?.inflate(R.menu.note_editor_menu, menu)
-    }
-
-    override fun onPrepareOptionsMenu(menu: Menu?) {
-        super.onPrepareOptionsMenu(menu)
-        if (isDarkTheme) {
-            menu?.findItem(R.id.action_more)?.setIcon(R.drawable.ic_more_vert_white)
-            menu?.findItem(R.id.action_preview)?.setIcon(R.drawable.ic_visibility_white_24dp)
-        }
-    }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when (item?.itemId) {
