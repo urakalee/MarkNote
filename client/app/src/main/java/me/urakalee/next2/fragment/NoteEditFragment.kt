@@ -353,8 +353,6 @@ class NoteEditFragment : BaseModelFragment<Note>() {
                 ToastUtils.makeToast(R.string.content_was_copied_to_clipboard)
             }
         }
-
-        addLauncher.setOnClickListener { addShortcut() }
     }
 
     private fun updateCharsInfo() {
@@ -408,29 +406,6 @@ class NoteEditFragment : BaseModelFragment<Note>() {
                 val cols = StringUtils.parseInteger(colsStr, 3)
                 noteContent.addTableEffect(rows, cols)
             }.show(it, "TABLE INPUT")
-        }
-    }
-
-    private fun addShortcut() {
-        if (!note.isNewNote) {
-            ShortcutHelper.addShortcut(PalmApp.getContext(), note)
-            ToastUtils.makeToast(R.string.successfully_add_shortcut)
-        } else {
-            val activityNonNull = activity ?: return
-            MaterialDialog.Builder(activityNonNull)
-                    .title(R.string.text_tips)
-                    .content(R.string.text_save_and_retry_to_add_shortcut)
-                    .positiveText(R.string.text_save_and_retry)
-                    .negativeText(R.string.text_give_up)
-                    .onPositive { _, _ ->
-                        saveOrUpdateData {
-                            if (it) {
-                                ShortcutHelper.addShortcut(PalmApp.getContext(), note)
-                                ToastUtils.makeToast(R.string.successfully_add_shortcut)
-                            }
-                        }
-                    }
-                    .show()
         }
     }
 

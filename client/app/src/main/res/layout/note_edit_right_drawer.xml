@@ -142,21 +142,6 @@
                     android:paddingStart="13dp"
                     android:text="@string/text_copy_text" />
 
-                <me.shouheng.notepal.widget.themed.Divider
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp" />
-
-                <TextView
-                    android:id="@+id/addLauncher"
-                    android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:background="?attr/selectableItemBackground"
-                    android:drawablePadding="13dp"
-                    android:drawableStart="@drawable/ic_phone_android_grey_24dp"
-                    android:gravity="center_vertical"
-                    android:paddingStart="13dp"
-                    android:text="@string/text_add_to_home_screen" />
-
             </LinearLayout>
 
         </ScrollView>

@@ -252,13 +252,7 @@ class NoteViewFragment : BaseFragment<FragmentNoteViewBinding>() {
                 }
             }
             R.id.action_share -> share()
-            R.id.font_cursive -> binding.mdView.settings.cursiveFontFamily = "cursive"
-            R.id.font_fantasy -> binding.mdView.settings.fantasyFontFamily = "fantasy"
-            R.id.font_fixed -> binding.mdView.settings.fixedFontFamily = "monospace"
-            R.id.font_sans_serif -> binding.mdView.settings.sansSerifFontFamily = "sans-serif"
-            R.id.font_serif -> binding.mdView.settings.serifFontFamily = "sans-serif"
             R.id.action_labs -> ModelHelper.showLabels(context, tags)
-            R.id.action_location -> showLocation()
             R.id.action_copy_link -> {
                 note?.let {
                     ModelHelper.copyLink(contextNonNull, it)
@@ -267,12 +261,6 @@ class NoteViewFragment : BaseFragment<FragmentNoteViewBinding>() {
             R.id.action_copy_content -> {
                 ModelHelper.copyToClipboard(contextNonNull, content)
                 ToastUtils.makeToast(R.string.content_was_copied_to_clipboard)
-            }
-            R.id.action_add_shortcut -> {
-                note?.let {
-                    ShortcutHelper.addShortcut(PalmApp.getContext(), note)
-                    ToastUtils.makeToast(R.string.successfully_add_shortcut)
-                }
             }
             R.id.action_statistic -> {
                 note?.let {
