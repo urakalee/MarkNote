@@ -18,7 +18,6 @@ import kotlinx.android.synthetic.main.activity_note.*
 import kotlinx.android.synthetic.main.fragment_note_edit.*
 import kotlinx.android.synthetic.main.include_note_edit.*
 import kotlinx.android.synthetic.main.note_edit_right_drawer.*
-import me.shouheng.notepal.PalmApp
 import me.shouheng.notepal.R
 import me.shouheng.notepal.activity.MenuSortActivity
 import me.shouheng.notepal.config.Constants
@@ -35,7 +34,6 @@ import me.shouheng.notepal.util.*
 import me.shouheng.notepal.util.preferences.UserPreferences
 import me.shouheng.notepal.viewmodel.AttachmentViewModel
 import me.shouheng.notepal.viewmodel.CategoryViewModel
-import me.shouheng.notepal.viewmodel.LocationViewModel
 import me.shouheng.notepal.widget.FlowLayout
 import me.shouheng.notepal.widget.MDItemView
 import me.urakalee.next2.activity.ContentActivity
@@ -68,7 +66,6 @@ class NoteEditFragment : BaseModelFragment<Note>() {
     private lateinit var notebookViewModel: NotebookViewModel
     private lateinit var categoryViewModel: CategoryViewModel
     private lateinit var attachmentViewModel: AttachmentViewModel
-    private lateinit var locationViewModel: LocationViewModel
 
     override val layoutResId: Int
         get() = R.layout.fragment_note_edit
@@ -134,7 +131,6 @@ class NoteEditFragment : BaseModelFragment<Note>() {
         noteViewModel = ViewModelProviders.of(this).get(NoteViewModel::class.java)
         notebookViewModel = ViewModelProviders.of(this).get(NotebookViewModel::class.java)
         categoryViewModel = ViewModelProviders.of(this).get(CategoryViewModel::class.java)
-        locationViewModel = ViewModelProviders.of(this).get(LocationViewModel::class.java)
         attachmentViewModel = ViewModelProviders.of(this).get(AttachmentViewModel::class.java)
     }
 
@@ -260,16 +256,6 @@ class NoteEditFragment : BaseModelFragment<Note>() {
         addFormatBar()
 
         btnSetting.setOnClickListener { MenuSortActivity.start(this@NoteEditFragment, REQ_MENU_SORT) }
-
-        fastScrollView.fastScrollDelegate?.setThumbSize(16, 40)
-        fastScrollView.fastScrollDelegate?.setThumbDynamicHeight(false)
-        if (context != null) {
-            fastScrollView.fastScrollDelegate?.setThumbDrawable(
-                    PalmApp.getDrawableCompact(
-                            if (isDarkTheme) R.drawable.fast_scroll_bar_dark
-                            else R.drawable.fast_scroll_bar_light
-                    ))
-        }
     }
 
     private fun showNotebookPicker() {

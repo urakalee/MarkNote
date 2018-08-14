@@ -103,21 +103,6 @@ class ContentActivity : CommonActivity<ActivityContentBinding>(),
             val isEdit = (intent.getStringExtra(Constants.EXTRA_START_TYPE) == Constants.VALUE_START_EDIT)
             toNoteFragment(noteNonNull, if (requestCode == -1) null else requestCode, isEdit)
         }
-
-        // The case below mainly used for the intent from shortcut
-        if (intent.hasExtra(Constants.EXTRA_CODE)) {
-            val code = intent.getLongExtra(Constants.EXTRA_CODE, -1)
-            val requestCode = intent.getIntExtra(Constants.EXTRA_REQUEST_CODE, -1)
-            note = note ?: NoteStore.getInstance().get(code)
-            if (note == null) {
-                ToastUtils.makeToast(R.string.text_no_such_note)
-                LogUtils.d("Failed to resolve intent : $intent")
-                finish()
-                return
-            }
-            val isEdit = (intent.getStringExtra(Constants.EXTRA_START_TYPE) == Constants.VALUE_START_EDIT)
-            toNoteFragment(note!!, if (requestCode == -1) null else requestCode, isEdit)
-        }
     }
 
     private fun toNoteFragment(note: Note, requestCode: Int?, isEdit: Boolean) {

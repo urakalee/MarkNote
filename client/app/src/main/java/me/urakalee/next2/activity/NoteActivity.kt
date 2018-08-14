@@ -6,6 +6,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.annotation.ColorInt
 import android.support.v4.app.Fragment
+import android.support.v4.app.FragmentPagerAdapter
 import com.afollestad.materialdialogs.color.ColorChooserDialog
 import com.afollestad.materialdialogs.color.ColorChooserDialog.ColorCallback
 import kotlinx.android.synthetic.main.activity_note.*
@@ -20,9 +21,9 @@ import me.urakalee.next2.base.fragment.CommonFragment
 import me.urakalee.next2.fragment.NoteEditFragment
 import me.urakalee.next2.fragment.NoteViewFragment
 import me.urakalee.next2.model.Note
-import me.urakalee.next2.storage.NoteStore
 import me.urakalee.ranger.extension.getFromBundle
 import me.urakalee.ranger.extension.hasExtraInBundle
+import me.urakalee.ranger.extension.makeFragmentTag
 import me.urakalee.ranger.extension.putToBundle
 
 /**
@@ -31,9 +32,6 @@ import me.urakalee.ranger.extension.putToBundle
 class NoteActivity : CommonActivity(),
         ColorCallback {
 
-    /**
-     * Current working note
-     */
     private var note: Note? = null
 
     override val layoutResId: Int
@@ -48,7 +46,7 @@ class NoteActivity : CommonActivity(),
 
     override fun onBackPressed() {
         // TODO: getCurrentFragment in pager
-        val currentFragment = getCurrentFragment(R.id.fragment_container)
+        val currentFragment = getCurrentFragment()
         if (currentFragment is CommonFragment) {
             currentFragment.onBackPressed()
         } else {
@@ -64,57 +62,42 @@ class NoteActivity : CommonActivity(),
             note = savedInstanceState.get(BUNDLE_KEY_NOTE) as? Note
         }
 
-        handleIntent()
-
+        if (!handleIntent()) {
+            finish()
+            return
+        }
         configToolbar()
+        configPager()
     }
 
-    private fun handleIntent() {
+    private fun handleIntent(): Boolean {
         val fragment = intent.getStringExtra(Constants.EXTRA_FRAGMENT)
         if (fragment == null) {
             ToastUtils.makeToast(R.string.content_failed_to_parse_intent)
             LogUtils.d("Failed to handle intent : $intent")
-            finish()
-            return
+            return false
         }
-        when (fragment) {
-            Constants.VALUE_FRAGMENT_NOTE -> handleNoteIntent()
+        return when (fragment) {
+            Constants.VALUE_FRAGMENT_NOTE -> {
+                handleNoteIntent()
+            }
             else -> {
                 ToastUtils.makeToast(R.string.content_failed_to_parse_intent)
-                finish()
+                false
             }
         }
     }
 
-    private fun handleNoteIntent() {
+    private fun handleNoteIntent(): Boolean {
         if (intent.hasExtraInBundle(Constants.EXTRA_MODEL)) {
             note = note ?: intent.getFromBundle(Constants.EXTRA_MODEL)
-            if (note == null) {
-                ToastUtils.makeToast(R.string.content_failed_to_parse_intent)
-                LogUtils.d("Failed to resolve note intent : $intent")
-                finish()
-                return
+            note?.let {
+                return true
             }
-            val noteNonNull = note!!
-            val requestCode = intent.getIntExtra(Constants.EXTRA_REQUEST_CODE, -1)
-            val isEdit = (intent.getStringExtra(Constants.EXTRA_START_TYPE) == Constants.VALUE_START_EDIT)
-            toNoteFragment(noteNonNull, if (requestCode == -1) null else requestCode, isEdit)
         }
-
-        // The case below mainly used for the intent from shortcut
-        if (intent.hasExtra(Constants.EXTRA_CODE)) {
-            val code = intent.getLongExtra(Constants.EXTRA_CODE, -1)
-            val requestCode = intent.getIntExtra(Constants.EXTRA_REQUEST_CODE, -1)
-            note = note ?: NoteStore.getInstance().get(code)
-            if (note == null) {
-                ToastUtils.makeToast(R.string.text_no_such_note)
-                LogUtils.d("Failed to resolve intent : $intent")
-                finish()
-                return
-            }
-            val isEdit = (intent.getStringExtra(Constants.EXTRA_START_TYPE) == Constants.VALUE_START_EDIT)
-            toNoteFragment(note!!, if (requestCode == -1) null else requestCode, isEdit)
-        }
+        ToastUtils.makeToast(R.string.content_failed_to_parse_intent)
+        LogUtils.d("Failed to resolve note intent : $intent")
+        return false
     }
 
     private fun toNoteFragment(note: Note, requestCode: Int?, isEdit: Boolean) {
@@ -141,6 +124,51 @@ class NoteActivity : CommonActivity(),
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         if (!isDarkTheme) toolbar.popupTheme = R.style.AppTheme_PopupOverlay
         setStatusBarColor(resources.getColor(if (isDarkTheme) R.color.dark_theme_foreground else R.color.md_grey_500))
+    }
+
+    private var pagerAdapter: FragmentPagerAdapter? = null
+
+    private fun configPager() {
+        val requestCode = intent.getIntExtra(Constants.EXTRA_REQUEST_CODE, -1)
+        val action = if (intent.action.isNullOrBlank()) null else intent.action
+        val isEdit = (intent.getStringExtra(Constants.EXTRA_START_TYPE) == Constants.VALUE_START_EDIT)
+
+        val noteEditFragmentIndex = 0
+        val noteEditFragmentTag = makeFragmentTag(pager.id, noteEditFragmentIndex)
+        val noteViewFragmentIndex = 1
+        val noteViewFragmentTag = makeFragmentTag(pager.id, noteViewFragmentIndex)
+
+        var noteEditFragment = supportFragmentManager.findFragmentByTag(noteEditFragmentTag)
+        if (noteEditFragment == null) {
+            noteEditFragment = NoteEditFragment.newInstance(note!!, if (requestCode == -1) null else requestCode, action)
+        } else {
+            noteEditFragment.arguments?.putBoolean(NoteEditFragment.KEY_ARGS_RESTORE, true)
+        }
+
+        var noteViewFragment = supportFragmentManager.findFragmentByTag(noteViewFragmentTag)
+        if (noteViewFragment == null) {
+            noteViewFragment = Fragment()
+        }
+
+        val pageMap = listOf(
+                noteEditFragment,
+                noteViewFragment
+        )
+        pagerAdapter = object : FragmentPagerAdapter(supportFragmentManager) {
+
+            override fun getItem(position: Int): Fragment {
+                return pageMap[position]
+            }
+
+            override fun getCount(): Int {
+                return pageMap.size
+            }
+        }
+        pager.adapter = pagerAdapter
+    }
+
+    private fun getCurrentFragment(): Fragment? {
+        return pagerAdapter?.getItem(pager.currentItem)
     }
 
     override fun onColorSelection(dialog: ColorChooserDialog, @ColorInt selectedColor: Int) {

@@ -5,8 +5,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <my.shouheng.palmmarkdown.fastscroller.FastScrollScrollView
-        android:id="@+id/fastScrollView"
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1">
@@ -81,7 +80,7 @@
 
         </LinearLayout>
 
-    </my.shouheng.palmmarkdown.fastscroller.FastScrollScrollView>
+    </ScrollView>
 
     <RelativeLayout
         android:id="@+id/markBar"
