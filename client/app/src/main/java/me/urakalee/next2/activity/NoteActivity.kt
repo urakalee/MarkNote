@@ -7,8 +7,11 @@ import android.os.Bundle
 import android.support.annotation.ColorInt
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentPagerAdapter
+import android.view.MenuItem
+import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.color.ColorChooserDialog
 import com.afollestad.materialdialogs.color.ColorChooserDialog.ColorCallback
+import com.balysv.materialmenu.MaterialMenuDrawable
 import kotlinx.android.synthetic.main.activity_note.*
 import me.shouheng.notepal.R
 import me.shouheng.notepal.config.Constants
@@ -32,7 +35,32 @@ import me.urakalee.ranger.extension.putToBundle
 class NoteActivity : CommonActivity(),
         ColorCallback {
 
+    private lateinit var materialMenu: MaterialMenuDrawable
+
     private var note: Note? = null
+    /**
+     * Field remark that is the content changed.
+     */
+    private var contentChanged: Boolean = false
+        set(value) {
+            when (value) {
+                true -> {
+                    if (!contentChanged) {
+                        field = true
+                        materialMenu.animateIconState(MaterialMenuDrawable.IconState.CHECK)
+                    }
+                }
+                false -> {
+                    field = false
+                    materialMenu.animateIconState(MaterialMenuDrawable.IconState.ARROW)
+                }
+            }
+        }
+    /**
+     * Have we ever saved or updated the content.
+     */
+    private var savedOrUpdated: Boolean = false
+
 
     override val layoutResId: Int
         get() = R.layout.activity_note
@@ -45,6 +73,24 @@ class NoteActivity : CommonActivity(),
     }
 
     override fun onBackPressed() {
+        if (contentChanged) {
+            MaterialDialog.Builder(this)
+                    .title(R.string.text_tips)
+                    .content(R.string.text_save_or_discard)
+                    .positiveText(R.string.text_save)
+                    .negativeText(R.string.text_give_up)
+                    .onPositive { _, _ ->
+                        noteEditFragment?.saveOrUpdateData {
+                            setResult()
+                        }
+                    }
+                    .onNegative { _, _ ->
+                        super.onBackPressed()
+                    }
+                    .show()
+        } else {
+            setResult()
+        }
         // TODO: getCurrentFragment in pager
         val currentFragment = getCurrentFragment()
         if (currentFragment is CommonFragment) {
@@ -52,6 +98,30 @@ class NoteActivity : CommonActivity(),
         } else {
             super.onBackPressed()
         }
+    }
+
+    private fun setResult() {
+        // The model didn't change.
+        if (!savedOrUpdated) {
+            super.onBackPressed()
+            return
+        }
+
+        var requestCode: Int? = intent.getIntExtra(Constants.EXTRA_REQUEST_CODE, -1)
+        requestCode = if (requestCode == -1) null else requestCode
+        // If has request code, return it, otherwise just go back
+        requestCode?.let { req ->
+            val intent = Intent()
+            intent.putExtra(Constants.EXTRA_REQUEST_CODE, req)
+            intent.putExtra(Constants.EXTRA_MODEL, note!!)
+            var position: Int? = intent.getIntExtra(Constants.EXTRA_POSITION, -1)
+            position = if (position == -1) null else position
+            position?.let { pos ->
+                intent.putExtra(Constants.EXTRA_POSITION, pos)
+            }
+            setResult(Activity.RESULT_OK, intent)
+        }
+        super.onBackPressed()
     }
 
     //endregion
@@ -104,13 +174,6 @@ class NoteActivity : CommonActivity(),
         val action = if (intent.action.isNullOrBlank()) null else intent.action
         var fragment: Fragment?
         if (isEdit) {
-            fragment = supportFragmentManager.findFragmentByTag(TAG_NOTE_FRAGMENT)
-            if (fragment == null) {
-                fragment = NoteEditFragment.newInstance(note, requestCode, action)
-            } else {
-                fragment.arguments?.putBoolean(NoteEditFragment.KEY_ARGS_RESTORE, true)
-            }
-            FragmentHelper.replace(this, fragment, R.id.fragment_container, TAG_NOTE_FRAGMENT)
         } else {
             val isPreview = intent.getBooleanExtra(Constants.EXTRA_IS_PREVIEW, false)
             fragment = NoteViewFragment.newInstance(note, isPreview, requestCode)
@@ -120,17 +183,21 @@ class NoteActivity : CommonActivity(),
 
     private fun configToolbar() {
         toolbar.bringToFront()
+
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         if (!isDarkTheme) toolbar.popupTheme = R.style.AppTheme_PopupOverlay
         setStatusBarColor(resources.getColor(if (isDarkTheme) R.color.dark_theme_foreground else R.color.md_grey_500))
+
+        materialMenu = MaterialMenuDrawable(this, primaryColor(), MaterialMenuDrawable.Stroke.THIN)
+        materialMenu.iconState = MaterialMenuDrawable.IconState.ARROW
+        toolbar.navigationIcon = materialMenu
     }
 
     private var pagerAdapter: FragmentPagerAdapter? = null
+    private var noteEditFragment: NoteEditFragment? = null
 
     private fun configPager() {
-        val requestCode = intent.getIntExtra(Constants.EXTRA_REQUEST_CODE, -1)
-        val action = if (intent.action.isNullOrBlank()) null else intent.action
         val isEdit = (intent.getStringExtra(Constants.EXTRA_START_TYPE) == Constants.VALUE_START_EDIT)
 
         val noteEditFragmentIndex = 0
@@ -138,12 +205,34 @@ class NoteActivity : CommonActivity(),
         val noteViewFragmentIndex = 1
         val noteViewFragmentTag = makeFragmentTag(pager.id, noteViewFragmentIndex)
 
-        var noteEditFragment = supportFragmentManager.findFragmentByTag(noteEditFragmentTag)
-        if (noteEditFragment == null) {
-            noteEditFragment = NoteEditFragment.newInstance(note!!, if (requestCode == -1) null else requestCode, action)
+        var fragment = supportFragmentManager.findFragmentByTag(noteEditFragmentTag)
+        if (fragment == null || fragment !is NoteEditFragment) {
+            fragment = NoteEditFragment()
         } else {
-            noteEditFragment.arguments?.putBoolean(NoteEditFragment.KEY_ARGS_RESTORE, true)
+            fragment.arguments?.putBoolean(NoteEditFragment.KEY_ARGS_RESTORE, true)
         }
+        fragment.delegate = object : NoteEditFragment.NoteEditFragmentDelegate {
+
+            override fun getNote(): Note {
+                return note!!
+            }
+
+            override fun getAction(): String? {
+                return if (intent.action.isNullOrBlank()) null else intent.action
+            }
+
+            override fun isContentChanged(): Boolean {
+                return this@NoteActivity.contentChanged
+            }
+
+            override fun setContentChanged(contentChanged: Boolean) {
+                this@NoteActivity.contentChanged = contentChanged
+                if (!contentChanged) {
+                    savedOrUpdated = true
+                }
+            }
+        }
+        noteEditFragment = fragment
 
         var noteViewFragment = supportFragmentManager.findFragmentByTag(noteViewFragmentTag)
         if (noteViewFragment == null) {
@@ -151,7 +240,7 @@ class NoteActivity : CommonActivity(),
         }
 
         val pageMap = listOf(
-                noteEditFragment,
+                noteEditFragment!!,
                 noteViewFragment
         )
         pagerAdapter = object : FragmentPagerAdapter(supportFragmentManager) {
@@ -170,6 +259,20 @@ class NoteActivity : CommonActivity(),
     private fun getCurrentFragment(): Fragment? {
         return pagerAdapter?.getItem(pager.currentItem)
     }
+
+    //region menu
+
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        when (item?.itemId) {
+            android.R.id.home -> {
+                if (contentChanged) noteEditFragment?.saveOrUpdateData(null)
+                else setResult()
+            }
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
+    //endregion
 
     override fun onColorSelection(dialog: ColorChooserDialog, @ColorInt selectedColor: Int) {
         val fragment = getCurrentFragment(R.id.fragment_container)
