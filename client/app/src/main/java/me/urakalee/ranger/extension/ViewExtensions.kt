@@ -13,7 +13,7 @@ import android.view.ViewTreeObserver
 import android.widget.*
 
 /**
- * Created by meng on 2017/11/21.
+ * @author Uraka.Lee
  */
 fun makeFragmentTag(containerId: Int, position: Int): String {
     return "android:switcher:$containerId:$position"

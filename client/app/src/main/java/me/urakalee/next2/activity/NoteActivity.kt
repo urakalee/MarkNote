@@ -24,10 +24,7 @@ import me.urakalee.next2.base.fragment.CommonFragment
 import me.urakalee.next2.fragment.NoteEditFragment
 import me.urakalee.next2.fragment.NoteViewFragment
 import me.urakalee.next2.model.Note
-import me.urakalee.ranger.extension.getFromBundle
-import me.urakalee.ranger.extension.hasExtraInBundle
-import me.urakalee.ranger.extension.makeFragmentTag
-import me.urakalee.ranger.extension.putToBundle
+import me.urakalee.ranger.extension.*
 import org.apache.commons.io.FileUtils
 import java.io.IOException
 
@@ -217,6 +214,7 @@ class NoteActivity : CommonActivity(),
                 when (position) {
                     noteViewFragmentIndex -> {
                         if (noteEditFragment?.isAdded == true) {
+                            hideSoftKeyboard(pager)
                             noteViewFragment?.refreshData()
                         }
                     }
