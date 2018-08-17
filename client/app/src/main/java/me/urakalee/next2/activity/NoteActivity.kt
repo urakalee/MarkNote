@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.support.annotation.ColorInt
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentPagerAdapter
+import android.support.v4.view.ViewPager
 import android.view.MenuItem
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.color.ColorChooserDialog
@@ -206,6 +207,16 @@ class NoteActivity : CommonActivity(),
             }
         }
         pager.adapter = pagerAdapter
+        pager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
+
+            override fun onPageScrollStateChanged(state: Int) {}
+
+            override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {}
+
+            override fun onPageSelected(position: Int) {
+            }
+        })
+        pager.currentItem = if (isEdit) noteEditFragmentIndex else noteViewFragmentIndex
     }
 
     //region fragments
