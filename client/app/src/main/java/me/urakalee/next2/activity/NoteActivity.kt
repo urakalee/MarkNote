@@ -214,6 +214,13 @@ class NoteActivity : CommonActivity(),
             override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {}
 
             override fun onPageSelected(position: Int) {
+                when (position) {
+                    noteViewFragmentIndex -> {
+                        if (noteEditFragment?.isAdded == true) {
+                            noteViewFragment?.refreshData()
+                        }
+                    }
+                }
             }
         })
         pager.currentItem = if (isEdit) noteEditFragmentIndex else noteViewFragmentIndex

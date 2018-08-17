@@ -51,14 +51,6 @@ class NoteViewFragment : BaseFragment() {
         setHasOptionsMenu(true)
     }
 
-    // TODO: refresh on NoteEdit page edited
-    private fun refreshLayout() {
-        val actionBar = (activity as? AppCompatActivity)?.supportActionBar
-        actionBar?.title = title
-
-        mdView.parseMarkdown(content)
-    }
-
     //endregion
     //region init
 
@@ -146,6 +138,12 @@ class NoteViewFragment : BaseFragment() {
     }
 
     //endregion
+
+    fun refreshData() {
+        noteTitle.text = title
+        mdView.parseMarkdown(content)
+    }
+
     //region menu
 
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
