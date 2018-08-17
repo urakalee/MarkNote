@@ -70,12 +70,9 @@ class NoteEditFragment : BaseModelFragment<Note>() {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == Activity.RESULT_OK) {
             when (requestCode) {
-                REQ_MENU_SORT -> addFormatBar()
+                REQ_MENU_SORT -> renderFormatBar()
             }
         }
-    }
-
-    override fun onBackPressed() {
     }
 
     //endregion
@@ -187,7 +184,7 @@ class NoteEditFragment : BaseModelFragment<Note>() {
         noteContent.setText(note.content)
         noteContent.addTextChangedListener(contentWatcher)
 
-        addFormatBar()
+        renderFormatBar()
 
         btnSetting.setOnClickListener { MenuSortActivity.start(this@NoteEditFragment, REQ_MENU_SORT) }
     }
@@ -203,7 +200,7 @@ class NoteEditFragment : BaseModelFragment<Note>() {
         }
     }
 
-    private fun addFormatBar() {
+    private fun renderFormatBar() {
         markContainer.removeAllViews()
         val verticalPadding = 12.dp
         val horizontalPadding = 6.dp

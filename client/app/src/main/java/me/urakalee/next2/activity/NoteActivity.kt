@@ -22,6 +22,7 @@ import me.shouheng.notepal.util.ToastUtils
 import me.urakalee.next2.base.activity.CommonActivity
 import me.urakalee.next2.base.fragment.CommonFragment
 import me.urakalee.next2.fragment.NoteEditFragment
+import me.urakalee.next2.fragment.NoteNextFragment
 import me.urakalee.next2.fragment.NoteViewFragment
 import me.urakalee.next2.model.Note
 import me.urakalee.ranger.extension.*
@@ -177,6 +178,7 @@ class NoteActivity : CommonActivity(),
     private var pagerAdapter: FragmentPagerAdapter? = null
     private var noteEditFragment: NoteEditFragment? = null
     private var noteViewFragment: NoteViewFragment? = null
+    private var noteNextFragment: NoteNextFragment? = null
 
     private fun configPager() {
         val isEdit = (intent.getStringExtra(Constants.EXTRA_START_TYPE) == Constants.VALUE_START_EDIT)
@@ -185,13 +187,17 @@ class NoteActivity : CommonActivity(),
         val noteEditFragmentTag = makeFragmentTag(pager.id, noteEditFragmentIndex)
         val noteViewFragmentIndex = 1
         val noteViewFragmentTag = makeFragmentTag(pager.id, noteViewFragmentIndex)
+        val noteNextFragmentIndex = 2
+        val noteNextFragmentTag = makeFragmentTag(pager.id, noteNextFragmentIndex)
 
         getOrCreateNoteEditFragment(noteEditFragmentTag)
         getOrCreateNoteViewFragment(noteViewFragmentTag)
+        getOrCreateNoteNextFragment(noteNextFragmentTag)
 
         val pageMap = listOf(
                 noteEditFragment!!,
-                noteViewFragment!!
+                noteViewFragment!!,
+                noteNextFragment!!
         )
         pagerAdapter = object : FragmentPagerAdapter(supportFragmentManager) {
 
@@ -270,6 +276,20 @@ class NoteActivity : CommonActivity(),
         }
         noteViewFragment = fragment
 
+    }
+
+    private fun getOrCreateNoteNextFragment(tag: String) {
+        var fragment = supportFragmentManager.findFragmentByTag(tag)
+        if (fragment == null || fragment !is NoteNextFragment) {
+            fragment = NoteNextFragment()
+        }
+        fragment.delegate = object : NoteNextFragment.NoteNextFragmentDelegate {
+
+            override fun getNote(): Note {
+                return note!!
+            }
+        }
+        noteNextFragment = fragment
     }
 
     //endregion
