@@ -19,7 +19,6 @@
     <string name="text_delete_still">Delete still</string>
     <string name="text_edit">Edit</string>
     <string name="text_find_in_page">Find in page</string>
-    <string name="text_font">Font</string>
     <string name="text_next">Next</string>
     <string name="text_last">Last</string>
     <string name="text_give_up">Give up</string>
@@ -44,19 +43,13 @@
     <string name="text_file_saved_to">File is saved to %s</string>
     <string name="text_save">Save</string>
     <string name="text_statistic">Statistics</string>
-    <string name="text_save_and_retry_to_add_shortcut">The project hasn\'t been saved, unable to add shortcut. Please try again after saved.</string>
-    <string name="text_save_and_retry">Save and retry</string>
     <string name="text_tips">Tips</string>
     <string name="text_warning">Warning</string>
-    <string name="text_location_info">Location</string>
-    <string name="text_no_location_info">Location not found</string>
-    <string name="text_show_location">Show location</string>
     <string name="trying_to_get_location">Trying to get location&#8230;</string>
     <string name="content_was_copied_to_clipboard">Content has been saved to clipboard</string>
     <string name="share_message_chooser">Select share mode</string>
     <string name="cannot_get_link_of_not_synced_item">Unable to get link of un-synchronized project</string>
     <string name="title_required">Title required</string>
-    <string name="successfully_add_shortcut">Successfully add shortcut</string>
     <string name="text_confirm">Confirm</string>
     <string name="text_back">Back</string>
     <string name="text_color">Color</string>

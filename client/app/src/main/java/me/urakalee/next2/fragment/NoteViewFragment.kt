@@ -10,23 +10,21 @@ import android.support.v7.widget.SearchView
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
-import com.afollestad.materialdialogs.MaterialDialog
 import com.kennyc.bottomsheet.BottomSheet
 import com.kennyc.bottomsheet.BottomSheetListener
+import kotlinx.android.synthetic.main.fragment_note_view.*
 import me.shouheng.notepal.PalmApp
 import me.shouheng.notepal.R
 import me.shouheng.notepal.config.Constants
 import me.shouheng.notepal.config.Constants.*
-import me.shouheng.notepal.databinding.FragmentNoteViewBinding
 import me.shouheng.notepal.dialog.OpenResolver
-import me.shouheng.notepal.fragment.base.BaseFragment
 import me.shouheng.notepal.model.Attachment
 import me.shouheng.notepal.model.ModelFactory
 import me.shouheng.notepal.provider.CategoryStore
-import me.shouheng.notepal.provider.LocationsStore
 import me.shouheng.notepal.util.*
 import me.shouheng.notepal.viewmodel.CategoryViewModel
 import me.urakalee.next2.activity.NoteActivity
+import me.urakalee.next2.base.fragment.BaseFragment
 import me.urakalee.next2.model.Note
 import org.apache.commons.io.FileUtils
 import java.io.File
@@ -37,7 +35,7 @@ import java.util.*
 /**
  * @author Uraka.Lee
  */
-class NoteViewFragment : BaseFragment<FragmentNoteViewBinding>() {
+class NoteViewFragment : BaseFragment() {
 
     private var note: Note? = null
     private var noteTitle: String = "无标题"
@@ -51,9 +49,8 @@ class NoteViewFragment : BaseFragment<FragmentNoteViewBinding>() {
 
     private var isContentChanged = false
 
-    override fun getLayoutResId(): Int {
-        return R.layout.fragment_note_view
-    }
+    override val layoutResId: Int
+        get() = R.layout.fragment_note_view
 
     //region lifecycle
 
@@ -93,13 +90,13 @@ class NoteViewFragment : BaseFragment<FragmentNoteViewBinding>() {
         val actionBar = (activity as? AppCompatActivity)?.supportActionBar
         actionBar?.title = noteTitle
 
-        binding.mdView.parseMarkdown(noteContent)
+        mdView.parseMarkdown(noteContent)
     }
 
     //endregion
     //region init
 
-    override fun doCreateView(savedInstanceState: Bundle?) {
+    override fun afterViewCreated(savedInstanceState: Bundle?) {
         if (!handleArguments()) {
             activity?.finish()
             return
@@ -149,13 +146,13 @@ class NoteViewFragment : BaseFragment<FragmentNoteViewBinding>() {
     }
 
     private fun configViews() {
-        binding.mdView.fastScrollDelegate.setThumbDrawable(PalmApp.getDrawableCompact(
+        mdView.fastScrollDelegate.setThumbDrawable(PalmApp.getDrawableCompact(
                 if (isDarkTheme) R.drawable.fast_scroll_bar_dark else R.drawable.fast_scroll_bar_light))
-        binding.mdView.fastScrollDelegate.setThumbSize(16, 40)
-        binding.mdView.fastScrollDelegate.setThumbDynamicHeight(false)
-        binding.mdView.setHtmlResource(isDarkTheme)
-        binding.mdView.parseMarkdown(noteContent)
-        binding.mdView.setOnImageClickedListener { url, urls ->
+        mdView.fastScrollDelegate.setThumbSize(16, 40)
+        mdView.fastScrollDelegate.setThumbDynamicHeight(false)
+        mdView.setHtmlResource(isDarkTheme)
+        mdView.parseMarkdown(noteContent)
+        mdView.setOnImageClickedListener { url, urls ->
             val attachments = ArrayList<Attachment>()
             var clickedAttachment: Attachment? = null
             for (item in urls) {
@@ -165,7 +162,7 @@ class NoteViewFragment : BaseFragment<FragmentNoteViewBinding>() {
             }
             AttachmentHelper.resolveClickEvent(context, clickedAttachment, attachments, noteTitle)
         }
-        binding.mdView.setOnAttachmentClickedListener { url ->
+        mdView.setOnAttachmentClickedListener { url ->
             if (!url.isNullOrBlank()) {
                 val uri = Uri.parse(url)
 
@@ -229,7 +226,7 @@ class NoteViewFragment : BaseFragment<FragmentNoteViewBinding>() {
         searchView?.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
 
             override fun onQueryTextSubmit(query: String): Boolean {
-                binding.mdView.findAllAsync(query)
+                mdView.findAllAsync(query)
                 (activity as? AppCompatActivity)?.startSupportActionMode(ActionModeCallback())
                 return true
             }
@@ -287,9 +284,9 @@ class NoteViewFragment : BaseFragment<FragmentNoteViewBinding>() {
                         when (menuItem.itemId) {
                             R.id.action_share_text -> ModelHelper.share(context, noteTitle, content, ArrayList())
                             R.id.action_share_html -> outHtml(true)
-                            R.id.action_share_image -> createWebCapture(binding.mdView) { file ->
-                                ModelHelper.shareFile(context, file, Constants.MIME_TYPE_IMAGE)
-                            }
+                            R.id.action_share_image -> createWebCapture(mdView, FileHelper.OnSavedToGalleryListener {
+                                ModelHelper.shareFile(context, it, Constants.MIME_TYPE_IMAGE)
+                            })
                         }
                     }
 
@@ -312,10 +309,10 @@ class NoteViewFragment : BaseFragment<FragmentNoteViewBinding>() {
                         when (menuItem.itemId) {
                             R.id.export_html ->
                                 outHtml(false)
-                            R.id.capture -> createWebCapture(binding.mdView) { file ->
-                                ToastUtils.makeToast(String.format(getString(R.string.text_file_saved_to), file.path))
-                            }
-                            R.id.print -> PrintUtils.print(context, binding.mdView, note)
+                            R.id.capture -> createWebCapture(mdView, FileHelper.OnSavedToGalleryListener {
+                                ToastUtils.makeToast(String.format(getString(R.string.text_file_saved_to), it.path))
+                            })
+                            R.id.print -> PrintUtils.print(context, mdView, note)
                             R.id.export_text -> outText(false)
                         }
                     }
@@ -326,7 +323,7 @@ class NoteViewFragment : BaseFragment<FragmentNoteViewBinding>() {
     }
 
     private fun outHtml(isShare: Boolean) {
-        binding.mdView.outHtml { html ->
+        mdView.outHtml { html ->
             try {
                 val exportDir = FileHelper.getHtmlExportDir()
                 val outFile = File(exportDir, FileHelper.getDefaultFileName(Constants.EXPORTED_HTML_EXTENSION))
@@ -362,22 +359,6 @@ class NoteViewFragment : BaseFragment<FragmentNoteViewBinding>() {
 
     }
 
-    private fun showLocation() {
-        val contextNonNull = context ?: return
-        val noteNonNull = note ?: return
-        val location = LocationsStore.getInstance().getLocation(noteNonNull)
-        if (location == null) {
-            ToastUtils.makeToast(R.string.text_no_location_info)
-            return
-        }
-        MaterialDialog.Builder(contextNonNull)
-                .title(R.string.text_location_info)
-                .positiveText(R.string.text_confirm)
-                .content(ModelHelper.getFormatLocation(location))
-                .build()
-                .show()
-    }
-
     //endregion
 
     private inner class ActionModeCallback : ActionMode.Callback {
@@ -394,14 +375,14 @@ class NoteViewFragment : BaseFragment<FragmentNoteViewBinding>() {
         override fun onActionItemClicked(actionMode: ActionMode, menuItem: MenuItem): Boolean {
             when (menuItem.itemId) {
                 R.id.action_close -> actionMode.finish()
-                R.id.action_next -> binding.mdView.findNext(true)
-                R.id.action_last -> binding.mdView.findNext(false)
+                R.id.action_next -> mdView.findNext(true)
+                R.id.action_last -> mdView.findNext(false)
             }
             return true
         }
 
         override fun onDestroyActionMode(actionMode: ActionMode) {
-            binding.mdView.clearMatches()
+            mdView.clearMatches()
         }
     }
 

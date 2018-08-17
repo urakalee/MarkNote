@@ -19,7 +19,6 @@
     <string name="text_delete_still">仍然删除</string>
     <string name="text_edit">编辑</string>
     <string name="text_find_in_page">在页面中查找</string>
-    <string name="text_font">字体</string>
     <string name="text_next">下一个</string>
     <string name="text_last">上一个</string>
     <string name="text_give_up">放弃</string>
@@ -44,19 +43,13 @@
     <string name="text_file_saved_to">文件被保存到%s</string>
     <string name="text_save">保存</string>
     <string name="text_statistic">数据统计</string>
-    <string name="text_save_and_retry_to_add_shortcut">项目未保存，无法添加快捷方式，请保存后再次尝试.</string>
-    <string name="text_save_and_retry">保存并再次尝试</string>
     <string name="text_tips">提示</string>
     <string name="text_warning">警告</string>
-    <string name="text_location_info">位置信息</string>
-    <string name="text_no_location_info">没有找到位置信息</string>
-    <string name="text_show_location">显示位置信息</string>
     <string name="trying_to_get_location">正在尝试获取位置信息&#8230;</string>
     <string name="content_was_copied_to_clipboard">内容已复制到粘贴板</string>
     <string name="share_message_chooser">选择分享方式</string>
     <string name="cannot_get_link_of_not_synced_item">无法获取未同步的项目的链接</string>
     <string name="title_required">标题不能为空</string>
-    <string name="successfully_add_shortcut">成功添加快捷方式</string>
     <string name="text_confirm">确定</string>
     <string name="text_back">返回</string>
     <string name="text_color">颜色</string>
