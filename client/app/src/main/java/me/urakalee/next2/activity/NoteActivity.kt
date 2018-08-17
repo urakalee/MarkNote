@@ -310,7 +310,7 @@ class NoteActivity : CommonActivity(),
         }
 
         private fun noteViewIntent(context: Context?, note: Note, requestCode: Int): Intent {
-            val intent = Intent(context, ContentActivity::class.java)
+            val intent = Intent(context, NoteActivity::class.java)
             intent.putToBundle(Constants.EXTRA_MODEL, note)
             intent.putExtra(Constants.EXTRA_REQUEST_CODE, requestCode)
             intent.putExtra(Constants.EXTRA_START_TYPE, Constants.VALUE_START_VIEW)

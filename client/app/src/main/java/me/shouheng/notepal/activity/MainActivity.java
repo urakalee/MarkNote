@@ -17,7 +17,6 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -65,7 +64,6 @@ import me.shouheng.notepal.util.preferences.DashboardPreferences;
 import me.shouheng.notepal.util.preferences.UserPreferences;
 import me.shouheng.notepal.viewmodel.CategoryViewModel;
 import me.shouheng.notepal.widget.tools.CustomRecyclerScrollViewListener;
-import me.urakalee.next2.activity.ContentActivity;
 import me.urakalee.next2.activity.NoteActivity;
 import me.urakalee.next2.model.Note;
 import me.urakalee.next2.notelist.NotesFragment;
@@ -248,8 +246,6 @@ public class MainActivity extends CommonActivity<ActivityMainBinding> implements
     }
 
     private void init() {
-        handleIntent(getIntent());
-
         configToolbar();
 
         initViewModels();
@@ -265,24 +261,6 @@ public class MainActivity extends CommonActivity<ActivityMainBinding> implements
 
         toNotesFragment(true);
     }
-
-    // region handle intent
-
-    private void handleIntent(Intent intent) {
-        String action = intent.getAction();
-
-        // if the action is empty or the activity is recreated for theme change, don;t handle intent
-        if (TextUtils.isEmpty(action) || recreateForThemeChange) return;
-
-        switch (action) {
-            case Constants.ACTION_SHORTCUT:
-                intent.setClass(this, ContentActivity.class);
-                startActivity(intent);
-                break;
-        }
-    }
-
-    //endregion
 
     private void configToolbar() {
         Toolbar toolbar = findViewById(R.id.toolbar);

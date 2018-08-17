@@ -33,7 +33,6 @@ import me.shouheng.notepal.viewmodel.AttachmentViewModel
 import me.shouheng.notepal.viewmodel.CategoryViewModel
 import me.shouheng.notepal.widget.FlowLayout
 import me.shouheng.notepal.widget.MDItemView
-import me.urakalee.next2.activity.ContentActivity
 import me.urakalee.next2.base.fragment.BaseModelFragment
 import me.urakalee.next2.config.FeatureConfig
 import me.urakalee.next2.model.Note
@@ -476,15 +475,8 @@ class NoteEditFragment : BaseModelFragment<Note>() {
     //region menu
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        val note = delegate.getNote()
-
         when (item?.itemId) {
             R.id.action_more -> drawerLayout.openDrawer(GravityCompat.END, true)
-            R.id.action_preview -> {
-                note.title = noteTitle.text.toString()
-                note.content = noteContent.text.toString()
-                ContentActivity.viewNote(this, note, true, 0)
-            }
         }
         return super.onOptionsItemSelected(item)
     }

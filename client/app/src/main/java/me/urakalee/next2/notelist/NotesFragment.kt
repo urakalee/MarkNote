@@ -27,7 +27,6 @@ import me.shouheng.notepal.util.ToastUtils
 import me.shouheng.notepal.util.preferences.UserPreferences
 import me.shouheng.notepal.widget.tools.CustomItemAnimator
 import me.shouheng.notepal.widget.tools.DividerItemDecoration
-import me.urakalee.next2.activity.ContentActivity
 import me.urakalee.next2.activity.NoteActivity
 import me.urakalee.next2.config.FeatureConfig
 import me.urakalee.next2.model.Note
@@ -184,7 +183,7 @@ class NotesFragment : BaseFragment<FragmentNotesBinding>(),
             if (item.itemType == MultiItem.ITEM_TYPE_NOTE) {
                 val notebookNonNull = notebook ?: return@setOnItemClickListener
                 item.note.notebook = notebookNonNull
-                ContentActivity.viewNote(this@NotesFragment, item.note, false, REQUEST_NOTE_VIEW)
+                NoteActivity.viewNote(this@NotesFragment, item.note, false, REQUEST_NOTE_VIEW)
             } else if (item.itemType == MultiItem.ITEM_TYPE_NOTEBOOK) {
                 if (activity != null && activity is OnNotesInteractListener) {
                     (activity as OnNotesInteractListener).onNotebookSelected(item.notebook)
@@ -194,11 +193,7 @@ class NotesFragment : BaseFragment<FragmentNotesBinding>(),
         adapter?.setOnItemLongClickListener { adapter, view, position ->
             val item = adapter.data[position] as MultiItem
             if (item.itemType == MultiItem.ITEM_TYPE_NOTE) {
-                notebook?.let {
-                    item.note.notebook = it
-                    NoteActivity.editNote(this, item.note, REQUEST_NOTE_EDIT)
-                }
-//                popNoteMenu(view, item)
+                popNoteMenu(view, item)
             } else if (item.itemType == MultiItem.ITEM_TYPE_NOTEBOOK) {
                 popNotebookMenu(view, item, position)
             }

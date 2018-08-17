@@ -67,9 +67,6 @@
             android:name=".activity.GalleryActivity"
             android:theme="@style/PictureViewTheme" />
         <activity
-            android:name="me.urakalee.next2.activity.ContentActivity"
-            android:exported="true" />
-        <activity
             android:name="me.urakalee.next2.activity.NoteActivity"
             android:exported="true" />
         <activity android:name=".activity.ArchiveActivity" />
