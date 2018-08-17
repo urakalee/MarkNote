@@ -42,10 +42,8 @@ import me.urakalee.next2.viewmodel.NotebookViewModel
 import me.urakalee.ranger.extension.dp
 import me.urakalee.ranger.extension.pixel
 import my.shouheng.palmmarkdown.tools.MarkdownFormat
-import org.apache.commons.io.FileUtils
 import org.polaric.colorful.BaseActivity
 import org.polaric.colorful.PermissionUtils
-import java.io.IOException
 
 /**
  * @author Uraka.Lee
@@ -121,21 +119,8 @@ class NoteEditFragment : BaseModelFragment<Note>() {
 
     private fun fetchData() {
         val note = delegate.getNote()
-        fetchContentIfNeed(note)
         fetchCategories(note)
         fetchAttachment(note)
-    }
-
-    private fun fetchContentIfNeed(note: Note) {
-        if (!note.isNewNote && note.content == null) {
-            val noteFile = note.file
-            try {
-                note.content = FileUtils.readFileToString(noteFile, "utf-8")
-            } catch (e: IOException) {
-                LogUtils.d("IOException: $e")
-                ToastUtils.makeToast(R.string.note_failed_to_read_file)
-            }
-        }
     }
 
     private fun fetchCategories(note: Note) {
@@ -194,14 +179,14 @@ class NoteEditFragment : BaseModelFragment<Note>() {
         noteTitle.setTextColor(primaryColor())
         noteTitle.addTextChangedListener(titleWatcher)
 
-        noteContent.setText(note.content)
-        noteContent.addTextChangedListener(contentWatcher)
-
         notebook.setOnClickListener { showNotebookPicker() }
         notebook.isEnabled = FeatureConfig.MOVE_NOTE
         note.notebook?.let {
             notebookName.text = it.title
         }
+
+        noteContent.setText(note.content)
+        noteContent.addTextChangedListener(contentWatcher)
 
         addFormatBar()
 

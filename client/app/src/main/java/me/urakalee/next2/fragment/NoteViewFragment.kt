@@ -1,6 +1,5 @@
 package me.urakalee.next2.fragment
 
-import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -23,13 +22,11 @@ import me.shouheng.notepal.model.ModelFactory
 import me.shouheng.notepal.provider.CategoryStore
 import me.shouheng.notepal.util.*
 import me.shouheng.notepal.viewmodel.CategoryViewModel
-import me.urakalee.next2.activity.NoteActivity
 import me.urakalee.next2.base.fragment.BaseFragment
 import me.urakalee.next2.model.Note
 import org.apache.commons.io.FileUtils
 import java.io.File
 import java.io.IOException
-import java.io.Serializable
 import java.util.*
 
 /**
@@ -37,17 +34,12 @@ import java.util.*
  */
 class NoteViewFragment : BaseFragment() {
 
-    private var note: Note? = null
-    private var noteTitle: String = "无标题"
-        get() = note?.title ?: field
-    private var noteContent: String = ""
-        get() = note?.content ?: field
-    private var isPreview = false
+    private var title: String = "无标题"
+        get() = delegate.getNote().title ?: field
+    private var content: String = ""
+        get() = delegate.getNote().content ?: field
 
-    private var content: String? = null
     private var tags: String? = null
-
-    private var isContentChanged = false
 
     override val layoutResId: Int
         get() = R.layout.fragment_note_view
@@ -59,99 +51,38 @@ class NoteViewFragment : BaseFragment() {
         setHasOptionsMenu(true)
     }
 
-    override fun onBackPressed() {
-        if (!isPreview && isContentChanged) {
-            val argsNonNull = arguments ?: return
-            if (argsNonNull.containsKey(Constants.EXTRA_REQUEST_CODE)) {
-                val intent = Intent()
-                intent.putExtra(Constants.EXTRA_MODEL, note as Serializable)
-                if (argsNonNull.containsKey(Constants.EXTRA_POSITION)) {
-                    intent.putExtra(Constants.EXTRA_POSITION, argsNonNull.getInt(Constants.EXTRA_POSITION, 0))
-                }
-                activity?.setResult(Activity.RESULT_OK, intent)
-            }
-        }
-        super.onBackPressed()
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        when (requestCode) {
-            REQUEST_FOR_EDIT -> if (resultCode == Activity.RESULT_OK) {
-                isContentChanged = true
-                note = data?.getSerializableExtra(Constants.EXTRA_MODEL) as? Note
-                tags = note?.tagsName
-                refreshLayout()
-            }
-        }
-    }
-
+    // TODO: refresh on NoteEdit page edited
     private fun refreshLayout() {
         val actionBar = (activity as? AppCompatActivity)?.supportActionBar
-        actionBar?.title = noteTitle
+        actionBar?.title = title
 
-        mdView.parseMarkdown(noteContent)
+        mdView.parseMarkdown(content)
     }
 
     //endregion
     //region init
 
     override fun afterViewCreated(savedInstanceState: Bundle?) {
-        if (!handleArguments()) {
-            activity?.finish()
-            return
-        }
-
-        configToolbar()
-
         configViews()
-    }
 
-    private fun handleArguments(): Boolean {
-        val argsNonNull = arguments ?: return false
-
-        note = argsNonNull.getSerializable(Constants.EXTRA_MODEL) as? Note
-        if (note == null) {
-            ToastUtils.makeToast(R.string.text_no_such_note)
-            return false
-        }
-
-        val categories = CategoryStore.getInstance(context).getCategories(note)
-        tags = CategoryViewModel.getTagsName(categories)
-
-        isPreview = argsNonNull.getBoolean(EXTRA_IS_PREVIEW)
-        if (!isPreview) {
-            val noteNonNull = note!!
-            val noteFile = noteNonNull.file
-            LogUtils.d("noteFile: $noteFile")
-            if (noteFile == null) {
-                ToastUtils.makeToast(R.string.note_failed_to_get_note_content)
-                return false
-            }
-            try {
-                content = FileUtils.readFileToString(noteFile, "utf-8")
-            } catch (e: IOException) {
-                LogUtils.d("IOException: $e")
-                ToastUtils.makeToast(R.string.note_failed_to_read_file)
-            }
-            noteNonNull.content = content
-        }
-
-        return true
-    }
-
-    private fun configToolbar() {
-        val actionBarNonNull = (activity as? AppCompatActivity)?.supportActionBar ?: return
-        actionBarNonNull.title = noteTitle
+        initData()
     }
 
     private fun configViews() {
+        noteTitle.text = title
+        noteTitle.setTextColor(primaryColor())
+
+        notebook.isEnabled = false
+        delegate.getNote().notebook?.let {
+            notebookName.text = it.title
+        }
+
         mdView.fastScrollDelegate.setThumbDrawable(PalmApp.getDrawableCompact(
                 if (isDarkTheme) R.drawable.fast_scroll_bar_dark else R.drawable.fast_scroll_bar_light))
         mdView.fastScrollDelegate.setThumbSize(16, 40)
         mdView.fastScrollDelegate.setThumbDynamicHeight(false)
         mdView.setHtmlResource(isDarkTheme)
-        mdView.parseMarkdown(noteContent)
+        mdView.parseMarkdown(content)
         mdView.setOnImageClickedListener { url, urls ->
             val attachments = ArrayList<Attachment>()
             var clickedAttachment: Attachment? = null
@@ -160,7 +91,7 @@ class NoteViewFragment : BaseFragment() {
                 attachments.add(attachment)
                 if (item == url) clickedAttachment = attachment
             }
-            AttachmentHelper.resolveClickEvent(context, clickedAttachment, attachments, noteTitle)
+            AttachmentHelper.resolveClickEvent(context, clickedAttachment, attachments, title)
         }
         mdView.setOnAttachmentClickedListener { url ->
             if (!url.isNullOrBlank()) {
@@ -208,15 +139,19 @@ class NoteViewFragment : BaseFragment() {
         }
     }
 
+    private fun initData() {
+        val note = delegate.getNote()
+        val categories = CategoryStore.getInstance(context).getCategories(note)
+        tags = CategoryViewModel.getTagsName(categories)
+    }
+
     //endregion
     //region menu
 
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
-        if (!isPreview) {
-            inflater?.inflate(R.menu.note_view_menu, menu)
-            menu?.findItem(R.id.action_find)?.let {
-                initSearchView(it.actionView as SearchView)
-            }
+        inflater?.inflate(R.menu.note_view_menu, menu)
+        menu?.findItem(R.id.action_find)?.let {
+            initSearchView(it.actionView as SearchView)
         }
         super.onCreateOptionsMenu(menu, inflater)
     }
@@ -243,15 +178,10 @@ class NoteViewFragment : BaseFragment() {
             android.R.id.home -> {
                 onBackPressed()
             }
-            R.id.action_edit -> {
-                note?.let {
-                    NoteActivity.editNote(this, it, REQUEST_FOR_EDIT)
-                }
-            }
             R.id.action_share -> share()
             R.id.action_labs -> ModelHelper.showLabels(context, tags)
             R.id.action_copy_link -> {
-                note?.let {
+                delegate.getNote().let {
                     ModelHelper.copyLink(contextNonNull, it)
                 }
             }
@@ -260,8 +190,7 @@ class NoteViewFragment : BaseFragment() {
                 ToastUtils.makeToast(R.string.content_was_copied_to_clipboard)
             }
             R.id.action_statistic -> {
-                note?.let {
-                    it.content = content
+                delegate.getNote().let {
                     ModelHelper.showStatistic(contextNonNull, it)
                 }
             }
@@ -282,7 +211,7 @@ class NoteViewFragment : BaseFragment() {
 
                     override fun onSheetItemSelected(bottomSheet: BottomSheet, menuItem: MenuItem, o: Any?) {
                         when (menuItem.itemId) {
-                            R.id.action_share_text -> ModelHelper.share(context, noteTitle, content, ArrayList())
+                            R.id.action_share_text -> ModelHelper.share(context, title, content, ArrayList())
                             R.id.action_share_html -> outHtml(true)
                             R.id.action_share_image -> createWebCapture(mdView, FileHelper.OnSavedToGalleryListener {
                                 ModelHelper.shareFile(context, it, Constants.MIME_TYPE_IMAGE)
@@ -312,7 +241,7 @@ class NoteViewFragment : BaseFragment() {
                             R.id.capture -> createWebCapture(mdView, FileHelper.OnSavedToGalleryListener {
                                 ToastUtils.makeToast(String.format(getString(R.string.text_file_saved_to), it.path))
                             })
-                            R.id.print -> PrintUtils.print(context, mdView, note)
+                            R.id.print -> PrintUtils.print(context, mdView, delegate.getNote())
                             R.id.export_text -> outText(false)
                         }
                     }
@@ -345,7 +274,7 @@ class NoteViewFragment : BaseFragment() {
         try {
             val exDir = FileHelper.getTextExportDir()
             val outFile = File(exDir, FileHelper.getDefaultFileName(Constants.EXPORTED_TEXT_EXTENSION))
-            FileUtils.writeStringToFile(outFile, noteContent, "utf-8")
+            FileUtils.writeStringToFile(outFile, content, "utf-8")
             if (isShare) {
                 // Share, do share option
                 ModelHelper.shareFile(context, outFile, Constants.MIME_TYPE_FILES)
@@ -386,20 +315,10 @@ class NoteViewFragment : BaseFragment() {
         }
     }
 
-    companion object {
+    lateinit var delegate: NoteViewFragmentDelegate
 
-        private const val REQUEST_FOR_EDIT = 0x01
+    interface NoteViewFragmentDelegate {
 
-        fun newInstance(note: Note, isPreview: Boolean, requestCode: Int?): NoteViewFragment {
-            val args = Bundle()
-            args.putSerializable(Constants.EXTRA_MODEL, note)
-            requestCode?.let {
-                args.putInt(Constants.EXTRA_REQUEST_CODE, it)
-            }
-            args.putBoolean(Constants.EXTRA_IS_PREVIEW, isPreview)
-            val fragment = NoteViewFragment()
-            fragment.arguments = args
-            return fragment
-        }
+        fun getNote(): Note
     }
 }

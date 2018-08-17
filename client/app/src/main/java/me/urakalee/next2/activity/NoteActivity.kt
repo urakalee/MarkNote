@@ -16,7 +16,6 @@ import kotlinx.android.synthetic.main.activity_note.*
 import me.shouheng.notepal.R
 import me.shouheng.notepal.config.Constants
 import me.shouheng.notepal.fragment.base.BaseModelFragment
-import me.shouheng.notepal.util.FragmentHelper
 import me.shouheng.notepal.util.LogUtils
 import me.shouheng.notepal.util.ToastUtils
 import me.urakalee.next2.base.activity.CommonActivity
@@ -28,6 +27,8 @@ import me.urakalee.ranger.extension.getFromBundle
 import me.urakalee.ranger.extension.hasExtraInBundle
 import me.urakalee.ranger.extension.makeFragmentTag
 import me.urakalee.ranger.extension.putToBundle
+import org.apache.commons.io.FileUtils
+import java.io.IOException
 
 /**
  * @author Uraka.Lee
@@ -141,44 +142,25 @@ class NoteActivity : CommonActivity(),
     }
 
     private fun handleIntent(): Boolean {
-        val fragment = intent.getStringExtra(Constants.EXTRA_FRAGMENT)
-        if (fragment == null) {
-            ToastUtils.makeToast(R.string.content_failed_to_parse_intent)
-            LogUtils.d("Failed to handle intent : $intent")
-            return false
-        }
-        return when (fragment) {
-            Constants.VALUE_FRAGMENT_NOTE -> {
-                handleNoteIntent()
-            }
-            else -> {
-                ToastUtils.makeToast(R.string.content_failed_to_parse_intent)
-                false
-            }
-        }
-    }
-
-    private fun handleNoteIntent(): Boolean {
         if (intent.hasExtraInBundle(Constants.EXTRA_MODEL)) {
             note = note ?: intent.getFromBundle(Constants.EXTRA_MODEL)
             note?.let {
+                if (!it.isNewNote && it.content == null) {
+                    val noteFile = it.file
+                    try {
+                        it.content = FileUtils.readFileToString(noteFile, "utf-8")
+                    } catch (e: IOException) {
+                        LogUtils.d("IOException: $e")
+                        ToastUtils.makeToast(R.string.note_failed_to_read_file)
+                        return false
+                    }
+                }
                 return true
             }
         }
         ToastUtils.makeToast(R.string.content_failed_to_parse_intent)
         LogUtils.d("Failed to resolve note intent : $intent")
         return false
-    }
-
-    private fun toNoteFragment(note: Note, requestCode: Int?, isEdit: Boolean) {
-        val action = if (intent.action.isNullOrBlank()) null else intent.action
-        var fragment: Fragment?
-        if (isEdit) {
-        } else {
-            val isPreview = intent.getBooleanExtra(Constants.EXTRA_IS_PREVIEW, false)
-            fragment = NoteViewFragment.newInstance(note, isPreview, requestCode)
-            FragmentHelper.replace(this, fragment, R.id.fragment_container)
-        }
     }
 
     private fun configToolbar() {
@@ -196,6 +178,7 @@ class NoteActivity : CommonActivity(),
 
     private var pagerAdapter: FragmentPagerAdapter? = null
     private var noteEditFragment: NoteEditFragment? = null
+    private var noteViewFragment: NoteViewFragment? = null
 
     private fun configPager() {
         val isEdit = (intent.getStringExtra(Constants.EXTRA_START_TYPE) == Constants.VALUE_START_EDIT)
@@ -205,7 +188,30 @@ class NoteActivity : CommonActivity(),
         val noteViewFragmentIndex = 1
         val noteViewFragmentTag = makeFragmentTag(pager.id, noteViewFragmentIndex)
 
-        var fragment = supportFragmentManager.findFragmentByTag(noteEditFragmentTag)
+        getOrCreateNoteEditFragment(noteEditFragmentTag)
+        getOrCreateNoteViewFragment(noteViewFragmentTag)
+
+        val pageMap = listOf(
+                noteEditFragment!!,
+                noteViewFragment!!
+        )
+        pagerAdapter = object : FragmentPagerAdapter(supportFragmentManager) {
+
+            override fun getItem(position: Int): Fragment {
+                return pageMap[position]
+            }
+
+            override fun getCount(): Int {
+                return pageMap.size
+            }
+        }
+        pager.adapter = pagerAdapter
+    }
+
+    //region fragments
+
+    private fun getOrCreateNoteEditFragment(tag: String) {
+        var fragment = supportFragmentManager.findFragmentByTag(tag)
         if (fragment == null || fragment !is NoteEditFragment) {
             fragment = NoteEditFragment()
         } else {
@@ -233,28 +239,24 @@ class NoteActivity : CommonActivity(),
             }
         }
         noteEditFragment = fragment
-
-        var noteViewFragment = supportFragmentManager.findFragmentByTag(noteViewFragmentTag)
-        if (noteViewFragment == null) {
-            noteViewFragment = Fragment()
-        }
-
-        val pageMap = listOf(
-                noteEditFragment!!,
-                noteViewFragment
-        )
-        pagerAdapter = object : FragmentPagerAdapter(supportFragmentManager) {
-
-            override fun getItem(position: Int): Fragment {
-                return pageMap[position]
-            }
-
-            override fun getCount(): Int {
-                return pageMap.size
-            }
-        }
-        pager.adapter = pagerAdapter
     }
+
+    private fun getOrCreateNoteViewFragment(tag: String) {
+        var fragment = supportFragmentManager.findFragmentByTag(tag)
+        if (fragment == null || fragment !is NoteViewFragment) {
+            fragment = NoteViewFragment()
+        }
+        fragment.delegate = object : NoteViewFragment.NoteViewFragmentDelegate {
+
+            override fun getNote(): Note {
+                return note!!
+            }
+        }
+        noteViewFragment = fragment
+
+    }
+
+    //endregion
 
     private fun getCurrentFragment(): Fragment? {
         return pagerAdapter?.getItem(pager.currentItem)
@@ -286,7 +288,6 @@ class NoteActivity : CommonActivity(),
     companion object {
 
         private const val BUNDLE_KEY_NOTE = "key_bundle_note"
-        private const val TAG_NOTE_FRAGMENT = "note_fragment_tag"
 
         // region edit and view note
 
@@ -313,7 +314,6 @@ class NoteActivity : CommonActivity(),
             intent.putToBundle(Constants.EXTRA_MODEL, note)
             intent.putExtra(Constants.EXTRA_REQUEST_CODE, requestCode)
             intent.putExtra(Constants.EXTRA_START_TYPE, Constants.VALUE_START_VIEW)
-            intent.putExtra(Constants.EXTRA_FRAGMENT, Constants.VALUE_FRAGMENT_NOTE)
             return intent
         }
 
@@ -322,7 +322,6 @@ class NoteActivity : CommonActivity(),
             intent.putToBundle(Constants.EXTRA_MODEL, note)
             intent.putExtra(Constants.EXTRA_REQUEST_CODE, requestCode)
             intent.putExtra(Constants.EXTRA_START_TYPE, Constants.VALUE_START_EDIT)
-            intent.putExtra(Constants.EXTRA_FRAGMENT, Constants.VALUE_FRAGMENT_NOTE)
             return intent
         }
 
@@ -332,7 +331,6 @@ class NoteActivity : CommonActivity(),
             val intent = Intent(activity, NoteActivity::class.java)
             intent.action = action
             intent.putToBundle(Constants.EXTRA_MODEL, note)
-            intent.putExtra(Constants.EXTRA_FRAGMENT, Constants.VALUE_FRAGMENT_NOTE)
             intent.putExtra(Constants.EXTRA_REQUEST_CODE, requestCode)
             intent.putExtra(Constants.EXTRA_START_TYPE, Constants.VALUE_START_EDIT)
             activity.startActivity(intent)

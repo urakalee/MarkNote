@@ -14,10 +14,8 @@ import me.shouheng.notepal.config.Constants
 import me.shouheng.notepal.databinding.ActivityContentBinding
 import me.shouheng.notepal.fragment.base.BaseModelFragment
 import me.shouheng.notepal.fragment.base.CommonFragment
-import me.shouheng.notepal.util.FragmentHelper
 import me.shouheng.notepal.util.LogUtils
 import me.shouheng.notepal.util.ToastUtils
-import me.urakalee.next2.fragment.NoteViewFragment
 import me.urakalee.next2.model.Note
 import me.urakalee.ranger.extension.getFromBundle
 import me.urakalee.ranger.extension.hasExtraInBundle
@@ -108,9 +106,6 @@ class ContentActivity : CommonActivity<ActivityContentBinding>(),
         var fragment: Fragment?
         if (isEdit) {
         } else {
-            val isPreview = intent.getBooleanExtra(Constants.EXTRA_IS_PREVIEW, false)
-            fragment = NoteViewFragment.newInstance(note, isPreview, requestCode)
-            FragmentHelper.replace(this, fragment, R.id.fragment_container)
         }
     }
 

@@ -67,8 +67,8 @@ import me.shouheng.notepal.viewmodel.CategoryViewModel;
 import me.shouheng.notepal.widget.tools.CustomRecyclerScrollViewListener;
 import me.urakalee.next2.activity.ContentActivity;
 import me.urakalee.next2.activity.NoteActivity;
-import me.urakalee.next2.notelist.NotesFragment;
 import me.urakalee.next2.model.Note;
+import me.urakalee.next2.notelist.NotesFragment;
 import me.urakalee.next2.viewmodel.NoteViewModel;
 import me.urakalee.next2.viewmodel.NotebookViewModel;
 
@@ -588,7 +588,7 @@ public class MainActivity extends CommonActivity<ActivityMainBinding> implements
 
     private void startAddFile() {
         PermissionUtils.checkStoragePermission(this, () ->
-                ContentActivity.Companion.resolveAction(
+                NoteActivity.Companion.resolveAction(
                         MainActivity.this,
                         getNewNote(),
                         Constants.ACTION_ADD_FILES,
@@ -597,7 +597,7 @@ public class MainActivity extends CommonActivity<ActivityMainBinding> implements
 
     private void startAddPhoto() {
         PermissionUtils.checkStoragePermission(this, () ->
-                ContentActivity.Companion.resolveAction(
+                NoteActivity.Companion.resolveAction(
                         MainActivity.this,
                         getNewNote(),
                         Constants.ACTION_TAKE_PHOTO,
@@ -606,7 +606,7 @@ public class MainActivity extends CommonActivity<ActivityMainBinding> implements
 
     private void startAddSketch() {
         PermissionUtils.checkStoragePermission(this, () ->
-                ContentActivity.Companion.resolveAction(
+                NoteActivity.Companion.resolveAction(
                         MainActivity.this,
                         getNewNote(),
                         Constants.ACTION_ADD_SKETCH,
