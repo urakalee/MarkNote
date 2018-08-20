@@ -14,7 +14,10 @@ import kotlinx.android.synthetic.main.note_fragment_next.*
 import me.shouheng.notepal.R
 import me.urakalee.next2.base.fragment.BaseModelFragment
 import me.urakalee.next2.model.Note
+import me.urakalee.ranger.extension.isInvisible
+import me.urakalee.ranger.extension.removeRange
 import java.util.*
+import kotlin.math.min
 
 /**
  * @author Uraka.Lee
@@ -31,20 +34,48 @@ class NoteNextFragment : BaseModelFragment<Note>() {
         val helper = ItemTouchHelper(touchCallback)
         helper.attachToRecyclerView(listView)
 
-        val lines = delegate.getNote().content?.lines() ?: listOf()
-        adapter = NextAdapter(lines)
+        adapter = NextAdapter()
         adapter.delegate = adapterDelegate
+        val lines = delegate.getNote().content?.lines() ?: listOf()
+        adapter.setData(Section.lines2Sections(lines))
 
         listView.adapter = adapter
         adapter.notifyDataSetChanged()
     }
 
     fun refreshData() {
-        val lines = delegate.getNote().content?.lines() ?: listOf()
-        adapter.lines = lines
-        adapter.notifyDataSetChanged()
+        // 避免在 next 模式下操作之后, 回到 next 模式时, 导致多余的 setData
+        if (Section.joinSections(adapter.sections) != delegate.getNote().content) {
+            val lines = delegate.getNote().content?.lines() ?: listOf()
+            adapter.setData(Section.lines2Sections(lines))
+            adapter.notifyDataSetChanged()
+        }
     }
 
+    //region menu
+
+    private fun popNextItemMenu(view: View, position: Int) {
+        val contextNonNull = context ?: return
+        val popupMenu = PopupMenu(contextNonNull, view)
+        popupMenu.inflate(R.menu.note_menu_next_item)
+        popupMenu.setOnMenuItemClickListener { item ->
+            when (item.itemId) {
+                R.id.action_fold -> {
+                    val section = adapter.sections[position]
+                    if (section.isFolded()) {
+                        Section.expand(adapter.sections, position)
+                        adapter.notifyDataSetChanged()
+                    } else if (Section.fold(adapter.sections, position)) {
+                        adapter.notifyDataSetChanged()
+                    }
+                }
+            }
+            true
+        }
+        popupMenu.show()
+    }
+
+    //endregion
     //region delegate
 
     lateinit var delegate: NoteEditFragment.NoteEditFragmentDelegate
@@ -56,29 +87,17 @@ class NoteNextFragment : BaseModelFragment<Note>() {
         }
 
         override fun onItemMoved() {
-            delegate.getNote().content = adapter.lines.joinToString("\n")
+            delegate.getNote().content = Section.joinSections(adapter.sections)
             delegate.setContentChanged(true)
         }
-    }
-
-    private fun popNextItemMenu(view: View, position: Int) {
-        val contextNonNull = context ?: return
-        val popupMenu = PopupMenu(contextNonNull, view)
-        popupMenu.inflate(R.menu.note_menu_next_item)
-        popupMenu.setOnMenuItemClickListener { item ->
-            when (item.itemId) {
-                R.id.action_fold -> {
-                }
-            }
-            true
-        }
-        popupMenu.show()
     }
 
     //endregion
     //region adapter
 
-    private class NextAdapter(var lines: List<String>) : RecyclerView.Adapter<NextViewHolder>() {
+    private class NextAdapter : RecyclerView.Adapter<NextViewHolder>() {
+
+        val sections: MutableList<Section> = mutableListOf()
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NextViewHolder {
             val root = LayoutInflater.from(parent.context).inflate(R.layout.note_item_next, null, false)
@@ -89,18 +108,23 @@ class NoteNextFragment : BaseModelFragment<Note>() {
         }
 
         override fun getItemCount(): Int {
-            return lines.size
+            return sections.size
         }
 
         override fun onBindViewHolder(holder: NextViewHolder, position: Int) {
             holder.delegate = viewHolderDelegate
 
-            val line = lines[position]
-            holder.bind(position, line)
+            val section = sections[position]
+            holder.bind(position, section)
+        }
+
+        fun setData(sections: List<Section>) {
+            this.sections.clear()
+            this.sections.addAll(sections)
         }
 
         fun onMove(fromPosition: Int, toPosition: Int) {
-            Collections.swap(lines, fromPosition, toPosition)
+            Collections.swap(sections, fromPosition, toPosition)
             //通知数据移动
             notifyItemMoved(fromPosition, toPosition)
             delegate.onItemMoved()
@@ -125,15 +149,19 @@ class NoteNextFragment : BaseModelFragment<Note>() {
 
     private class NextViewHolder(val root: View) : RecyclerView.ViewHolder(root) {
 
+        private var folded: View = root.findViewById(R.id.folded)
         private var lineView: TextView = root.findViewById(R.id.line)
 
-        fun bind(position: Int, line: String) {
+        fun bind(position: Int, section: Section) {
             root.setOnClickListener {
                 delegate.onClicked(it, position)
             }
 
-            lineView.text = line
-            val blankLine = line.isBlank()
+            folded.isInvisible = !section.isFolded()
+            lineView.text = section.toString()
+
+            // decorate blank-line
+            val blankLine = section.isBlank()
             root.setBackgroundResource(
                     if (blankLine) R.color.note_next_bg_empty else android.R.color.transparent)
             lineView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, if (blankLine) 0f else 16f)
@@ -186,4 +214,71 @@ class NoteNextFragment : BaseModelFragment<Note>() {
     }
 
     //endregion
+    //region Section
+
+    /**
+     * section 是一个嵌套的数据结构
+     */
+    private class Section(var line: String?) {
+
+        var sections: MutableList<Section> = mutableListOf()
+
+        constructor(sections: List<Section>) : this(null) {
+            this.sections.addAll(sections)
+        }
+
+        fun isLine(): Boolean = line != null && sections.isEmpty()
+
+        fun isFolded(): Boolean = !isLine()
+
+        fun isBlank(): Boolean = isLine() && line!!.isBlank()
+
+        override fun toString(): String {
+            return when {
+                line != null -> line!!
+                sections.isNotEmpty() -> sections[0].toString()
+                else -> throw IllegalArgumentException("Invalid section")
+            }
+        }
+
+        companion object {
+
+            fun lines2Sections(lines: List<String>) = lines.map { Section(it) }
+
+            fun joinSections(sections: List<Section>): String {
+                return sections.joinToString("\n", transform = {
+                    if (it.isLine()) it.toString() else joinSections(it.sections)
+                })
+            }
+
+            /**
+             * @return true if folded
+             */
+            fun fold(sections: MutableList<Section>, index: Int): Boolean {
+                val section = sections[index]
+                if (section.isFolded()) return false
+                // 找到和 section 同级别的 section, 折叠
+                val nextSectionStartIndex = min(index + 3, sections.size)
+                if (nextSectionStartIndex == index + 1) return false
+                // 将折叠的元素新建 section, 放到 sections 里, index 对应的位置
+                val folded = sections.removeRange(index..nextSectionStartIndex)
+                sections.add(index, Section(folded))
+                return true
+            }
+
+            /**
+             * @return true if expanded
+             */
+            fun expand(sections: MutableList<Section>, index: Int): Boolean {
+                val section = sections[index]
+                if (!section.isFolded()) return false
+                sections.removeAt(index)
+                sections.addAll(index, section.sections)
+                return true
+            }
+        }
+    }
+
+    //endregion
 }
+
