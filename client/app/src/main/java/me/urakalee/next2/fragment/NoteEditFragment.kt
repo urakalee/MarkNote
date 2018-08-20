@@ -377,30 +377,49 @@ class NoteEditFragment : BaseModelFragment<Note>() {
     //endregion
     //region content
 
-    fun saveOrUpdateData(handler: ((Boolean) -> Unit)?) {
-        beforeSaveOrUpdate {
-            if (it) {
-                doPersist(handler)
+    /**
+     * HACK: 避免在 next 模式下保存之后, 回到 edit 模式时, 导致多余的 contentChange
+     */
+    private var triggeredByRefresh = false
+
+    fun refreshData() {
+        if (noteContent.text.toString() != delegate.getNote().content) {
+            triggeredByRefresh = true
+            noteContent.setText(delegate.getNote().content)
+        }
+    }
+
+    /**
+     * @param inEditNote: 使用 NoteEditFragment 里 edit-text 中的内容; 如果在其他 fragment 里, 应该直接用 note 中的内容
+     */
+    fun saveOrUpdateData(inEditNote: Boolean = true, afterPersist: ((Boolean) -> Unit)?) {
+        beforeSaveOrUpdate(inEditNote) { writeAttachmentSuccess ->
+            if (writeAttachmentSuccess) {
+                doPersist(afterPersist)
             }
         }
     }
 
-    private fun beforeSaveOrUpdate(handler: ((Boolean) -> Unit)?) {
+    private fun beforeSaveOrUpdate(inEditNote: Boolean, afterWriteAttachment: ((Boolean) -> Unit)?) {
         val note = delegate.getNote()
 
-        val noteContent = noteContent.text.toString()
-        note.content = noteContent
+        if (inEditNote) {
+            // Get note title from title editor or note content
+            val noteContent = noteContent.text.toString()
+            note.content = noteContent
+            val inputTitle = noteTitle.text.toString()
+            note.title = ModelHelper.getNoteTitle(inputTitle, noteContent)
 
-        // Get note title from title editor or note content
-        val inputTitle = noteTitle.text.toString()
-        note.title = ModelHelper.getNoteTitle(inputTitle, noteContent)
+            // Get preview image from note content
+            note.previewImage = ModelHelper.getNotePreviewImage(noteContent)
+            note.previewContent = ModelHelper.getNotePreview(noteContent)
+        } else {
+            // Get preview image from note content
+            note.previewImage = ModelHelper.getNotePreviewImage(note.content)
+            note.previewContent = ModelHelper.getNotePreview(note.content)
+        }
 
-        // Get preview image from note content
-        note.previewImage = ModelHelper.getNotePreviewImage(noteContent)
-
-        note.previewContent = ModelHelper.getNotePreview(noteContent)
-
-        attachmentViewModel.writeNoteContent(note)
+        attachmentViewModel.writeAttachment(note)
                 ?.observe(this, Observer { attachmentResource ->
                     if (attachmentResource == null) {
                         ToastUtils.makeToast(R.string.text_error_when_save)
@@ -411,11 +430,11 @@ class NoteEditFragment : BaseModelFragment<Note>() {
                             attachmentResource.data?.code?.let {
                                 note.attachmentCode = it
                             }
-                            handler?.invoke(true)
+                            afterWriteAttachment?.invoke(true)
                         }
                         LoadStatus.FAILED -> {
                             ToastUtils.makeToast(R.string.text_error_when_save)
-                            handler?.invoke(false)
+                            afterWriteAttachment?.invoke(false)
                         }
                         else -> {
                             // pass
@@ -453,8 +472,6 @@ class NoteEditFragment : BaseModelFragment<Note>() {
     }
 
     private fun afterSaveOrUpdate() {
-        delegate.getNote().content = noteContent.text.toString()
-
         val action = delegate.getAction() ?: return
         if (action == Constants.ACTION_ADD_SKETCH
                 || action == Constants.ACTION_TAKE_PHOTO
@@ -506,7 +523,10 @@ class NoteEditFragment : BaseModelFragment<Note>() {
                 noteContent.tag = null
             } else {
                 delegate.getNote().content = s.toString()
-                delegate.setContentChanged(true)
+                if (!triggeredByRefresh) {
+                    delegate.setContentChanged(true)
+                    triggeredByRefresh = false
+                }
                 updateCharsInfo()
             }
         }
@@ -519,8 +539,6 @@ class NoteEditFragment : BaseModelFragment<Note>() {
         fun getNote(): Note
 
         fun getAction(): String?
-
-        fun isContentChanged(): Boolean
 
         fun setContentChanged(contentChanged: Boolean)
     }

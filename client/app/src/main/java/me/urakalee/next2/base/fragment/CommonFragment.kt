@@ -42,7 +42,6 @@ abstract class CommonFragment : Fragment() {
     protected abstract fun afterViewCreated(savedInstanceState: Bundle?)
 
     open fun onBackPressed() {
-        val activity = activity
         activity?.finish()
     }
 
@@ -50,8 +49,8 @@ abstract class CommonFragment : Fragment() {
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     protected fun setStatusBarColor(color: Int) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && activity != null) {
-            activity!!.window.statusBarColor = color
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            activity?.window?.statusBarColor = color
         }
     }
 

@@ -54,7 +54,7 @@ public class AttachmentViewModel extends BaseViewModel<Attachment> {
         return result;
     }
 
-    public LiveData<Resource<Attachment>> writeNoteContent(Note note) {
+    public LiveData<Resource<Attachment>> writeAttachment(Note note) {
         MutableLiveData<Resource<Attachment>> result = new MutableLiveData<>();
         new ResourceAsyncTask<>(result, () -> {
             Attachment atFile = AttachmentsStore.getInstance(PalmApp.getContext()).get(note.getAttachmentCode());

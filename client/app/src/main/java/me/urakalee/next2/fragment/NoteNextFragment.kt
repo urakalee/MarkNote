@@ -31,19 +31,34 @@ class NoteNextFragment : BaseModelFragment<Note>() {
 
         val lines = delegate.getNote().content?.lines() ?: listOf()
         adapter = NextAdapter(lines)
+        adapter.delegate = adapterDelegate
 
         listView.adapter = adapter
         adapter.notifyDataSetChanged()
     }
 
-    lateinit var delegate: NoteNextFragmentDelegate
-
-    interface NoteNextFragmentDelegate {
-
-        fun getNote(): Note
+    fun refreshData() {
+        val lines = delegate.getNote().content?.lines() ?: listOf()
+        adapter.lines = lines
+        adapter.notifyDataSetChanged()
     }
 
-    private class NextAdapter(val lines: List<String>) : RecyclerView.Adapter<NextViewHolder>() {
+    //region delegate
+
+    lateinit var delegate: NoteEditFragment.NoteEditFragmentDelegate
+
+    private val adapterDelegate = object : NextAdapter.NextAdapterDelegate {
+
+        override fun onMove() {
+            delegate.getNote().content = adapter.lines.joinToString("\n")
+            delegate.setContentChanged(true)
+        }
+    }
+
+    //endregion
+    //region adapter
+
+    private class NextAdapter(var lines: List<String>) : RecyclerView.Adapter<NextViewHolder>() {
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NextViewHolder {
             val root = LayoutInflater.from(parent.context).inflate(R.layout.note_item_next, null, false)
@@ -66,6 +81,14 @@ class NoteNextFragment : BaseModelFragment<Note>() {
             Collections.swap(lines, fromPosition, toPosition)
             //通知数据移动
             notifyItemMoved(fromPosition, toPosition)
+            delegate.onMove()
+        }
+
+        lateinit var delegate: NextAdapterDelegate
+
+        interface NextAdapterDelegate {
+
+            fun onMove()
         }
     }
 
@@ -117,4 +140,6 @@ class NoteNextFragment : BaseModelFragment<Note>() {
             adapter.notifyDataSetChanged()
         }
     }
+
+    //endregion
 }

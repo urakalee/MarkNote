@@ -173,9 +173,6 @@ class NoteViewFragment : BaseFragment() {
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         val contextNonNull = context ?: return super.onOptionsItemSelected(item)
         when (item?.itemId) {
-            android.R.id.home -> {
-                onBackPressed()
-            }
             R.id.action_share -> share()
             R.id.action_labs -> ModelHelper.showLabels(context, tags)
             R.id.action_copy_link -> {

@@ -59,6 +59,8 @@ class NoteActivity : CommonActivity(),
      * Have we ever saved or updated the content.
      */
     private var savedOrUpdated: Boolean = false
+    private val noteEdited: Boolean
+        get() = contentChanged || savedOrUpdated
 
 
     override val layoutResId: Int
@@ -79,7 +81,7 @@ class NoteActivity : CommonActivity(),
                     .positiveText(R.string.text_save)
                     .negativeText(R.string.text_give_up)
                     .onPositive { _, _ ->
-                        noteEditFragment?.saveOrUpdateData {
+                        noteEditFragment?.saveOrUpdateData(getCurrentFragment() == noteEditFragment) {
                             setResult()
                         }
                     }
@@ -211,10 +213,26 @@ class NoteActivity : CommonActivity(),
 
             override fun onPageSelected(position: Int) {
                 when (position) {
-                    noteViewFragmentIndex -> {
+                    noteEditFragmentIndex -> {
                         if (noteEditFragment?.isAdded == true) {
+                            if (noteEdited) {
+                                noteEditFragment?.refreshData()
+                            }
+                        }
+                    }
+                    noteViewFragmentIndex -> {
+                        if (noteViewFragment?.isAdded == true) {
                             hideSoftKeyboard(pager)
-                            noteViewFragment?.refreshData()
+                            if (noteEdited) {
+                                noteViewFragment?.refreshData()
+                            }
+                        }
+                    }
+                    noteNextFragmentIndex -> {
+                        if (noteNextFragment?.isAdded == true) {
+                            if (noteEdited) {
+                                noteNextFragment?.refreshData()
+                            }
                         }
                     }
                 }
@@ -232,27 +250,7 @@ class NoteActivity : CommonActivity(),
         } else {
             fragment.arguments?.putBoolean(NoteEditFragment.KEY_ARGS_RESTORE, true)
         }
-        fragment.delegate = object : NoteEditFragment.NoteEditFragmentDelegate {
-
-            override fun getNote(): Note {
-                return note!!
-            }
-
-            override fun getAction(): String? {
-                return if (intent.action.isNullOrBlank()) null else intent.action
-            }
-
-            override fun isContentChanged(): Boolean {
-                return this@NoteActivity.contentChanged
-            }
-
-            override fun setContentChanged(contentChanged: Boolean) {
-                this@NoteActivity.contentChanged = contentChanged
-                if (!contentChanged) {
-                    savedOrUpdated = true
-                }
-            }
-        }
+        fragment.delegate = editDelegate
         noteEditFragment = fragment
     }
 
@@ -268,7 +266,6 @@ class NoteActivity : CommonActivity(),
             }
         }
         noteViewFragment = fragment
-
     }
 
     private fun getOrCreateNoteNextFragment(tag: String) {
@@ -276,27 +273,22 @@ class NoteActivity : CommonActivity(),
         if (fragment == null || fragment !is NoteNextFragment) {
             fragment = NoteNextFragment()
         }
-        fragment.delegate = object : NoteNextFragment.NoteNextFragmentDelegate {
-
-            override fun getNote(): Note {
-                return note!!
-            }
-        }
+        fragment.delegate = editDelegate
         noteNextFragment = fragment
     }
-
-    //endregion
 
     private fun getCurrentFragment(): Fragment? {
         return pagerAdapter?.getItem(pager.currentItem)
     }
 
+    //endregion
     //region menu
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when (item?.itemId) {
             android.R.id.home -> {
-                if (contentChanged) noteEditFragment?.saveOrUpdateData(null)
+                if (contentChanged) noteEditFragment?.saveOrUpdateData(
+                        getCurrentFragment() == noteEditFragment, null)
                 else setResult()
             }
         }
@@ -313,6 +305,28 @@ class NoteActivity : CommonActivity(),
     }
 
     override fun onColorChooserDismissed(dialog: ColorChooserDialog) {}
+
+    //region delegate
+
+    private val editDelegate = object : NoteEditFragment.NoteEditFragmentDelegate {
+
+        override fun getNote(): Note {
+            return note!!
+        }
+
+        override fun getAction(): String? {
+            return if (intent.action.isNullOrBlank()) null else intent.action
+        }
+
+        override fun setContentChanged(contentChanged: Boolean) {
+            this@NoteActivity.contentChanged = contentChanged
+            if (!contentChanged) {
+                savedOrUpdated = true
+            }
+        }
+    }
+
+    //endregion
 
     companion object {
 
