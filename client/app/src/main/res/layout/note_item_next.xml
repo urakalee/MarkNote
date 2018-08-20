@@ -4,7 +4,7 @@
     android:layout_height="wrap_content"
     android:orientation="horizontal">
 
-    <TextView
+    <me.shouheng.notepal.widget.themed.SupportTextView
         android:id="@+id/line"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

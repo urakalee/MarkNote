@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.helper.ItemTouchHelper
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -98,8 +99,10 @@ class NoteNextFragment : BaseModelFragment<Note>() {
 
         fun bind(line: String) {
             lineView.text = line
+            val blankLine = line.isBlank()
             root.setBackgroundResource(
-                    if (line.isBlank()) R.color.note_next_bg_empty else android.R.color.transparent)
+                    if (blankLine) R.color.note_next_bg_empty else android.R.color.transparent)
+            lineView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, if (blankLine) 0f else 16f)
         }
     }
 

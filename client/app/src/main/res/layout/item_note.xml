@@ -42,7 +42,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ellipsize="end"
-            android:maxLines="2"
+            android:maxLines="1"
             android:textSize="16dp"
             tools:text="This is the demo title text which is used to show the title in multiple lines." />
 
