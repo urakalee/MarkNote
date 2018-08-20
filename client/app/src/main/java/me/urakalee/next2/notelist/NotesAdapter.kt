@@ -29,8 +29,8 @@ class NotesAdapter(private val context: Context, data: List<NotesAdapter.MultiIt
     private val isDarkTheme: Boolean
 
     init {
-        addItemType(MultiItem.ITEM_TYPE_NOTE, R.layout.item_note)
-        addItemType(MultiItem.ITEM_TYPE_NOTEBOOK, R.layout.item_notebook)
+        addItemType(MultiItem.ITEM_TYPE_NOTE, R.layout.notes_item_note)
+        addItemType(MultiItem.ITEM_TYPE_NOTEBOOK, R.layout.notes_item_notebook)
 
         accentColor = ColorUtils.accentColor(context)
         isDarkTheme = ColorUtils.isDarkTheme(context)

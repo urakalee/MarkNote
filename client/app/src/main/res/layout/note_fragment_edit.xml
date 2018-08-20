@@ -4,14 +4,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <include layout="@layout/include_note_edit" />
+    <include layout="@layout/note_include_edit" />
 
     <FrameLayout
         android:layout_width="285dp"
         android:layout_height="match_parent"
         android:layout_gravity="end">
 
-        <include layout="@layout/note_edit_right_drawer" />
+        <include layout="@layout/note_drawer_edit" />
 
     </FrameLayout>
 

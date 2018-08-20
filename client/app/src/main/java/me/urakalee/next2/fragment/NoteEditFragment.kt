@@ -12,9 +12,9 @@ import android.text.TextWatcher
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import kotlinx.android.synthetic.main.fragment_note_edit.*
-import kotlinx.android.synthetic.main.include_note_edit.*
-import kotlinx.android.synthetic.main.note_edit_right_drawer.*
+import kotlinx.android.synthetic.main.note_fragment_edit.*
+import kotlinx.android.synthetic.main.note_include_edit.*
+import kotlinx.android.synthetic.main.note_drawer_edit.*
 import me.shouheng.notepal.R
 import me.shouheng.notepal.activity.MenuSortActivity
 import me.shouheng.notepal.config.Constants
@@ -57,7 +57,7 @@ class NoteEditFragment : BaseModelFragment<Note>() {
     private lateinit var attachmentViewModel: AttachmentViewModel
 
     override val layoutResId: Int
-        get() = R.layout.fragment_note_edit
+        get() = R.layout.note_fragment_edit
 
     //region lifecycle
 

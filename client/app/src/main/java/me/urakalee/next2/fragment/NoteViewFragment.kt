@@ -11,7 +11,7 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import com.kennyc.bottomsheet.BottomSheet
 import com.kennyc.bottomsheet.BottomSheetListener
-import kotlinx.android.synthetic.main.fragment_note_view.*
+import kotlinx.android.synthetic.main.note_fragment_view.*
 import me.shouheng.notepal.PalmApp
 import me.shouheng.notepal.R
 import me.shouheng.notepal.config.Constants
@@ -42,7 +42,7 @@ class NoteViewFragment : BaseFragment() {
     private var tags: String? = null
 
     override val layoutResId: Int
-        get() = R.layout.fragment_note_view
+        get() = R.layout.note_fragment_view
 
     //region lifecycle
 

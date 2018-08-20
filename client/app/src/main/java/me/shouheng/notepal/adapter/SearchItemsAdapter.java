@@ -44,7 +44,7 @@ public class SearchItemsAdapter extends RecyclerView.Adapter<SearchItemsAdapter.
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         return new ViewHolder(viewType, LayoutInflater.from(context).inflate(
-                viewType == NOTE ? R.layout.item_notebook : R.layout.item_section_title, parent, false));
+                viewType == NOTE ? R.layout.notes_item_notebook : R.layout.item_section_title, parent, false));
     }
 
     @Override

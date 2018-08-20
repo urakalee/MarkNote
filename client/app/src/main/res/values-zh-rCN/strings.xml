@@ -401,4 +401,8 @@
     <string name="custom_fast_scroller">自定义滑动条</string>
     <string name="custom_fast_scroller_sub">勾选复选框则在笔记列表界面使用快速滑动条</string>
     <!--endregion-->
+
+    <!-- region next -->
+    <string name="text_fold">折叠/展开</string>
+    <!-- endregion -->
 </resources>
