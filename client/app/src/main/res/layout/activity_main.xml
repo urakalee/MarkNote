@@ -81,7 +81,7 @@
                     app:menu_labels_showShadow="true"
                     app:menu_labels_singleLine="false"
                     app:menu_labels_textColor="#FFFFFF"
-                    app:menu_labels_textSize="14sp"
+                    app:menu_labels_textSize="14dp"
                     app:menu_openDirection="up"
                     app:menu_shadowColor="#66000000"
                     app:menu_shadowRadius="4dp"

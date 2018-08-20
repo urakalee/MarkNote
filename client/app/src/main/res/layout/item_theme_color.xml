@@ -34,7 +34,7 @@
         android:layout_toEndOf="@id/civ_color"
         android:gravity="center_vertical"
         android:text="Color Name"
-        android:textSize="16sp"
+        android:textSize="16dp"
         android:layout_marginStart="16dp"
         android:layout_width="wrap_content"
         android:layout_height="match_parent" />

@@ -75,7 +75,7 @@
                 android:paddingRight="12dp"
                 android:paddingTop="8dp"
                 android:text="@string/text_confirm"
-                android:textSize="15sp"
+                android:textSize="15dp"
                 android:visibility="visible"/>
 
             <TextView
@@ -91,7 +91,7 @@
                 android:paddingRight="12dp"
                 android:paddingTop="8dp"
                 android:text="@string/text_cancel"
-                android:textSize="15sp"/>
+                android:textSize="15dp"/>
 
         </RelativeLayout>
 

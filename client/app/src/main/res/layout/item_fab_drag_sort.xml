@@ -43,7 +43,7 @@
     <TextView
         android:text="Add Photo"
         android:id="@+id/tv_fab_name"
-        android:textSize="18sp"
+        android:textSize="18dp"
         android:singleLine="true"
         android:layout_centerVertical="true"
         android:maxLines="1"

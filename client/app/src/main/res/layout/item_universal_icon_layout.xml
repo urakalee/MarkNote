@@ -39,7 +39,7 @@
         <android.support.v7.widget.AppCompatTextView
             android:id="@+id/tv_title"
             android:gravity="bottom"
-            android:textSize="16sp"
+            android:textSize="16dp"
             android:ellipsize="end"
             android:textStyle="bold"
             tools:text="标题Title\nTitle"
@@ -49,7 +49,7 @@
         <TextView
             android:id="@+id/tv_sub_title"
             android:ellipsize="end"
-            android:textSize="14sp"
+            android:textSize="14dp"
             tools:text="副标题subTitle"
             android:layout_marginTop="2dp"
             android:maxLength="@integer/sub_content_length"

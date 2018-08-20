@@ -37,7 +37,7 @@
 
                     <me.shouheng.notepal.widget.themed.SupportTextView
                         android:text="@string/app_name"
-                        android:textSize="20sp"
+                        android:textSize="20dp"
                         android:textStyle="bold"
                         android:layout_gravity="center_horizontal"
                         android:layout_width="wrap_content"
@@ -45,7 +45,7 @@
 
                     <TextView
                         android:id="@+id/tv_app_desc"
-                        android:textSize="16sp"
+                        android:textSize="16dp"
                         android:gravity="center_horizontal"
                         android:text="@string/app_description"
                         android:layout_marginStart="20dp"
@@ -56,7 +56,7 @@
 
                     <me.shouheng.notepal.widget.themed.SupportTextView
                         android:id="@+id/tv_version_name"
-                        android:textSize="15sp"
+                        android:textSize="15dp"
                         android:layout_marginStart="20dp"
                         android:layout_marginEnd="20dp"
                         android:layout_marginTop="10dp"
@@ -141,7 +141,7 @@
                         android:id="@+id/tv_thanks_details"
                         android:text="@string/thanks_details"
                         android:layout_margin="16dp"
-                        android:textSize="15sp"
+                        android:textSize="15dp"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content" />
 

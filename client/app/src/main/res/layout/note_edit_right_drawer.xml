@@ -33,7 +33,7 @@
                 android:fontFamily="sans-serif"
                 android:paddingEnd="16dp"
                 android:paddingStart="16dp"
-                android:textSize="12sp"
+                android:textSize="12dp"
                 tools:text="Total Chars: 4" />
 
             <TextView
@@ -44,7 +44,7 @@
                 android:paddingBottom="16dp"
                 android:paddingEnd="16dp"
                 android:paddingStart="16dp"
-                android:textSize="12sp"
+                android:textSize="12dp"
                 tools:text="Last modified time: 3 days ago\nAdded time: 4 days ago." />
 
         </LinearLayout>

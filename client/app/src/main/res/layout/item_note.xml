@@ -43,14 +43,14 @@
             android:layout_height="wrap_content"
             android:ellipsize="end"
             android:maxLines="2"
-            android:textSize="16sp"
+            android:textSize="16dp"
             tools:text="This is the demo title text which is used to show the title in multiple lines." />
 
         <TextView
             android:id="@+id/noteTime"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="12sp"
+            android:textSize="12dp"
             tools:text="Created time: 2 days ago"
             tools:textColor="@color/colorAccent" />
 
@@ -60,7 +60,7 @@
             android:layout_height="wrap_content"
             android:ellipsize="end"
             android:maxLines="2"
-            android:textSize="12sp"
+            android:textSize="12dp"
             tools:text="This is the demo text which is used to show the preview content of this note in multiple lines." />
 
     </LinearLayout>
