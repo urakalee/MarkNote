@@ -34,4 +34,8 @@
 
     <color name="menu_container_light">#a0ffffff</color>
     <color name="menu_container_dark">#a0000000</color>
+
+    <!-- next -->
+    <color name="note_next_bg_empty">#10000000</color>
+
 </resources>

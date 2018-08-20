@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.helper.ItemTouchHelper
+import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
@@ -45,7 +46,11 @@ class NoteNextFragment : BaseModelFragment<Note>() {
     private class NextAdapter(val lines: List<String>) : RecyclerView.Adapter<NextViewHolder>() {
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NextViewHolder {
-            return NextViewHolder(TextView(parent.context))
+            val root = LayoutInflater.from(parent.context).inflate(R.layout.note_item_next, null, false)
+            val layoutParameter = RecyclerView.LayoutParams(
+                    RecyclerView.LayoutParams.MATCH_PARENT, RecyclerView.LayoutParams.WRAP_CONTENT)
+            root.layoutParams = layoutParameter
+            return NextViewHolder(root)
         }
 
         override fun getItemCount(): Int {
@@ -60,14 +65,18 @@ class NoteNextFragment : BaseModelFragment<Note>() {
         fun onMove(fromPosition: Int, toPosition: Int) {
             Collections.swap(lines, fromPosition, toPosition)
             //通知数据移动
-            notifyItemMoved(fromPosition, toPosition);
+            notifyItemMoved(fromPosition, toPosition)
         }
     }
 
-    private class NextViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+    private class NextViewHolder(val root: View) : RecyclerView.ViewHolder(root) {
+
+        private var lineView: TextView = root.findViewById(R.id.line)
 
         fun bind(line: String) {
-            (itemView as? TextView)?.text = line
+            lineView.text = line
+            root.setBackgroundResource(
+                    if (line.isBlank()) R.color.note_next_bg_empty else android.R.color.transparent)
         }
     }
 
@@ -84,7 +93,8 @@ class NoteNextFragment : BaseModelFragment<Note>() {
             return makeMovementFlags(dragFlag, swipeFlag);
         }
 
-        override fun onMove(recyclerView: RecyclerView?, viewHolder: RecyclerView.ViewHolder?, target: RecyclerView.ViewHolder?): Boolean {
+        override fun onMove(recyclerView: RecyclerView?,
+                            viewHolder: RecyclerView.ViewHolder?, target: RecyclerView.ViewHolder?): Boolean {
             val vh = viewHolder ?: return false
             val tgt = target ?: return false
             adapter.onMove(vh.adapterPosition, tgt.adapterPosition)
@@ -96,7 +106,7 @@ class NoteNextFragment : BaseModelFragment<Note>() {
 
         override fun onSelectedChanged(viewHolder: RecyclerView.ViewHolder?, actionState: Int) {
             if (actionState != 0) {
-                viewHolder?.itemView?.alpha = 0.9f
+                viewHolder?.itemView?.alpha = 0.8f
             }
             super.onSelectedChanged(viewHolder, actionState)
         }
