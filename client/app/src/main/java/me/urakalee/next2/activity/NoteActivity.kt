@@ -20,7 +20,6 @@ import me.shouheng.notepal.fragment.base.BaseModelFragment
 import me.shouheng.notepal.util.LogUtils
 import me.shouheng.notepal.util.ToastUtils
 import me.urakalee.next2.base.activity.CommonActivity
-import me.urakalee.next2.base.fragment.CommonFragment
 import me.urakalee.next2.fragment.NoteEditFragment
 import me.urakalee.next2.fragment.NoteNextFragment
 import me.urakalee.next2.fragment.NoteViewFragment
@@ -90,13 +89,6 @@ class NoteActivity : CommonActivity(),
                     .show()
         } else {
             setResult()
-        }
-        // TODO: getCurrentFragment in pager
-        val currentFragment = getCurrentFragment()
-        if (currentFragment is CommonFragment) {
-            currentFragment.onBackPressed()
-        } else {
-            super.onBackPressed()
         }
     }
 
@@ -209,6 +201,7 @@ class NoteActivity : CommonActivity(),
                 return pageMap.size
             }
         }
+        pager.offscreenPageLimit = 2 // 阻止 fragment 销毁
         pager.adapter = pagerAdapter
         pager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
 
