@@ -50,6 +50,19 @@ class Indent constructor(c: String?) {
         return this
     }
 
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as Indent
+
+        if (indent != other.indent) return false
+        if (content.length != other.content.length) return false
+        if (level != other.level) return false
+
+        return true
+    }
+
     companion object {
 
         val TAB_SIZE = 4

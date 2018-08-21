@@ -16,13 +16,13 @@ enum class Mark(val type: MarkType, val pattern: Regex, val defaultMark: String,
     LA(MarkType.PRECEDING, Regex("[a-z]\\."), "a.", ListHandler),
     //endregion
     TD(MarkType.PRECEDING, Regex("- \\[[x ]]", RegexOption.IGNORE_CASE), TodoHandler.UNCHECKED, TodoHandler),
-    QT(MarkType.PRECEDING, Regex(">"), ">", QuoteHandler),
+    QT(MarkType.PRECEDING, Regex(">"), ">", QuoteHandler), // TODO: multi-level
 
     STRIKE(MarkType.TEXT, Regex("~~.*~~"), "~~", StrikeHandler);
 
     companion object {
 
-        private fun fromString(s: String): Mark {
+        fun fromString(s: String): Mark {
             return values().filter {
                 it.type == MarkType.PRECEDING
             }.firstOrNull {

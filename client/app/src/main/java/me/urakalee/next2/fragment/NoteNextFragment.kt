@@ -12,12 +12,13 @@ import android.view.ViewGroup
 import android.widget.TextView
 import kotlinx.android.synthetic.main.note_fragment_next.*
 import me.shouheng.notepal.R
+import me.urakalee.markdown.Mark
+import me.urakalee.markdown.action.DayOneStrategy
 import me.urakalee.next2.base.fragment.BaseModelFragment
 import me.urakalee.next2.model.Note
 import me.urakalee.ranger.extension.isInvisible
 import me.urakalee.ranger.extension.removeRange
 import java.util.*
-import kotlin.math.min
 
 /**
  * @author Uraka.Lee
@@ -69,10 +70,18 @@ class NoteNextFragment : BaseModelFragment<Note>() {
                         adapter.notifyDataSetChanged()
                     }
                 }
+                R.id.action_delete -> {
+
+                }
             }
             true
         }
         popupMenu.show()
+    }
+
+    private fun configPopMenu(popupMenu: PopupMenu) {
+        popupMenu.menu.findItem(R.id.action_fold).isVisible = true
+        popupMenu.menu.findItem(R.id.action_delete).isVisible = true
     }
 
     //endregion
@@ -258,8 +267,50 @@ class NoteNextFragment : BaseModelFragment<Note>() {
                 val section = sections[index]
                 if (section.isFolded()) return false
                 // 找到和 section 同级别的 section, 折叠
-                val nextSectionStartIndex = min(index + 3, sections.size)
+                val (precedingMarkSource, indent, _) = DayOneStrategy.detectPrecedingMark(section.line!!)
+                val mark = Mark.fromString(precedingMarkSource)
+                var nextSectionStartIndex = index + 1
+                for (i in nextSectionStartIndex until sections.size) {
+                    val aSection = sections[i]
+                    if (aSection.isBlank()) {
+                        // pass
+                    } else if (aSection.isLine()) {
+                        val (aPrecedingMarkSource, aIndent, _)
+                                = DayOneStrategy.detectPrecedingMark(aSection.line!!)
+                        val aMark = Mark.fromString(aPrecedingMarkSource)
+                        if (mark == Mark.H && aMark == Mark.H) {
+                            // mark 为 H 标签, 找到了同级或上级 H 标签, 则结束
+                            if (precedingMarkSource.length >= aPrecedingMarkSource.length) {
+                                nextSectionStartIndex = i
+                                break
+                            }
+                        } else if (aMark == Mark.H) {
+                            // mark 为无标签或其它标签, 找到了 H 标签, 则结束
+                            nextSectionStartIndex = i
+                            break
+                        } else if (mark == aMark) {
+                            // mark 为无标签或其它标签, 找到了同缩进或上级缩进的无标签或其它标签, 则结束
+                            if (indent.length >= aIndent.length) {
+                                nextSectionStartIndex = i
+                                break
+                            }
+                        }
+                    }
+                    nextSectionStartIndex += 1
+                }
                 if (nextSectionStartIndex == index + 1) return false
+                // 往回退掉所有的空行(空行不参与折叠)
+                /*
+                for (i in nextSectionStartIndex - 1 downTo index + 1) {
+                    val aSection = sections[i]
+                    if (aSection.isBlank()) {
+                        nextSectionStartIndex -= 1
+                    } else {
+                        break
+                    }
+                }
+                if (nextSectionStartIndex == index + 1) return false
+                */
                 // 将折叠的元素新建 section, 放到 sections 里, index 对应的位置
                 val folded = sections.removeRange(index..nextSectionStartIndex)
                 sections.add(index, Section(folded))
