@@ -1,6 +1,7 @@
 package me.urakalee.next2.fragment
 
 import android.os.Bundle
+import android.os.Handler
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.PopupMenu
 import android.support.v7.widget.RecyclerView
@@ -8,6 +9,7 @@ import android.support.v7.widget.helper.ItemTouchHelper
 import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewConfiguration
 import android.view.ViewGroup
 import android.widget.TextView
 import kotlinx.android.synthetic.main.note_fragment_next.*
@@ -62,13 +64,6 @@ class NoteNextFragment : BaseModelFragment<Note>() {
         popupMenu.setOnMenuItemClickListener { item ->
             when (item.itemId) {
                 R.id.action_fold -> {
-                    val section = adapter.sections[position]
-                    if (section.isFolded()) {
-                        Section.expand(adapter.sections, position)
-                        adapter.notifyDataSetChanged()
-                    } else if (Section.fold(adapter.sections, position)) {
-                        adapter.notifyDataSetChanged()
-                    }
                 }
                 R.id.action_delete -> {
 
@@ -92,7 +87,23 @@ class NoteNextFragment : BaseModelFragment<Note>() {
     private val adapterDelegate = object : NextAdapter.NextAdapterDelegate {
 
         override fun onItemClicked(itemView: View, position: Int) {
-            popNextItemMenu(itemView, position)
+        }
+
+        override fun onItemDoubleClicked(itemView: View, position: Int) {
+            val section = adapter.sections[position]
+            if (section.canFold()) {
+                if (Section.fold(adapter.sections, position)) {
+                    adapter.notifyDataSetChanged()
+                }
+            } else if (section.canExpand()) {
+                if (Section.expand(adapter.sections, position)) {
+                    adapter.notifyDataSetChanged()
+                }
+            }
+        }
+
+        override fun onItemLongClicked(itemView: View, position: Int) {
+//            popNextItemMenu(itemView, position)
         }
 
         override fun onItemMoved() {
@@ -144,6 +155,14 @@ class NoteNextFragment : BaseModelFragment<Note>() {
             override fun onClicked(itemView: View, position: Int) {
                 delegate.onItemClicked(itemView, position)
             }
+
+            override fun onDoubleClicked(itemView: View, position: Int) {
+                delegate.onItemDoubleClicked(itemView, position)
+            }
+
+            override fun onLongClicked(itemView: View, position: Int) {
+                delegate.onItemLongClicked(itemView, position)
+            }
         }
 
         lateinit var delegate: NextAdapterDelegate
@@ -151,6 +170,10 @@ class NoteNextFragment : BaseModelFragment<Note>() {
         interface NextAdapterDelegate {
 
             fun onItemClicked(itemView: View, position: Int)
+
+            fun onItemDoubleClicked(itemView: View, position: Int)
+
+            fun onItemLongClicked(itemView: View, position: Int)
 
             fun onItemMoved()
         }
@@ -161,12 +184,31 @@ class NoteNextFragment : BaseModelFragment<Note>() {
         private var folded: View = root.findViewById(R.id.folded)
         private var lineView: TextView = root.findViewById(R.id.line)
 
+        private var firstClickTime: Long = 0
+        private var doubleClickTimeout: Long = ViewConfiguration.getDoubleTapTimeout().toLong()
+        private var handler = Handler()
+
         fun bind(position: Int, section: Section) {
             root.setOnClickListener {
-                delegate.onClicked(it, position)
+                val now = System.currentTimeMillis()
+                if (now - firstClickTime < doubleClickTimeout) {
+                    handler.removeCallbacksAndMessages(null)
+                    firstClickTime = 0
+                    delegate.onDoubleClicked(it, position)
+                } else {
+                    firstClickTime = now
+                    handler.postDelayed({
+                        delegate.onClicked(it, position)
+                        firstClickTime = 0
+                    }, doubleClickTimeout)
+                }
+            }
+            root.setOnLongClickListener {
+                delegate.onLongClicked(it, position)
+                true
             }
 
-            folded.isInvisible = !section.isFolded()
+            folded.isInvisible = !section.canExpand()
             lineView.text = section.toString()
 
             // decorate blank-line
@@ -181,6 +223,10 @@ class NoteNextFragment : BaseModelFragment<Note>() {
         interface NextViewHolderDelegate {
 
             fun onClicked(itemView: View, position: Int)
+
+            fun onDoubleClicked(itemView: View, position: Int)
+
+            fun onLongClicked(itemView: View, position: Int)
         }
     }
 
@@ -238,9 +284,11 @@ class NoteNextFragment : BaseModelFragment<Note>() {
 
         fun isLine(): Boolean = line != null && sections.isEmpty()
 
-        fun isFolded(): Boolean = !isLine()
-
         fun isBlank(): Boolean = isLine() && line!!.isBlank()
+
+        fun canFold(): Boolean = isLine() && !isBlank()
+
+        fun canExpand(): Boolean = !isLine()
 
         override fun toString(): String {
             return when {
@@ -265,7 +313,7 @@ class NoteNextFragment : BaseModelFragment<Note>() {
              */
             fun fold(sections: MutableList<Section>, index: Int): Boolean {
                 val section = sections[index]
-                if (section.isFolded()) return false
+                if (!section.canFold()) return false
                 // 找到和 section 同级别的 section, 折叠
                 val (precedingMarkSource, indent, _) = DayOneStrategy.detectPrecedingMark(section.line!!)
                 val mark = Mark.fromString(precedingMarkSource)
@@ -277,6 +325,31 @@ class NoteNextFragment : BaseModelFragment<Note>() {
                     } else if (aSection.isLine()) {
                         val (aPrecedingMarkSource, aIndent, _)
                                 = DayOneStrategy.detectPrecedingMark(aSection.line!!)
+                        val aMark = Mark.fromString(aPrecedingMarkSource)
+                        if (mark == Mark.H && aMark == Mark.H) {
+                            // mark 为 H 标签, 找到了同级或上级 H 标签, 则结束
+                            if (precedingMarkSource.length >= aPrecedingMarkSource.length) {
+                                nextSectionStartIndex = i
+                                break
+                            }
+                        } else if (aMark == Mark.H) {
+                            // mark 为无标签或其它标签, 找到了 H 标签, 则结束
+                            nextSectionStartIndex = i
+                            break
+                        } else if (mark == aMark) {
+                            // mark 为无标签或其它标签, 找到了同缩进或上级缩进的无标签或其它标签, 则结束
+                            if (indent.length >= aIndent.length) {
+                                nextSectionStartIndex = i
+                                break
+                            }
+                        }
+                    } else {
+                        var firstSection = aSection.sections[0]
+                        while (firstSection.canExpand()) {
+                            firstSection = firstSection.sections[0]
+                        }
+                        val (aPrecedingMarkSource, aIndent, _)
+                                = DayOneStrategy.detectPrecedingMark(firstSection.line!!)
                         val aMark = Mark.fromString(aPrecedingMarkSource)
                         if (mark == Mark.H && aMark == Mark.H) {
                             // mark 为 H 标签, 找到了同级或上级 H 标签, 则结束
@@ -322,7 +395,7 @@ class NoteNextFragment : BaseModelFragment<Note>() {
              */
             fun expand(sections: MutableList<Section>, index: Int): Boolean {
                 val section = sections[index]
-                if (!section.isFolded()) return false
+                if (!section.canExpand()) return false
                 sections.removeAt(index)
                 sections.addAll(index, section.sections)
                 return true
