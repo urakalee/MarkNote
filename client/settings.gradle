@@ -1,4 +1,2 @@
-include ':app', ':markdown', ':photoview', ':colorful'
-project(':colorful').projectDir = new File('../colorful')
+include ':app', ':markdown'
 project(':markdown').projectDir = new File('../markdown')
-project(':photoview').projectDir = new File('../photoview')
