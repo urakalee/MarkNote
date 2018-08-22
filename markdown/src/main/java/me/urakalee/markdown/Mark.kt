@@ -20,6 +20,10 @@ enum class Mark(val type: MarkType, val pattern: Regex, val defaultMark: String,
 
     STRIKE(MarkType.TEXT, Regex("~~.*~~"), "~~", StrikeHandler);
 
+    fun isList(): Boolean {
+        return this == LI || this == LO || this == LA
+    }
+
     companion object {
 
         fun fromString(s: String): Mark {
