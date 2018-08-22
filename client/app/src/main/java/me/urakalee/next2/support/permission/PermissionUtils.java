@@ -10,6 +10,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 
+import me.shouheng.notepal.R;
 import me.urakalee.next2.base.activity.BaseActivity;
 
 /**
@@ -89,25 +90,25 @@ public class PermissionUtils {
     public static String getPermissionName(Context context, int requestCode) {
         switch (requestCode) {
             case PermissionRequestCode.REQUEST_PERMISSION_STORAGE:
-                return context.getString(org.polaric.colorful.R.string.permission_storage_permission);
+                return context.getString(R.string.permission_storage_permission);
             case PermissionRequestCode.REQUEST_PERMISSION_LOCATION:
-                return context.getString(org.polaric.colorful.R.string.permission_location_permission);
+                return context.getString(R.string.permission_location_permission);
             case PermissionRequestCode.REQUEST_PERMISSION_MICROPHONE:
-                return context.getString(org.polaric.colorful.R.string.permission_microphone_permission);
+                return context.getString(R.string.permission_microphone_permission);
             case PermissionRequestCode.REQUEST_PERMISSION_PHONE_STATE:
-                return context.getString(org.polaric.colorful.R.string.permission_phone_permission);
+                return context.getString(R.string.permission_phone_permission);
             case PermissionRequestCode.REQUEST_PERMISSION_SMS:
-                return context.getString(org.polaric.colorful.R.string.permission_sms_permission);
+                return context.getString(R.string.permission_sms_permission);
             case PermissionRequestCode.REQUEST_PERMISSION_SENSORS:
-                return context.getString(org.polaric.colorful.R.string.permission_sensor_permission);
+                return context.getString(R.string.permission_sensor_permission);
             case PermissionRequestCode.REQUEST_PERMISSION_CONTACTS:
-                return context.getString(org.polaric.colorful.R.string.permission_contacts_permission);
+                return context.getString(R.string.permission_contacts_permission);
             case PermissionRequestCode.REQUEST_PERMISSION_CAMERA:
-                return context.getString(org.polaric.colorful.R.string.permission_camera_permission);
+                return context.getString(R.string.permission_camera_permission);
             case PermissionRequestCode.REQUEST_PERMISSION_CALENDAR:
-                return context.getString(org.polaric.colorful.R.string.permission_calendar_permission);
+                return context.getString(R.string.permission_calendar_permission);
         }
-        return context.getString(org.polaric.colorful.R.string.permission_default_permission_name);
+        return context.getString(R.string.permission_default_permission_name);
     }
 
     public interface OnGetPermissionCallback {

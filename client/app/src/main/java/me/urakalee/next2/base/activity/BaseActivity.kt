@@ -16,6 +16,7 @@ import android.view.ViewGroup
 import android.view.Window
 import android.view.WindowManager
 import android.widget.Toast
+import me.shouheng.notepal.R
 import me.shouheng.notepal.util.ColorUtils
 import me.urakalee.next2.support.misc.getPackageName
 import me.urakalee.next2.support.permission.PermissionUtils
@@ -55,12 +56,12 @@ abstract class BaseActivity : AppCompatActivity() {
 
     private fun showPermissionSettingDialog(requestCode: Int) {
         val permissionName = PermissionUtils.getPermissionName(this, requestCode)
-        val msg = String.format(getString(org.polaric.colorful.R.string.set_permission_in_setting), permissionName)
+        val msg = String.format(getString(R.string.set_permission_in_setting), permissionName)
         AlertDialog.Builder(this)
-                .setTitle(org.polaric.colorful.R.string.setting_permission)
+                .setTitle(R.string.setting_permission)
                 .setMessage(msg)
-                .setPositiveButton(org.polaric.colorful.R.string.to_set) { dialog, which -> toSetPermission() }
-                .setNegativeButton(org.polaric.colorful.R.string.text_cancel, null)
+                .setPositiveButton(R.string.to_set) { dialog, which -> toSetPermission() }
+                .setNegativeButton(R.string.text_cancel, null)
                 .create()
                 .show()
     }
@@ -81,11 +82,11 @@ abstract class BaseActivity : AppCompatActivity() {
      */
     private fun getToastMessage(requestCode: Int): String {
         val permissionName = PermissionUtils.getPermissionName(this, requestCode)
-        val defName = getString(org.polaric.colorful.R.string.permission_default_permission_name)
+        val defName = getString(R.string.permission_default_permission_name)
         return if (defName == permissionName) {
-            getString(org.polaric.colorful.R.string.permission_denied_try_again_after_set)
+            getString(R.string.permission_denied_try_again_after_set)
         } else {
-            String.format(getString(org.polaric.colorful.R.string.permission_denied_try_again_after_set_given_permission), permissionName)
+            String.format(getString(R.string.permission_denied_try_again_after_set_given_permission), permissionName)
         }
     }
 

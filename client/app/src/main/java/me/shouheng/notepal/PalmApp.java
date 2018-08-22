@@ -13,8 +13,6 @@ import com.crashlytics.android.Crashlytics;
 import com.facebook.stetho.Stetho;
 import com.squareup.leakcanary.LeakCanary;
 
-import org.polaric.colorful.Colorful;
-
 import io.fabric.sdk.android.Fabric;
 import me.shouheng.notepal.model.Model;
 
@@ -29,7 +27,6 @@ import me.shouheng.notepal.model.Model;
  * 8. Add sortable selections in list fragment.
  * 11. Statistic;
  * 12. Calendar + Timeline;
- * 13. Google map location info;
  * 14. Multiple platform statistics and user trace;
  * 21. Share html and associated resources, note content and resources.
  * <p>
@@ -44,8 +41,6 @@ import me.shouheng.notepal.model.Model;
  * 重点：
  * 1.自动刷新到新的笔记历史栈里面，防止数据丢失；
  * 2.笔记编辑界面底部的按钮可以自定义，现在的按钮位置需要调整；
- * 3.打开笔记的时候先从OneDrive上面检查备份信息；
- * 4.备份的文件的名称需要改；
  * <p>
  * Created by wangshouheng on 2017/2/26.
  */
@@ -62,8 +57,6 @@ public class PalmApp extends Application {
         super.onCreate();
 
         mInstance = this;
-
-        Colorful.init(this);
 
         if (BuildConfig.DEBUG) {
             Stetho.initializeWithDefaults(this);

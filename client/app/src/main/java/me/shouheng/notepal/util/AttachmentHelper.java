@@ -15,7 +15,6 @@ import java.util.List;
 
 import me.shouheng.notepal.PalmApp;
 import me.shouheng.notepal.R;
-import me.shouheng.notepal.activity.GalleryActivity;
 import me.shouheng.notepal.activity.SketchActivity;
 import me.shouheng.notepal.async.CreateAttachmentTask;
 import me.shouheng.notepal.config.Constants;
@@ -86,11 +85,7 @@ public class AttachmentHelper {
                 }
             }
         }
-        Intent intent = new Intent(context, GalleryActivity.class);
-        intent.putExtra(GalleryActivity.EXTRA_GALLERY_TITLE, galleryTitle);
-        intent.putParcelableArrayListExtra(GalleryActivity.EXTRA_GALLERY_IMAGES, images);
-        intent.putExtra(GalleryActivity.EXTRA_GALLERY_CLICKED_IMAGE, clickedImage);
-        context.startActivity(intent);
+        // TODO: gallery
     }
 
     // endregion

@@ -15,8 +15,6 @@
     <color name="white_divider_color">#22ffffff</color>
     <color name="black_divider_color">#08000000</color>
 
-    <color name="dark_theme_background">#2e2e2e</color>
-    <color name="dark_theme_foreground">#3f3f3f</color>
     <color name="light_theme_background">#fafafa</color>
 
     <color name="note_bottom_editors">#525D63</color>

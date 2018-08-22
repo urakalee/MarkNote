@@ -13,14 +13,13 @@ import android.view.View;
 
 import com.kennyc.bottomsheet.menu.BottomSheetMenu;
 
-import org.polaric.colorful.Colorful;
-import org.polaric.colorful.Defaults;
-
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import me.shouheng.notepal.PalmApp;
 import me.shouheng.notepal.R;
+import me.urakalee.next2.support.theme.AccentColor;
+import me.urakalee.next2.support.theme.ThemeColor;
 
 /**
  * Created by wangshouheng on 2017/3/31.
@@ -38,7 +37,7 @@ public class ColorUtils {
 
     public static int primaryColor(Context context) {
         if (primaryColor == null) {
-            Colorful.ThemeColor primaryColor = Colorful.ThemeColor.getByPrimaryName(Defaults.primaryColor.getIdentifyName());
+            ThemeColor primaryColor = ThemeColor.Companion.getDefaultColor();
             ColorUtils.primaryColor = context.getResources().getColor(primaryColor.getColorRes());
         }
         return primaryColor;
@@ -46,7 +45,7 @@ public class ColorUtils {
 
     public static int accentColor(Context context) {
         if (accentColor == null) {
-            Colorful.AccentColor accentColor = Colorful.AccentColor.getByAccentName(Defaults.accentColor.getColorName());
+            AccentColor accentColor = AccentColor.Companion.getDefaultColor();
             ColorUtils.accentColor = context.getResources().getColor(accentColor.getColorRes());
         }
         return accentColor;
