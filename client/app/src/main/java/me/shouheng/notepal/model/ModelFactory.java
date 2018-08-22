@@ -10,7 +10,6 @@ import me.shouheng.notepal.model.enums.ItemStatus;
 import me.shouheng.notepal.model.enums.ModelType;
 import me.shouheng.notepal.model.enums.Operation;
 import me.shouheng.notepal.model.enums.Portrait;
-import me.shouheng.notepal.model.enums.WeatherType;
 import me.shouheng.notepal.util.ColorUtils;
 import me.shouheng.notepal.util.LogUtils;
 import me.urakalee.next2.model.Note;
@@ -59,23 +58,6 @@ public class ModelFactory {
         return attachment;
     }
 
-    public static Location getLocation() {
-        Location location = getModel(Location.class);
-        location.setModelType(ModelType.NONE);
-        return location;
-    }
-
-    public static Weather getWeather(WeatherType type, int temperature) {
-        Weather weather = getModel(Weather.class);
-        weather.setType(type);
-        weather.setTemperature(temperature);
-        return weather;
-    }
-
-    public static MindSnagging getMindSnagging() {
-        return getModel(MindSnagging.class);
-    }
-
     public static Category getCategory() {
         Category category = getModel(Category.class);
         category.setPortrait(Portrait.FOLDER);
@@ -110,18 +92,10 @@ public class ModelFactory {
         String modelName = null;
         if (model instanceof Attachment) {
             return ((Attachment) model).getUri().toString();
-        } else if (model instanceof MindSnagging) {
-            modelName = ((MindSnagging) model).getContent();
         } else if (model instanceof Note) {
             modelName = ((Note) model).getTitle();
         } else if (model instanceof Notebook) {
             modelName = ((Notebook) model).getTitle();
-        } else if (model instanceof Location) {
-            Location location = ((Location) model);
-            modelName = location.getCountry() + "|" + location.getCity() + "|" + location.getDistrict();
-        } else if (model instanceof Weather) {
-            Weather weather = ((Weather) model);
-            modelName = PalmApp.getStringCompact(weather.getType().nameRes) + "|" + weather.getTemperature();
         }
         if (modelName != null && modelName.length() > TextLength.TIMELINE_TITLE_LENGTH.length) {
             return modelName.substring(0, TextLength.TIMELINE_TITLE_LENGTH.length);

@@ -99,8 +99,7 @@ public class StatisticsFragment extends BaseFragment<FragmentStatisticsBinding> 
                 stats.getTotalNotes(),
                 stats.getTotalNotebooks(),
                 stats.getTotalMinds(),
-                stats.getTotalAttachments(),
-                stats.getTotalLocations()));
+                stats.getTotalAttachments()));
 
         outputAttachmentStats(Arrays.asList(
                 stats.getFiles(),

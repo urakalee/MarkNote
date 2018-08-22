@@ -27,8 +27,6 @@ import me.shouheng.notepal.model.Model;
  * You may also research the performance when the db version is different.
  * 7. Refine NoteViewFragment performance;
  * 8. Add sortable selections in list fragment.
- * 9. Location logic of foreign country;
- * 10. Weather logic, only add weather data in db;
  * 11. Statistic;
  * 12. Calendar + Timeline;
  * 13. Google map location info;
@@ -85,8 +83,8 @@ public class PalmApp extends Application {
         return PalmApp.getContext().getString(resId);
     }
 
-    public static @ColorInt
-    int getColorCompact(@ColorRes int colorRes) {
+    @ColorInt
+    public static int getColorCompact(@ColorRes int colorRes) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             return PalmApp.getContext().getColor(colorRes);
         } else {

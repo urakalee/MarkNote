@@ -22,21 +22,6 @@ public class Stats {
     private int trashedMinds;
     // endregion
 
-    // region locations stats
-
-    /**
-     * Distinct locations */
-    private List<Location> locations;
-
-    /**
-     * Distinct locations */
-    private int locCnt;
-
-    /**
-     * Total locations */
-    private int totalLocations;
-    // endregion
-
     // region notebooks stats
     private int totalNotebooks;
     // endregion
@@ -107,30 +92,6 @@ public class Stats {
 
     public void setTrashedMinds(int trashedMinds) {
         this.trashedMinds = trashedMinds;
-    }
-
-    public List<Location> getLocations() {
-        return locations;
-    }
-
-    public void setLocations(List<Location> locations) {
-        this.locations = locations;
-    }
-
-    public int getLocCnt() {
-        return locCnt;
-    }
-
-    public void setLocCnt(int locCnt) {
-        this.locCnt = locCnt;
-    }
-
-    public int getTotalLocations() {
-        return totalLocations;
-    }
-
-    public void setTotalLocations(int totalLocations) {
-        this.totalLocations = totalLocations;
     }
 
     public int getTotalNotebooks() {
@@ -214,9 +175,6 @@ public class Stats {
                 ", totalMinds=" + totalMinds +
                 ", archivedMinds=" + archivedMinds +
                 ", trashedMinds=" + trashedMinds +
-                ", locations=" + locations +
-                ", locCnt=" + locCnt +
-                ", totalLocations=" + totalLocations +
                 ", totalNotebooks=" + totalNotebooks +
                 ", totalAttachments=" + totalAttachments +
                 ", images=" + images +

@@ -27,8 +27,6 @@ import me.shouheng.notepal.R;
 import me.shouheng.notepal.config.Constants;
 import me.shouheng.notepal.config.TextLength;
 import me.shouheng.notepal.model.Attachment;
-import me.shouheng.notepal.model.Location;
-import me.shouheng.notepal.model.MindSnagging;
 import me.shouheng.notepal.model.Model;
 import me.urakalee.next2.model.Note;
 import me.shouheng.notepal.viewmodel.CategoryViewModel;
@@ -87,20 +85,6 @@ public class ModelHelper {
                 context.getResources().getString(R.string.share_message_chooser)));
     }
 
-    public static void share(Context context, MindSnagging mindSnagging) {
-        Intent shareIntent = new Intent();
-        shareIntent.setAction(Intent.ACTION_SEND);
-        shareIntent.putExtra(Intent.EXTRA_TEXT, mindSnagging.getContent());
-
-        if (mindSnagging.getPicture() != null) {
-            shareIntent.setType(FileHelper.getMimeTypeInternal(context, mindSnagging.getPicture()));
-            shareIntent.putExtra(Intent.EXTRA_STREAM, mindSnagging.getPicture());
-        }
-
-        context.startActivity(
-                Intent.createChooser(shareIntent, context.getResources().getString(R.string.share_message_chooser)));
-    }
-
     public static void shareFile(Context context, File file, String mimeType) {
         Intent shareIntent = new Intent();
         shareIntent.setAction(Intent.ACTION_SEND);
@@ -118,13 +102,6 @@ public class ModelHelper {
 
         ClipboardManager clipboardManager = (ClipboardManager) ctx.getSystemService(Context.CLIPBOARD_SERVICE);
         clipboardManager.setText(null);
-    }
-
-    public static String getFormatLocation(Location location) {
-        return location.getCountry() + "|"
-                + location.getProvince() + "|"
-                + location.getCity() + "|"
-                + location.getDistrict();
     }
 
     // region statistic helper

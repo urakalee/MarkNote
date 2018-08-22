@@ -8,7 +8,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import me.shouheng.notepal.async.ResourceAsyncTask;
-import me.shouheng.notepal.model.MindSnagging;
 import me.urakalee.next2.model.Note;
 import me.shouheng.notepal.model.data.Resource;
 import me.shouheng.notepal.repository.QueryRepository;
@@ -36,12 +35,7 @@ public class SearchViewModel extends ViewModel {
             if (conditions.isIncludeNote()) {
                 notes = queryRepository.getNotes(queryText);
             }
-            List<MindSnagging> snaggings = new LinkedList<>();
-//            if (conditions.isIncludeMindSnagging()) {
-//                snaggings = queryRepository.getMindSnaggings(queryText);
-//            }
-
-            SearchResult searchResult = new SearchResult(notes, snaggings);
+            SearchResult searchResult = new SearchResult(notes);
 
             return Resource.success(searchResult);
         }).execute();

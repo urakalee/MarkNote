@@ -51,20 +51,16 @@ public class PalmDB extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        LocationsStore.getInstance().onCreate(db);
         AttachmentsStore.getInstance(mContext).onCreate(db);
         TimelineStore.getInstance(mContext).onCreate(db);
         CategoryStore.getInstance(mContext).onCreate(db);
-        WeatherStore.getInstance().onCreate(db);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        LocationsStore.getInstance().onUpgrade(db, oldVersion, newVersion);
         AttachmentsStore.getInstance(mContext).onUpgrade(db, oldVersion, newVersion);
         TimelineStore.getInstance(mContext).onUpgrade(db, oldVersion, newVersion);
         CategoryStore.getInstance(mContext).onUpgrade(db, oldVersion, newVersion);
-        WeatherStore.getInstance().onUpgrade(db, oldVersion, newVersion);
     }
 
     @Override

@@ -38,19 +38,15 @@ import me.shouheng.notepal.databinding.ActivityMainBinding;
 import me.shouheng.notepal.databinding.ActivityMainNavHeaderBinding;
 import me.shouheng.notepal.dialog.CategoryEditDialog;
 import me.shouheng.notepal.dialog.NotebookEditDialog;
-import me.shouheng.notepal.dialog.QuickNoteEditor;
 import me.shouheng.notepal.fragment.CategoriesFragment;
-import me.shouheng.notepal.listener.OnAttachingFileListener;
 import me.shouheng.notepal.listener.OnMainActivityInteraction;
 import me.shouheng.notepal.listener.SettingChangeType;
-import me.shouheng.notepal.model.Attachment;
 import me.shouheng.notepal.model.Category;
 import me.shouheng.notepal.model.ModelFactory;
 import me.shouheng.notepal.model.Notebook;
 import me.shouheng.notepal.model.data.LoadStatus;
 import me.shouheng.notepal.model.enums.FabSortItem;
 import me.shouheng.notepal.model.enums.ItemStatus;
-import me.shouheng.notepal.util.AttachmentHelper;
 import me.shouheng.notepal.util.ColorUtils;
 import me.shouheng.notepal.util.FragmentHelper;
 import me.shouheng.notepal.util.LogUtils;
@@ -63,30 +59,24 @@ import me.urakalee.next2.activity.NoteActivity;
 import me.urakalee.next2.model.Note;
 import me.urakalee.next2.notelist.NotesFragment;
 import me.urakalee.next2.support.permission.PermissionUtils;
-import me.urakalee.next2.viewmodel.NoteViewModel;
 import me.urakalee.next2.viewmodel.NotebookViewModel;
 
 import static android.support.v7.widget.RecyclerView.SCROLL_STATE_IDLE;
 
 public class MainActivity extends CommonActivity<ActivityMainBinding> implements
         NotesFragment.OnNotesInteractListener,
-        OnAttachingFileListener,
         CategoriesFragment.OnCategoriesInteractListener {
 
     // region request codes
     private final int REQUEST_FAB_SORT = 0x0001;
     private final int REQUEST_ADD_NOTE = 0x0002;
-    private final int REQUEST_ARCHIVE = 0x0003;
-    private final int REQUEST_TRASH = 0x0004;
     private final int REQUEST_USER_INFO = 0x0005;
     private final int REQUEST_SEARCH = 0x0007;
     private final int REQUEST_NOTE_VIEW = 0x0008;
     private final int REQUEST_SETTING = 0x0009;
-    private final int REQUEST_SETTING_BACKUP = 0x000A;
     // endregion
 
     private NotebookViewModel notebookViewModel;
-    private NoteViewModel noteViewModel;
     private CategoryViewModel categoryViewModel;
 
     private UserPreferences userPreferences;
@@ -94,7 +84,6 @@ public class MainActivity extends CommonActivity<ActivityMainBinding> implements
 
     private NotebookEditDialog notebookEditDialog;
     private CategoryEditDialog categoryEditDialog;
-    private QuickNoteEditor quickNoteEditor;
 
     private ActivityMainNavHeaderBinding headerBinding;
 
@@ -159,8 +148,6 @@ public class MainActivity extends CommonActivity<ActivityMainBinding> implements
 
         if (resultCode != RESULT_OK) return;
 
-        handleAttachmentResult(requestCode, data);
-
         switch (requestCode) {
             case REQUEST_FAB_SORT:
                 initFabSortItems();
@@ -168,12 +155,6 @@ public class MainActivity extends CommonActivity<ActivityMainBinding> implements
             case REQUEST_ADD_NOTE:
             case REQUEST_NOTE_VIEW:
                 if (isNotesFragment()) ((NotesFragment) getCurrentFragment()).reload();
-                break;
-            case REQUEST_TRASH:
-                updateListIfNecessary();
-                break;
-            case REQUEST_ARCHIVE:
-                updateListIfNecessary();
                 break;
             case REQUEST_SEARCH:
                 updateListIfNecessary();
@@ -203,10 +184,6 @@ public class MainActivity extends CommonActivity<ActivityMainBinding> implements
                 }
                 break;
         }
-    }
-
-    private void handleAttachmentResult(int requestCode, Intent data) {
-        AttachmentHelper.resolveActivityResult(this, requestCode, data);
     }
 
     private void updateListIfNecessary() {
@@ -271,7 +248,6 @@ public class MainActivity extends CommonActivity<ActivityMainBinding> implements
 
     private void initViewModels() {
         notebookViewModel = ViewModelProviders.of(this).get(NotebookViewModel.class);
-        noteViewModel = ViewModelProviders.of(this).get(NoteViewModel.class);
         categoryViewModel = ViewModelProviders.of(this).get(CategoryViewModel.class);
     }
 
@@ -688,22 +664,6 @@ public class MainActivity extends CommonActivity<ActivityMainBinding> implements
     }
 
     //endregion
-
-    @Override
-    public void onAttachingFileErrorOccurred(Attachment attachment) {
-        ToastUtils.makeToast(R.string.failed_to_save_attachment);
-    }
-
-    @Override
-    public void onAttachingFileFinished(Attachment attachment) {
-        if (AttachmentHelper.checkAttachment(attachment)) {
-            if (quickNoteEditor != null) {
-                quickNoteEditor.setAttachment(attachment);
-            }
-        } else {
-            ToastUtils.makeToast(R.string.failed_to_save_attachment);
-        }
-    }
 
     private void onLoadStateChanged(LoadStatus status) {
         switch (status) {

@@ -10,14 +10,12 @@ import java.util.List;
 import me.shouheng.notepal.PalmApp;
 import me.shouheng.notepal.config.Constants;
 import me.shouheng.notepal.model.Attachment;
-import me.shouheng.notepal.model.Location;
 import me.shouheng.notepal.model.Stats;
 import me.shouheng.notepal.model.enums.ItemStatus;
 import me.shouheng.notepal.model.enums.ModelType;
 import me.shouheng.notepal.model.enums.Operation;
 import me.shouheng.notepal.provider.AttachmentsStore;
 import me.shouheng.notepal.provider.CategoryStore;
-import me.shouheng.notepal.provider.LocationsStore;
 import me.shouheng.notepal.provider.TimelineStore;
 import me.shouheng.notepal.provider.schema.TimelineSchema;
 import me.shouheng.notepal.util.LogUtils;
@@ -50,12 +48,6 @@ public class StatisticsHelper {
         stats.setTotalMinds(categoryStore.getCount(null, ItemStatus.DELETED, true));
         stats.setArchivedMinds(categoryStore.getCount(null, ItemStatus.ARCHIVED, false));
         stats.setTrashedMinds(categoryStore.getCount(null, ItemStatus.TRASHED, false));
-
-        LocationsStore locationsStore = LocationsStore.getInstance();
-        List<Location> locations = locationsStore.getDistinct(null, null);
-        stats.setLocCnt(locations.size());
-        stats.setLocations(locations);
-        stats.setTotalLocations(locationsStore.getCount(null, ItemStatus.DELETED, true));
 
         NotebookStore notebookStore = NotebookStore.Companion.getInstance();
         stats.setTotalNotebooks(notebookStore.getCount(null, ItemStatus.TRASHED, false));

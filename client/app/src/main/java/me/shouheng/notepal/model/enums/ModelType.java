@@ -4,13 +4,10 @@ import android.support.annotation.StringRes;
 
 import me.shouheng.notepal.R;
 import me.shouheng.notepal.model.Attachment;
-import me.shouheng.notepal.model.Location;
-import me.shouheng.notepal.model.MindSnagging;
 import me.shouheng.notepal.model.Model;
 import me.urakalee.next2.model.Note;
 import me.shouheng.notepal.model.Notebook;
 import me.shouheng.notepal.model.TimeLine;
-import me.shouheng.notepal.model.Weather;
 
 
 /**
@@ -20,10 +17,7 @@ public enum ModelType {
     NOTE(3, Note.class, R.string.model_name_note),
     NOTEBOOK(9, Notebook.class, R.string.model_name_notebook),
     ATTACHMENT(11, Attachment.class, R.string.model_name_attachment),
-    LOCATION(13, Location.class, R.string.model_name_location),
-    MIND_SNAGGING(14, MindSnagging.class, R.string.model_name_mind_snagging),
-    TIME_LINE(15, TimeLine.class, R.string.model_name_timeline),
-    WEATHER(16, Weather.class, R.string.model_name_weather);
+    TIME_LINE(15, TimeLine.class, R.string.model_name_timeline);
 
     public final int id;
 
