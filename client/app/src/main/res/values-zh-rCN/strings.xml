@@ -45,7 +45,6 @@
     <string name="text_statistic">数据统计</string>
     <string name="text_tips">提示</string>
     <string name="text_warning">警告</string>
-    <string name="trying_to_get_location">正在尝试获取位置信息&#8230;</string>
     <string name="content_was_copied_to_clipboard">内容已复制到粘贴板</string>
     <string name="share_message_chooser">选择分享方式</string>
     <string name="cannot_get_link_of_not_synced_item">无法获取未同步的项目的链接</string>
@@ -54,8 +53,6 @@
     <string name="text_back">返回</string>
     <string name="text_color">颜色</string>
     <string name="text_portrait">图标</string>
-    <string name="set_successfully">设置成功</string>
-    <string name="items">类目</string>
     <string name="text_other_ways">其他方式</string>
     <string name="text_trash">放进垃圾箱</string>
     <string name="text_archived">归档</string>
@@ -68,7 +65,6 @@
     <string name="text_failed_to_modify_data">修改数据失败</string>
     <string name="text_pick_from_album">从相册中选择</string>
 
-    <string name="check_network_availability">检查网络连接是否可用</string>
 
     <!--region Common->Announcement-->
     <string name="dialog_notice_content_part1">用户你好！<![CDATA[<br/><br/>]]>由于时间限制仍然马克笔记有许多不足。我们邀请你来一起完善：</string>
@@ -128,8 +124,6 @@
 
     <string name="content_failed_to_parse_intent">无法解析的意图</string>
     <string name="note_failed_to_read_file">读取文件内容失败</string>
-    <string name="note_failed_to_get_note_content">读取笔记内容失败</string>
-    <string name="text_no_such_note">没有找到该笔记</string>
     <string name="note_note_title">笔记标题</string>
     <string name="note_write_down_what_you_want">写下此刻的想法&#8230;</string>
     <string name="note_default_notebook">默认笔记本</string>
@@ -165,14 +159,12 @@
     <string name="tags_list_empty_sub_archived">没有发现归档的标签</string>
     <string name="tags_list_empty_sub_trashed">没有在垃圾箱中发现标签</string>
 
-    <string name="edit_quick_note">快速创建笔记</string>
     <!--endregion-->
 
     <!--region Attachment-->
     <string name="failed_to_create_file">创建文件失败</string>
     <string name="storage_not_available">存储空间不可用</string>
     <string name="failed_to_save_attachment">保存附件失败</string>
-    <string name="add_attachment">添加附件</string>
 
     <string name="attachment_type_files">文件</string>
     <string name="attachment_type_images">图片</string>
@@ -192,7 +184,6 @@
     <string name="activity_not_found_to_resolve">没有找到可用的程序</string>
     <string name="use_to_open">用&#8230;打开</string>
     <string name="information">信息</string>
-    <string name="failed_when_play_audio">播放音频时出现错误</string>
     <string name="failed_to_resolve_intent">没有找到可用的应用</string>
 
     <string name="confirm_to_clear_bitmap">确认全部擦除？</string>
@@ -208,9 +199,7 @@
     <string name="model_name_notebook">笔记本</string>
     <string name="model_name_attachment">附件</string>
     <string name="model_name_location">位置</string>
-    <string name="model_name_mind_snagging">小纸条</string>
     <string name="model_name_timeline">时间线</string>
-    <string name="model_name_weather">天气</string>
     <string name="model_name_category">标签</string>
 
     <string name="operation_none">None</string>
@@ -257,19 +246,8 @@
     <string name="setting_dashboard_user_motto_default">欢迎使用 马克笔记</string>
 
     <string name="setting_theme">应用主题</string>
-    <string name="setting_dark_theme">夜间主题</string>
-    <string name="setting_dark_theme_sub">将整个程序的主题设置成暗色调的</string>
-    <string name="setting_primary_color">主色调</string>
-    <string name="setting_primary_color_sub">应用到整个程序的主要色彩</string>
-    <string name="setting_accent_color">强调色调</string>
-    <string name="setting_accent_color_sub">设置主界面及其他组件所需的强调色</string>
 
-    <string name="select_accent_color">选择强调色彩</string>
-    <string name="my_youth">活力</string>
-    <string name="noble">质朴</string>
 
-    <string name="setting_colored_navigation_bar">彩色导航栏</string>
-    <string name="setting_colored_navigation_bar_sub">切换导航栏颜色</string>
     <!--endregion-->
 
     <!--region Setting->Help-->

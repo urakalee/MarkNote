@@ -12,5 +12,4 @@
         android:icon="@drawable/ic_more_vert_black"
         app:showAsAction="always"/>
 
-
 </menu>
