@@ -66,7 +66,7 @@ public class FabSortActivity extends CommonActivity<ActivityFabSortBinding> {
             ab.setTitle(R.string.fab_sort_custom_fab);
             ab.setDisplayHomeAsUpEnabled(true);
         }
-        if (!isDarkTheme()) toolbar.setPopupTheme(R.style.AppTheme_PopupOverlay);
+        toolbar.setPopupTheme(R.style.AppTheme_PopupOverlay);
     }
 
     private void prepareFabSortItems() {

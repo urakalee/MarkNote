@@ -11,8 +11,8 @@ import me.shouheng.notepal.model.Attachment
 import me.shouheng.notepal.util.AttachmentHelper
 import me.shouheng.notepal.util.FileHelper
 import me.shouheng.notepal.util.ScreenShotHelper
-import org.polaric.colorful.BaseActivity
-import org.polaric.colorful.PermissionUtils
+import me.urakalee.next2.base.activity.BaseActivity
+import me.urakalee.next2.support.permission.PermissionUtils
 
 /**
  * @author Uraka.Lee

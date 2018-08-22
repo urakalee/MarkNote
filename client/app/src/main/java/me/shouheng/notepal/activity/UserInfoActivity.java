@@ -36,7 +36,7 @@ public class UserInfoActivity extends CommonActivity<ActivityUserInfoBinding>
             actionBar.setDisplayHomeAsUpEnabled(true);
             actionBar.setTitle(R.string.user_info);
         }
-        if (!isDarkTheme()) toolbar.setPopupTheme(R.style.AppTheme_PopupOverlay);
+        toolbar.setPopupTheme(R.style.AppTheme_PopupOverlay);
     }
 
     private void configFragment() {

@@ -22,8 +22,6 @@ import me.shouheng.notepal.activity.base.CommonActivity;
 import me.shouheng.notepal.adapter.SearchItemsAdapter;
 import me.shouheng.notepal.adapter.SearchItemsAdapter.OnItemSelectedListener;
 import me.shouheng.notepal.databinding.ActivitySearchBinding;
-import me.urakalee.next2.activity.NoteActivity;
-import me.urakalee.next2.model.Note;
 import me.shouheng.notepal.util.GsonUtils;
 import me.shouheng.notepal.util.LogUtils;
 import me.shouheng.notepal.util.ToastUtils;
@@ -32,6 +30,8 @@ import me.shouheng.notepal.util.tools.SearchConditions;
 import me.shouheng.notepal.viewmodel.SearchViewModel;
 import me.shouheng.notepal.widget.tools.CustomItemAnimator;
 import me.shouheng.notepal.widget.tools.DividerItemDecoration;
+import me.urakalee.next2.activity.NoteActivity;
+import me.urakalee.next2.model.Note;
 
 public class SearchActivity extends CommonActivity<ActivitySearchBinding> implements
         OnQueryTextListener,
@@ -63,9 +63,7 @@ public class SearchActivity extends CommonActivity<ActivitySearchBinding> implem
     @Override
     protected void doCreateView(Bundle savedInstanceState) {
         setSupportActionBar(getBinding().toolbarLayout.toolbar);
-        if (!isDarkTheme()){
-            getBinding().toolbarLayout.toolbar.setPopupTheme(R.style.AppTheme_PopupOverlay);
-        }
+        getBinding().toolbarLayout.toolbar.setPopupTheme(R.style.AppTheme_PopupOverlay);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
@@ -75,7 +73,7 @@ public class SearchActivity extends CommonActivity<ActivitySearchBinding> implem
 
         getBinding().recyclerview.setEmptyView(findViewById(R.id.emptyView));
         getBinding().recyclerview.addItemDecoration(new DividerItemDecoration(
-                this, DividerItemDecoration.VERTICAL_LIST, isDarkTheme()));
+                this, DividerItemDecoration.VERTICAL_LIST, false));
         getBinding().recyclerview.setItemAnimator(new CustomItemAnimator());
         getBinding().recyclerview.setLayoutManager(new LinearLayoutManager(this));
         getBinding().recyclerview.setAdapter(adapter);

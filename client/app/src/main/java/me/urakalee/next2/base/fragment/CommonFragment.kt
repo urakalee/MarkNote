@@ -7,7 +7,6 @@ import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import me.shouheng.notepal.R
 import me.shouheng.notepal.util.ColorUtils
 
 /**
@@ -15,24 +14,15 @@ import me.shouheng.notepal.util.ColorUtils
  */
 abstract class CommonFragment : Fragment() {
 
-    //region
-
     override fun onCreateView(
             inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         if (layoutResId <= 0) {
             throw AssertionError("Subclass must provide a valid layout resource id")
         }
-        val root = inflater.inflate(layoutResId, container, false)
-        if (isDarkTheme) {
-            root.setBackgroundResource(R.color.dark_theme_background)
-        }
-        return root
+        return inflater.inflate(layoutResId, container, false)
     }
 
     protected abstract val layoutResId: Int
-
-    protected val isDarkTheme: Boolean
-        get() = ColorUtils.isDarkTheme(context)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -45,7 +35,7 @@ abstract class CommonFragment : Fragment() {
         activity?.finish()
     }
 
-    //endregion
+    //region colorful
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     protected fun setStatusBarColor(color: Int) {
@@ -61,4 +51,6 @@ abstract class CommonFragment : Fragment() {
     protected fun accentColor(): Int {
         return ColorUtils.accentColor(context)
     }
+
+    //endregion
 }

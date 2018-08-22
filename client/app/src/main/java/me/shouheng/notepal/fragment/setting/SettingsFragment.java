@@ -1,27 +1,19 @@
 package me.shouheng.notepal.fragment.setting;
 
 import android.os.Bundle;
-import android.support.v7.preference.CheckBoxPreference;
 import android.support.v7.preference.Preference;
 
 import me.shouheng.notepal.R;
-import me.shouheng.notepal.activity.base.ThemedActivity;
 import me.shouheng.notepal.config.Constants;
 import me.shouheng.notepal.dialog.FeedbackDialog;
 import me.shouheng.notepal.dialog.NoticeDialog;
 import me.shouheng.notepal.model.Feedback;
-import me.shouheng.notepal.util.ColorUtils;
 import me.shouheng.notepal.util.IntentUtils;
-import me.shouheng.notepal.widget.ColorPreference;
 
 /**
  * Created by wang shouheng on 2017/12/21.
  */
 public class SettingsFragment extends BaseFragment {
-
-    private CheckBoxPreference isDarkTheme, coloredNavigationBar;
-
-    private ColorPreference primaryColor, accentColor;
 
     /**
      * Used to transfer click message to the activity.
@@ -36,16 +28,7 @@ public class SettingsFragment extends BaseFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         addPreferencesFromResource(R.xml.preferences);
-
-        isDarkTheme = (CheckBoxPreference) findPreference(getString(R.string.key_is_dark_theme));
-        primaryColor = (ColorPreference) findPreference(getString(R.string.key_primary_color));
-        accentColor = (ColorPreference) findPreference(getString(R.string.key_accent_color));
-        coloredNavigationBar = (CheckBoxPreference) findPreference(getString(R.string.key_is_colored_navigation_bar));
-        primaryColor.setValue(ColorUtils.primaryColor(getActivity()));
-        accentColor.setValue(ColorUtils.accentColor(getActivity()));
-
         setPreferenceClickListeners();
     }
 
@@ -54,15 +37,6 @@ public class SettingsFragment extends BaseFragment {
     }
 
     private void setPreferenceClickListeners() {
-        isDarkTheme.setOnPreferenceClickListener(preference -> {
-            updateThemeSettings();
-            return true;
-        });
-        coloredNavigationBar.setOnPreferenceClickListener(preference -> {
-            ((ThemedActivity) getActivity()).updateTheme();
-            return true;
-        });
-
         findPreference(R.string.key_feedback).setOnPreferenceClickListener(preference -> {
             showFeedbackEditor();
             return true;
@@ -76,8 +50,6 @@ public class SettingsFragment extends BaseFragment {
             return true;
         });
 
-        primaryColor.setOnPreferenceClickListener(listener);
-        accentColor.setOnPreferenceClickListener(listener);
         findPreference(R.string.key_preferences).setOnPreferenceClickListener(listener);
         findPreference(R.string.key_setup_dashboard).setOnPreferenceClickListener(listener);
         findPreference(R.string.key_data_backup).setOnPreferenceClickListener(listener);
@@ -95,19 +67,6 @@ public class SettingsFragment extends BaseFragment {
         String subject = String.format(Constants.DEVELOPER_EMAIL_PREFIX, feedback.getFeedbackType().name());
         String body = feedback.getQuestion() + Constants.DEVELOPER_EMAIL_EMAIL_PREFIX + feedback.getEmail();
         IntentUtils.sendEmail(getActivity(), subject, body);
-    }
-
-    private void updateThemeSettings() {
-        ColorUtils.forceUpdateThemeStatus(getActivity());
-        ((ThemedActivity) getActivity()).reUpdateTheme();
-    }
-
-    public void notifyAccentColorChanged(int accentColor) {
-        this.accentColor.setValue(accentColor);
-    }
-
-    public void notifyPrimaryColorChanged(int primaryColor) {
-        this.primaryColor.setValue(primaryColor);
     }
 
     public interface OnPreferenceClickListener {

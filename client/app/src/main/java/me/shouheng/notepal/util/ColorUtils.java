@@ -14,34 +14,31 @@ import android.view.View;
 import com.kennyc.bottomsheet.menu.BottomSheetMenu;
 
 import org.polaric.colorful.Colorful;
+import org.polaric.colorful.Defaults;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import me.shouheng.notepal.PalmApp;
 import me.shouheng.notepal.R;
-import me.shouheng.notepal.util.preferences.ThemePreferences;
 
 /**
- * Created by wangshouheng on 2017/3/31.*/
+ * Created by wangshouheng on 2017/3/31.
+ */
 public class ColorUtils {
 
-    private static Boolean isDarkTheme;
     private static Integer primaryColor;
     private static Integer accentColor;
 
     private static final int DEFAULT_COLOR_ALPHA = 50;
 
     public static boolean isDarkTheme(Context context) {
-        if (isDarkTheme == null) {
-            isDarkTheme = ThemePreferences.getInstance().isDarkTheme();
-        }
-        return isDarkTheme;
+        return false;
     }
 
     public static int primaryColor(Context context) {
         if (primaryColor == null) {
-            Colorful.ThemeColor primaryColor = ThemePreferences.getInstance().getThemeColor();
+            Colorful.ThemeColor primaryColor = Colorful.ThemeColor.getByPrimaryName(Defaults.primaryColor.getIdentifyName());
             ColorUtils.primaryColor = context.getResources().getColor(primaryColor.getColorRes());
         }
         return primaryColor;
@@ -49,32 +46,14 @@ public class ColorUtils {
 
     public static int accentColor(Context context) {
         if (accentColor == null) {
-            Colorful.AccentColor accentColor = ThemePreferences.getInstance().getAccentColor();
+            Colorful.AccentColor accentColor = Colorful.AccentColor.getByAccentName(Defaults.accentColor.getColorName());
             ColorUtils.accentColor = context.getResources().getColor(accentColor.getColorRes());
         }
         return accentColor;
     }
 
-    public static Colorful.ThemeColor getThemeColor() {
-        return ThemePreferences.getInstance().getThemeColor();
-    }
-
-    public static Colorful.AccentColor getAccentColor() {
-        return ThemePreferences.getInstance().getAccentColor();
-    }
-
-    public static void forceUpdateThemeStatus(Context context) {
-        Colorful.ThemeColor primaryColor = ThemePreferences.getInstance().getThemeColor();
-        ColorUtils.primaryColor = context.getResources().getColor(primaryColor.getColorRes());
-
-        Colorful.AccentColor accentColor = ThemePreferences.getInstance().getAccentColor();
-        ColorUtils.accentColor = context.getResources().getColor(accentColor.getColorRes());
-
-        isDarkTheme = ThemePreferences.getInstance().isDarkTheme();
-    }
-
     public static String getColorName(int color) {
-        return "#" + getHexString(Color.red(color)) + getHexString(Color.green(color)) + getHexString( Color.blue(color));
+        return "#" + getHexString(Color.red(color)) + getHexString(Color.green(color)) + getHexString(Color.blue(color));
     }
 
     private static String getHexString(int i) {
@@ -139,7 +118,7 @@ public class ColorUtils {
         BottomSheetMenu menu = new BottomSheetMenu(context);
         new MenuInflater(context).inflate(menuRes, menu);
         int size = menu.size();
-        for (int i=0; i<size; i++) {
+        for (int i = 0; i < size; i++) {
             MenuItem menuItem = menu.getItem(i);
             Drawable drawable = menuItem.getIcon();
             if (drawable != null) {

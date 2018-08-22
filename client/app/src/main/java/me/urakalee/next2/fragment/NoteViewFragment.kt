@@ -69,11 +69,10 @@ class NoteViewFragment : BaseFragment() {
             notebookName.text = it.title
         }
 
-        mdView.fastScrollDelegate.setThumbDrawable(PalmApp.getDrawableCompact(
-                if (isDarkTheme) R.drawable.fast_scroll_bar_dark else R.drawable.fast_scroll_bar_light))
+        mdView.fastScrollDelegate.setThumbDrawable(PalmApp.getDrawableCompact(R.drawable.fast_scroll_bar_light))
         mdView.fastScrollDelegate.setThumbSize(16, 40)
         mdView.fastScrollDelegate.setThumbDynamicHeight(false)
-        mdView.setHtmlResource(isDarkTheme)
+        mdView.setHtmlResource(false)
         mdView.parseMarkdown(content)
         mdView.setOnImageClickedListener { url, urls ->
             val attachments = ArrayList<Attachment>()
@@ -197,7 +196,7 @@ class NoteViewFragment : BaseFragment() {
     private fun share() {
         val activityNonNull = activity ?: return
         BottomSheet.Builder(activityNonNull)
-                .setStyle(if (isDarkTheme) R.style.BottomSheet_Dark else R.style.BottomSheet)
+                .setStyle(R.style.BottomSheet)
                 .setMenu(ColorUtils.getThemedBottomSheetMenu(context, R.menu.share))
                 .setTitle(R.string.text_share)
                 .setListener(object : BottomSheetListener {
@@ -222,7 +221,7 @@ class NoteViewFragment : BaseFragment() {
     private fun export() {
         val activityNonNull = activity ?: return
         BottomSheet.Builder(activityNonNull)
-                .setStyle(if (isDarkTheme) R.style.BottomSheet_Dark else R.style.BottomSheet)
+                .setStyle(R.style.BottomSheet)
                 .setMenu(ColorUtils.getThemedBottomSheetMenu(context, R.menu.export))
                 .setTitle(R.string.text_export)
                 .setListener(object : BottomSheetListener {

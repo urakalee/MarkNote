@@ -14,13 +14,14 @@ import com.afollestad.materialdialogs.color.ColorChooserDialog;
 import com.crashlytics.android.Crashlytics;
 
 import io.fabric.sdk.android.Fabric;
+import me.urakalee.next2.base.activity.BaseActivity;
 
 /**
  * Created by wang shouheng on 2017/12/21.
  */
 @SuppressLint("Registered")
-public abstract class CommonActivity<T extends ViewDataBinding> extends ThemedActivity implements
-        ColorChooserDialog.ColorCallback {
+public abstract class CommonActivity<T extends ViewDataBinding>
+        extends BaseActivity implements ColorChooserDialog.ColorCallback {
 
     private T binding;
 
@@ -49,10 +50,6 @@ public abstract class CommonActivity<T extends ViewDataBinding> extends ThemedAc
     }
 
     protected abstract void doCreateView(Bundle savedInstanceState);
-
-    public void superOnBackPressed() {
-        super.onBackPressed();
-    }
 
     protected final T getBinding() {
         return binding;

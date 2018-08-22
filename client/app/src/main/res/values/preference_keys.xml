@@ -22,13 +22,6 @@
     <string name="key_key_show_note_expanded" translatable="false">key_show_note_expanded</string>
     <!--endregion-->
 
-    <!--region theme-->
-    <string name="key_is_dark_theme" translatable="false">is_dark_theme</string>
-    <string name="key_primary_color" translatable="false">primary_color</string>
-    <string name="key_accent_color" translatable="false">accent_color</string>
-    <string name="key_is_colored_navigation_bar" translatable="false">colored_navigation_bar</string>
-    <!--endregion-->
-
     <!--region security-->
     <string name="key_data_security" translatable="false">data_security</string>
     <string name="key_is_password_required" translatable="false">password_required</string>

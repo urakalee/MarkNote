@@ -14,9 +14,6 @@ import android.support.v7.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
 
-import org.polaric.colorful.BaseActivity;
-import org.polaric.colorful.PermissionUtils;
-
 import me.shouheng.notepal.PalmApp;
 import me.shouheng.notepal.R;
 import me.shouheng.notepal.config.Constants;
@@ -31,6 +28,8 @@ import me.shouheng.notepal.util.AttachmentHelper;
 import me.shouheng.notepal.util.ColorUtils;
 import me.shouheng.notepal.util.ToastUtils;
 import me.shouheng.notepal.util.preferences.DashboardPreferences;
+import me.urakalee.next2.base.activity.BaseActivity;
+import me.urakalee.next2.support.permission.PermissionUtils;
 
 /**
  * Created by shouh on 2018/3/18.

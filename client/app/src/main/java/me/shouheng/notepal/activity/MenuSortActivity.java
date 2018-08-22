@@ -70,7 +70,7 @@ public class MenuSortActivity extends CommonActivity<ActivityMenuSortBinding> {
             ab.setTitle(R.string.custom_note_menu);
             ab.setDisplayHomeAsUpEnabled(true);
         }
-        if (!isDarkTheme()) toolbar.setPopupTheme(R.style.AppTheme_PopupOverlay);
+        toolbar.setPopupTheme(R.style.AppTheme_PopupOverlay);
     }
 
     private void configList() {

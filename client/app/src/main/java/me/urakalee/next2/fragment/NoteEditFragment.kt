@@ -12,9 +12,9 @@ import android.text.TextWatcher
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import kotlinx.android.synthetic.main.note_drawer_edit.*
 import kotlinx.android.synthetic.main.note_fragment_edit.*
 import kotlinx.android.synthetic.main.note_include_edit.*
-import kotlinx.android.synthetic.main.note_drawer_edit.*
 import me.shouheng.notepal.R
 import me.shouheng.notepal.activity.MenuSortActivity
 import me.shouheng.notepal.config.Constants
@@ -33,16 +33,16 @@ import me.shouheng.notepal.viewmodel.AttachmentViewModel
 import me.shouheng.notepal.viewmodel.CategoryViewModel
 import me.shouheng.notepal.widget.FlowLayout
 import me.shouheng.notepal.widget.MDItemView
+import me.urakalee.next2.base.activity.BaseActivity
 import me.urakalee.next2.base.fragment.BaseModelFragment
 import me.urakalee.next2.config.FeatureConfig
 import me.urakalee.next2.model.Note
+import me.urakalee.next2.support.permission.PermissionUtils
 import me.urakalee.next2.viewmodel.NoteViewModel
 import me.urakalee.next2.viewmodel.NotebookViewModel
 import me.urakalee.ranger.extension.dp
 import me.urakalee.ranger.extension.pixel
 import my.shouheng.palmmarkdown.tools.MarkdownFormat
-import org.polaric.colorful.BaseActivity
-import org.polaric.colorful.PermissionUtils
 
 /**
  * @author Uraka.Lee
@@ -243,10 +243,6 @@ class NoteEditFragment : BaseModelFragment<Note>() {
         drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
 
         drawerToolbar.setNavigationOnClickListener { drawerLayout.closeDrawer(GravityCompat.END) }
-        if (isDarkTheme) {
-            drawerToolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp)
-            drawer.setBackgroundResource(R.color.dark_theme_background)
-        }
 
         updateCharsInfo()
         timeInfo.text = ModelHelper.getTimeInfo(note)

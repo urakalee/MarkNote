@@ -4,19 +4,15 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.support.annotation.ColorInt
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentPagerAdapter
 import android.support.v4.view.ViewPager
 import android.view.MenuItem
 import com.afollestad.materialdialogs.MaterialDialog
-import com.afollestad.materialdialogs.color.ColorChooserDialog
-import com.afollestad.materialdialogs.color.ColorChooserDialog.ColorCallback
 import com.balysv.materialmenu.MaterialMenuDrawable
 import kotlinx.android.synthetic.main.activity_note.*
 import me.shouheng.notepal.R
 import me.shouheng.notepal.config.Constants
-import me.shouheng.notepal.fragment.base.BaseModelFragment
 import me.shouheng.notepal.util.LogUtils
 import me.shouheng.notepal.util.ToastUtils
 import me.urakalee.next2.base.activity.CommonActivity
@@ -31,8 +27,7 @@ import java.io.IOException
 /**
  * @author Uraka.Lee
  */
-class NoteActivity : CommonActivity(),
-        ColorCallback {
+class NoteActivity : CommonActivity() {
 
     private lateinit var materialMenu: MaterialMenuDrawable
 
@@ -161,8 +156,8 @@ class NoteActivity : CommonActivity(),
 
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        if (!isDarkTheme) toolbar.popupTheme = R.style.AppTheme_PopupOverlay
-        setStatusBarColor(resources.getColor(if (isDarkTheme) R.color.dark_theme_foreground else R.color.md_grey_500))
+        toolbar.popupTheme = R.style.AppTheme_PopupOverlay
+        setStatusBarColor(resources.getColor(R.color.md_grey_500))
 
         materialMenu = MaterialMenuDrawable(this, primaryColor(), MaterialMenuDrawable.Stroke.THIN)
         materialMenu.iconState = MaterialMenuDrawable.IconState.ARROW
@@ -296,16 +291,6 @@ class NoteActivity : CommonActivity(),
     }
 
     //endregion
-
-    override fun onColorSelection(dialog: ColorChooserDialog, @ColorInt selectedColor: Int) {
-        val fragment = getCurrentFragment(R.id.fragment_container)
-        if (fragment is BaseModelFragment<*, *>) {
-            fragment.onColorSelection(selectedColor)
-        }
-    }
-
-    override fun onColorChooserDismissed(dialog: ColorChooserDialog) {}
-
     //region delegate
 
     private val editDelegate = object : NoteEditFragment.NoteEditFragmentDelegate {

@@ -28,14 +28,14 @@ import me.shouheng.notepal.util.preferences.UserPreferences
 import me.shouheng.notepal.widget.tools.CustomItemAnimator
 import me.shouheng.notepal.widget.tools.DividerItemDecoration
 import me.urakalee.next2.activity.NoteActivity
+import me.urakalee.next2.base.activity.BaseActivity
 import me.urakalee.next2.config.FeatureConfig
 import me.urakalee.next2.model.Note
 import me.urakalee.next2.notelist.NotesAdapter.MultiItem
+import me.urakalee.next2.support.permission.PermissionUtils
 import me.urakalee.next2.viewmodel.NoteViewModel
 import me.urakalee.next2.viewmodel.NotebookViewModel
 import me.urakalee.ranger.extension.isVisible
-import org.polaric.colorful.BaseActivity
-import org.polaric.colorful.PermissionUtils
 
 /**
  * @author Uraka.Lee
@@ -299,10 +299,6 @@ class NotesFragment : BaseFragment<FragmentNotesBinding>(),
         dialog?.show(fragmentNonNull, "Notebook Editor")
     }
 
-    fun setSelectedColor(color: Int) {
-        dialog?.updateUIBySelectedColor(color)
-    }
-
     private var dialog: NotebookEditDialog? = null
 
     private fun deleteNotebook(notebook: Notebook) {
@@ -332,7 +328,7 @@ class NotesFragment : BaseFragment<FragmentNotesBinding>(),
 
     fun reload() {
         val activityNonNull = activity as? BaseActivity ?: return
-        PermissionUtils.checkStoragePermission(activityNonNull, { doReload() })
+        PermissionUtils.checkStoragePermission(activityNonNull) { doReload() }
     }
 
     private fun doReload() {

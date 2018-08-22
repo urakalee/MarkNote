@@ -20,11 +20,11 @@ import me.shouheng.notepal.model.Model;
 
 /**
  * TODO All the todo items in later version:
- *
+ * <p>
  * 2. Enable copy link logic when the server is ready. {@link me.shouheng.notepal.util.ModelHelper#copyLink(Activity, Model)};
  * 3. Add Google Drive logic, check if the file has backup time in google drive;
  * 6. Modify import from external logic, since current logic did nothing according to the db version and change,
- *    You may also research the performance when the db version is different.
+ * You may also research the performance when the db version is different.
  * 7. Refine NoteViewFragment performance;
  * 8. Add sortable selections in list fragment.
  * 9. Location logic of foreign country;
@@ -34,22 +34,23 @@ import me.shouheng.notepal.model.Model;
  * 13. Google map location info;
  * 14. Multiple platform statistics and user trace;
  * 21. Share html and associated resources, note content and resources.
- *
+ * <p>
  * 不要让用户做太多的选择！
  * 只要一个主线功能就行！
- *
+ * <p>
  * Official account:
  * 1. Contact email: shouheng2015@gmail.com
  * 2. Fabric: shouheng2015@gmail.com
  * 3. One Drive: w_shouheng@163.com
- *
+ * <p>
  * 重点：
  * 1.自动刷新到新的笔记历史栈里面，防止数据丢失；
  * 2.笔记编辑界面底部的按钮可以自定义，现在的按钮位置需要调整；
  * 3.打开笔记的时候先从OneDrive上面检查备份信息；
  * 4.备份的文件的名称需要改；
- *
- * Created by wangshouheng on 2017/2/26. */
+ * <p>
+ * Created by wangshouheng on 2017/2/26.
+ */
 public class PalmApp extends Application {
 
     private static PalmApp mInstance;
@@ -66,8 +67,6 @@ public class PalmApp extends Application {
 
         Colorful.init(this);
 
-        /*
-         * Enable stetho only in debug mode. */
         if (BuildConfig.DEBUG) {
             Stetho.initializeWithDefaults(this);
         }
@@ -86,7 +85,8 @@ public class PalmApp extends Application {
         return PalmApp.getContext().getString(resId);
     }
 
-    public static @ColorInt int getColorCompact(@ColorRes int colorRes) {
+    public static @ColorInt
+    int getColorCompact(@ColorRes int colorRes) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             return PalmApp.getContext().getColor(colorRes);
         } else {
@@ -95,10 +95,6 @@ public class PalmApp extends Application {
     }
 
     public static Drawable getDrawableCompact(@DrawableRes int resId) {
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-            return getContext().getDrawable(resId);
-        } else {
-            return getContext().getResources().getDrawable(resId);
-        }
+        return getContext().getDrawable(resId);
     }
 }

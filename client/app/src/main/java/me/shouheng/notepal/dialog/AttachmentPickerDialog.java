@@ -11,14 +11,13 @@ import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 
-import org.polaric.colorful.BaseActivity;
-import org.polaric.colorful.PermissionUtils;
-
 import java.io.Serializable;
 
 import me.shouheng.notepal.R;
 import me.shouheng.notepal.databinding.DialogAttachmentPickerLayoutBinding;
 import me.shouheng.notepal.util.AttachmentHelper;
+import me.urakalee.next2.base.activity.BaseActivity;
+import me.urakalee.next2.support.permission.PermissionUtils;
 
 /**
  * Created by wangshouheng on 2017/4/7.*/

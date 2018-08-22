@@ -24,11 +24,8 @@ import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.RelativeLayout;
 
-import com.afollestad.materialdialogs.color.ColorChooserDialog;
 import com.bumptech.glide.Glide;
 import com.github.clans.fab.FloatingActionButton;
-
-import org.polaric.colorful.PermissionUtils;
 
 import java.util.Collections;
 import java.util.List;
@@ -39,7 +36,6 @@ import me.shouheng.notepal.activity.base.CommonActivity;
 import me.shouheng.notepal.config.Constants;
 import me.shouheng.notepal.databinding.ActivityMainBinding;
 import me.shouheng.notepal.databinding.ActivityMainNavHeaderBinding;
-import me.shouheng.notepal.dialog.AttachmentPickerDialog;
 import me.shouheng.notepal.dialog.CategoryEditDialog;
 import me.shouheng.notepal.dialog.NotebookEditDialog;
 import me.shouheng.notepal.dialog.QuickNoteEditor;
@@ -49,7 +45,6 @@ import me.shouheng.notepal.listener.OnMainActivityInteraction;
 import me.shouheng.notepal.listener.SettingChangeType;
 import me.shouheng.notepal.model.Attachment;
 import me.shouheng.notepal.model.Category;
-import me.shouheng.notepal.model.MindSnagging;
 import me.shouheng.notepal.model.ModelFactory;
 import me.shouheng.notepal.model.Notebook;
 import me.shouheng.notepal.model.data.LoadStatus;
@@ -67,6 +62,7 @@ import me.shouheng.notepal.widget.tools.CustomRecyclerScrollViewListener;
 import me.urakalee.next2.activity.NoteActivity;
 import me.urakalee.next2.model.Note;
 import me.urakalee.next2.notelist.NotesFragment;
+import me.urakalee.next2.support.permission.PermissionUtils;
 import me.urakalee.next2.viewmodel.NoteViewModel;
 import me.urakalee.next2.viewmodel.NotebookViewModel;
 
@@ -270,7 +266,7 @@ public class MainActivity extends CommonActivity<ActivityMainBinding> implements
             actionBar.setDisplayHomeAsUpEnabled(true);
             actionBar.setHomeAsUpIndicator(R.drawable.ic_menu_white);
         }
-        if (!isDarkTheme()) toolbar.setPopupTheme(R.style.AppTheme_PopupOverlay);
+        toolbar.setPopupTheme(R.style.AppTheme_PopupOverlay);
     }
 
     private void initViewModels() {
@@ -489,55 +485,6 @@ public class MainActivity extends CommonActivity<ActivityMainBinding> implements
     //endregion
     //region no-use currently
 
-    private void editMindSnagging(@NonNull MindSnagging param) {
-        quickNoteEditor = new QuickNoteEditor.Builder()
-                .setMindSnagging(param)
-                .setOnAddAttachmentListener(mindSnagging -> showAttachmentPicker())
-                .setOnAttachmentClickListener(this::resolveAttachmentClick)
-                .setOnConfirmListener(this::saveMindSnagging)
-                .build();
-        quickNoteEditor.show(getSupportFragmentManager(), "mind snagging");
-    }
-
-    private void showAttachmentPicker() {
-        new AttachmentPickerDialog.Builder()
-                .setAddLinkVisible(false)
-                .setRecordVisible(false)
-                .setVideoVisible(false)
-                .build().show(getSupportFragmentManager(), "Attachment picker");
-    }
-
-    private void resolveAttachmentClick(Attachment attachment) {
-        AttachmentHelper.resolveClickEvent(
-                this,
-                attachment,
-                Collections.singletonList(attachment),
-                attachment.getName());
-    }
-
-    private void saveMindSnagging(MindSnagging mindSnagging, Attachment attachment) {
-        noteViewModel.saveSnagging(getNewNote(), mindSnagging, attachment).observe(this, noteResource -> {
-            if (noteResource == null) {
-                ToastUtils.makeToast(R.string.text_failed_to_modify_data);
-                return;
-            }
-            switch (noteResource.status) {
-                case SUCCESS:
-                    ToastUtils.makeToast(R.string.text_save_successfully);
-                    Fragment fragment = getCurrentFragment();
-                    if (fragment != null && fragment instanceof NotesFragment) {
-                        ((NotesFragment) fragment).reload();
-                    }
-                    break;
-                case FAILED:
-                    ToastUtils.makeToast(R.string.text_failed_to_modify_data);
-                    break;
-                case LOADING:
-                    break;
-            }
-        });
-    }
-
     private void editCategory() {
         categoryEditDialog = CategoryEditDialog.newInstance(ModelFactory.getCategory(), this::saveCategory);
         categoryEditDialog.show(getSupportFragmentManager(), "CATEGORY_EDIT_DIALOG");
@@ -619,12 +566,6 @@ public class MainActivity extends CommonActivity<ActivityMainBinding> implements
                 case R.id.nav_categories:
                     toCategoriesFragment();
                     break;
-                case R.id.nav_archive:
-                    startActivityForResult(ArchiveActivity.class, REQUEST_ARCHIVE);
-                    break;
-                case R.id.nav_trash:
-                    startActivityForResult(TrashedActivity.class, REQUEST_TRASH);
-                    break;
                 case R.id.nav_settings:
                     SettingsActivity.start(this, REQUEST_SETTING);
                     break;
@@ -705,24 +646,6 @@ public class MainActivity extends CommonActivity<ActivityMainBinding> implements
     }
 
     //endregion
-
-    @Override
-    public void onColorSelection(@NonNull ColorChooserDialog dialog, int selectedColor) {
-        if (notebookEditDialog != null) {
-            notebookEditDialog.updateUIBySelectedColor(selectedColor);
-        }
-        if (categoryEditDialog != null) {
-            categoryEditDialog.updateUIBySelectedColor(selectedColor);
-        }
-        Fragment currentFragment = getCurrentFragment();
-        if (currentFragment instanceof NotesFragment) {
-            ((NotesFragment) currentFragment).setSelectedColor(selectedColor);
-        }
-        if (currentFragment instanceof CategoriesFragment) {
-            ((CategoriesFragment) currentFragment).setSelectedColor(selectedColor);
-        }
-    }
-
     //region delegate
 
     //region note fragment
