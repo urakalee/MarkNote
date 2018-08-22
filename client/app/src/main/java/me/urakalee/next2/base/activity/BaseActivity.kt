@@ -1,12 +1,12 @@
 package me.urakalee.next2.base.activity
 
-import android.annotation.TargetApi
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.net.Uri
 import android.os.Build
+import android.os.Bundle
 import android.provider.Settings
 import android.support.annotation.StringRes
 import android.support.v4.view.ViewCompat
@@ -60,7 +60,7 @@ abstract class BaseActivity : AppCompatActivity() {
         AlertDialog.Builder(this)
                 .setTitle(R.string.setting_permission)
                 .setMessage(msg)
-                .setPositiveButton(R.string.to_set) { dialog, which -> toSetPermission() }
+                .setPositiveButton(R.string.to_set) { _, _ -> toSetPermission() }
                 .setNegativeButton(R.string.text_cancel, null)
                 .create()
                 .show()
@@ -93,6 +93,14 @@ abstract class BaseActivity : AppCompatActivity() {
     //endregion
     //region colorful
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        setTheme(ColorUtils.getBaseStyle());
+        theme.applyStyle(ColorUtils.primaryStyle(this), true)
+        theme.applyStyle(ColorUtils.accentStyle(this), true)
+    }
+
     protected fun setTranslucentStatusBar() {
         val mContentView = findViewById<ViewGroup>(Window.ID_ANDROID_CONTENT);
         // set child View not fill the system window
@@ -112,11 +120,8 @@ abstract class BaseActivity : AppCompatActivity() {
         }
     }
 
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     protected fun setStatusBarColor(color: Int) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            window.statusBarColor = color
-        }
+        window.statusBarColor = color
     }
 
     protected fun primaryColor(): Int {

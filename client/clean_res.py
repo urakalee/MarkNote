@@ -311,9 +311,9 @@ def clean():
     for directory in resDirectory:
         for root, dirs, files in os.walk(directory):
             for file in files:
-                if file == 'strings.xml':
+                if file.startswith('strings') and file.endswith('.xml'):
                     deleteIfUnusedString(root, file)
-                if file == 'colors.xml':
+                if file.startswith('colors') and file.endswith('.xml'):
                     deleteIfUnusedColor(root, file)
                 deleteIfUnusedDrawable(root, file)
                 deleteIfUnusedLayout(root, file)

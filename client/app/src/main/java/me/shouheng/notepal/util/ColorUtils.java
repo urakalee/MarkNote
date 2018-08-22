@@ -5,7 +5,9 @@ import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
+import android.support.annotation.ColorInt;
 import android.support.annotation.MenuRes;
+import android.support.annotation.StyleRes;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -26,8 +28,8 @@ import me.urakalee.next2.support.theme.ThemeColor;
  */
 public class ColorUtils {
 
-    private static Integer primaryColor;
-    private static Integer accentColor;
+    private static ThemeColor primaryColor;
+    private static AccentColor accentColor;
 
     private static final int DEFAULT_COLOR_ALPHA = 50;
 
@@ -35,20 +37,41 @@ public class ColorUtils {
         return false;
     }
 
+    @ColorInt
     public static int primaryColor(Context context) {
         if (primaryColor == null) {
-            ThemeColor primaryColor = ThemeColor.Companion.getDefaultColor();
-            ColorUtils.primaryColor = context.getResources().getColor(primaryColor.getColorRes());
+            primaryColor = ThemeColor.Companion.getDefaultColor();
         }
-        return primaryColor;
+        return context.getResources().getColor(primaryColor.getColorRes());
     }
 
+    @ColorInt
     public static int accentColor(Context context) {
         if (accentColor == null) {
-            AccentColor accentColor = AccentColor.Companion.getDefaultColor();
-            ColorUtils.accentColor = context.getResources().getColor(accentColor.getColorRes());
+            accentColor = AccentColor.Companion.getDefaultColor();
         }
-        return accentColor;
+        return context.getResources().getColor(accentColor.getColorRes());
+    }
+
+    @StyleRes
+    public static int getBaseStyle() {
+        return R.style.Colorful_Light;
+    }
+
+    @StyleRes
+    public static int primaryStyle(Context context) {
+        if (primaryColor == null) {
+            primaryColor = ThemeColor.Companion.getDefaultColor();
+        }
+        return context.getResources().getIdentifier(primaryColor.getIdentifyName(), "style", context.getPackageName());
+    }
+
+    @StyleRes
+    public static int accentStyle(Context context) {
+        if (accentColor == null) {
+            accentColor = AccentColor.Companion.getDefaultColor();
+        }
+        return context.getResources().getIdentifier(accentColor.getAccentName(), "style", context.getPackageName());
     }
 
     public static String getColorName(int color) {

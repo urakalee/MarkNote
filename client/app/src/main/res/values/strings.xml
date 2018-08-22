@@ -182,8 +182,6 @@
     <string name="sketch">Sketch</string>
 
     <string name="activity_not_found_to_resolve">No available application</string>
-    <string name="use_to_open">Open with&#8230;</string>
-    <string name="information">Information</string>
     <string name="failed_to_resolve_intent">Failed to resolve intent</string>
 
     <string name="confirm_to_clear_bitmap">Confirm to clear bitmap?</string>

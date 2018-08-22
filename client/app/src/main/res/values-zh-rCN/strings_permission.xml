@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="permission_setting_permission">授予权限</string>
     <string name="permission_storage_permission">存储空间</string>
     <string name="permission_location_permission">位置信息</string>
     <string name="permission_microphone_permission">麦克风</string>

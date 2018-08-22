@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="permission_setting_permission">Permission settings</string>
     <string name="permission_storage_permission">Storage</string>
     <string name="permission_location_permission">Location</string>
     <string name="permission_microphone_permission">Microphone</string>

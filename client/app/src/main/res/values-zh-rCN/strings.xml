@@ -182,8 +182,6 @@
     <string name="sketch">手写</string>
 
     <string name="activity_not_found_to_resolve">没有找到可用的程序</string>
-    <string name="use_to_open">用&#8230;打开</string>
-    <string name="information">信息</string>
     <string name="failed_to_resolve_intent">没有找到可用的应用</string>
 
     <string name="confirm_to_clear_bitmap">确认全部擦除？</string>
