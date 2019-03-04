@@ -521,8 +521,8 @@ class NoteEditFragment : BaseModelFragment<Note>() {
                 delegate.getNote().content = s.toString()
                 if (!triggeredByRefresh) {
                     delegate.setContentChanged(true)
-                    triggeredByRefresh = false
                 }
+                triggeredByRefresh = false
                 updateCharsInfo()
             }
         }

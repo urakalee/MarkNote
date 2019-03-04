@@ -8,8 +8,7 @@ import java.io.File
 /**
  * @author Uraka.Lee
  */
-//private const val ROOT_PATH = "NExT2"
-private const val ROOT_PATH = "/Android/data/com.ryeeeeee.markdownx/files/notes/dayone"
+private const val ROOT_PATH = "NExT2/dayone"
 
 fun sdCard() = Environment.getExternalStorageDirectory()
 
