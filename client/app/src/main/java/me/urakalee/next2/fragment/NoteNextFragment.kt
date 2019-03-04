@@ -14,6 +14,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import kotlinx.android.synthetic.main.note_fragment_next.*
 import me.shouheng.notepal.R
+import me.shouheng.notepal.util.MD5Util
 import me.urakalee.markdown.Indent
 import me.urakalee.markdown.Mark
 import me.urakalee.markdown.action.DayOneStrategy
@@ -22,6 +23,7 @@ import me.urakalee.next2.model.Note
 import me.urakalee.ranger.extension.isInvisible
 import me.urakalee.ranger.extension.removeRange
 import java.util.*
+import kotlin.collections.HashMap
 
 /**
  * @author Uraka.Lee
@@ -51,25 +53,62 @@ class NoteNextFragment : BaseModelFragment<Note>() {
         // 避免在 next 模式下操作之后, 回到 next 模式时, 导致多余的 setData
         if (Section.joinSections(adapter.sections) != delegate.getNote().content) {
             val lines = delegate.getNote().content?.lines() ?: listOf()
-            // 尽可能保持折叠状态
+            //region 尽可能保持折叠状态
             val sections = mutableListOf<Section>()
             sections.addAll(Section.lines2Sections(lines))
             val oldSections = adapter.sections
-            // 对比找到第一个 fold 不同的 section
-            for (index in 0 until oldSections.size) {
-                val oldSection = oldSections[index]
-                if (oldSection.canExpand()) {
-                    Section.fold(sections, index)
-                    if (oldSection != sections[index]) {
-                        // 操作数据之前先恢复之前的 fold
-                        Section.expand(sections, index)
-                        oldSections.removeRange(index..oldSections.size)
-                        oldSections.addAll(sections.subList(index, sections.size))
-                        break
+            val md5Map = HashMap<String, Pair<String, String?>>() // line -> (lineMd5, sectionMd5), 如果是 line, sectionMd5 为 null
+            traverse(oldSections, false) { list, index ->
+                val section = list[index]
+                val line = section.toString()
+                val lineMd5 = MD5Util.MD5(line)
+                val sectionMd5 = if (section.canExpand()) {
+                    MD5Util.MD5(Section.joinSections(section.sections))
+                } else {
+                    null
+                }
+                // 这个算法有一个问题但不大: 对于内容完全相同的行, 其 md5 值会相互覆盖
+                // 对于有文字的话, 完全相同的行可以认为不存在; 对于无文字的行, 也不会 fold
+                md5Map[line] = Pair(lineMd5, sectionMd5)
+            }
+            traverse(sections, false) { list, index ->
+                val section = list[index]
+                val line = section.toString()
+                // 新的一行, 可能是改/新增, 不处理
+                val pair = md5Map[line] ?: return@traverse
+                // 旧的一行, 但没有折叠, 不处理
+                if (pair.second == null) {
+                    return@traverse
+                }
+                // 旧的一行, 折叠了, 尝试进行折叠
+                if (Section.fold(list, index)) {
+                    // 折叠成功, 比较折叠的结果
+                    if (pair.second == MD5Util.MD5(Section.joinSections(list[index].sections))) {
+                        // 如果相同, 保持这个折叠
+                    } else {
+                        // 否则, 取消折叠
+                        Section.expand(list, index)
                     }
                 }
             }
+            //endregion
+            adapter.setData(sections)
             adapter.notifyDataSetChanged()
+        }
+    }
+
+    /**
+     * @param ignoreIndexZero 由于已经对第一行做了处理, 继续遍历时应忽略; 只在入口时为 false
+     */
+    private fun traverse(sections: MutableList<Section>, ignoreIndexZero: Boolean, processor: (MutableList<Section>, Int) -> Unit) {
+        var index = if (ignoreIndexZero) 1 else 0
+        while (index < sections.size) {
+            processor.invoke(sections, index)
+            val section = sections[index]
+            if (section.canExpand()) {
+                traverse(section.sections, true, processor)
+            }
+            index += 1
         }
     }
 
@@ -140,7 +179,7 @@ class NoteNextFragment : BaseModelFragment<Note>() {
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NextViewHolder {
             val root = LayoutInflater.from(parent.context).inflate(R.layout.note_item_next, null, false)
             val layoutParameter = RecyclerView.LayoutParams(
-                    RecyclerView.LayoutParams.MATCH_PARENT, RecyclerView.LayoutParams.WRAP_CONTENT)
+                RecyclerView.LayoutParams.MATCH_PARENT, RecyclerView.LayoutParams.WRAP_CONTENT)
             root.layoutParams = layoutParameter
             return NextViewHolder(root)
         }
@@ -232,7 +271,7 @@ class NoteNextFragment : BaseModelFragment<Note>() {
             // decorate blank-line
             val blankLine = section.isBlank()
             root.setBackgroundResource(
-                    if (blankLine) R.color.note_next_bg_empty else android.R.color.transparent)
+                if (blankLine) R.color.note_next_bg_empty else android.R.color.transparent)
             lineView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, if (blankLine) 0f else 16f)
         }
 
@@ -390,7 +429,7 @@ class NoteNextFragment : BaseModelFragment<Note>() {
 
             private fun findNextSection(precedingMarkSource: String, indent: Indent, mark: Mark, aSection: Section): Boolean {
                 val (aPrecedingMarkSource, aIndent, _)
-                        = DayOneStrategy.detectPrecedingMark(aSection.line!!)
+                    = DayOneStrategy.detectPrecedingMark(aSection.line!!)
                 val aMark = Mark.fromString(aPrecedingMarkSource)
                 if (mark == Mark.H) {
                     // mark 为 H 标签, 只在 H 标签之间折叠, 不考虑缩进
