@@ -51,7 +51,24 @@ class NoteNextFragment : BaseModelFragment<Note>() {
         // 避免在 next 模式下操作之后, 回到 next 模式时, 导致多余的 setData
         if (Section.joinSections(adapter.sections) != delegate.getNote().content) {
             val lines = delegate.getNote().content?.lines() ?: listOf()
-            adapter.setData(Section.lines2Sections(lines))
+            // 尽可能保持折叠状态
+            val sections = mutableListOf<Section>()
+            sections.addAll(Section.lines2Sections(lines))
+            val oldSections = adapter.sections
+            // 对比找到第一个 fold 不同的 section
+            for (index in 0 until oldSections.size) {
+                val oldSection = oldSections[index]
+                if (oldSection.canExpand()) {
+                    Section.fold(sections, index)
+                    if (oldSection != sections[index]) {
+                        // 操作数据之前先恢复之前的 fold
+                        Section.expand(sections, index)
+                        oldSections.removeRange(index..oldSections.size)
+                        oldSections.addAll(sections.subList(index, sections.size))
+                        break
+                    }
+                }
+            }
             adapter.notifyDataSetChanged()
         }
     }
@@ -299,6 +316,31 @@ class NoteNextFragment : BaseModelFragment<Note>() {
             }
         }
 
+        override fun equals(other: Any?): Boolean {
+            if (other !is Section) {
+                return false
+            }
+            if (isLine()) {
+                if (!other.isLine()) {
+                    return false
+                }
+                return line == other.line
+            } else {
+                if (other.isLine()) {
+                    return false
+                }
+                if (sections.size != other.sections.size) {
+                    return false
+                }
+                for (index in 0 until sections.size) {
+                    if (sections[index] != other.sections[index]) {
+                        return false
+                    }
+                }
+                return true
+            }
+        }
+
         companion object {
 
             fun lines2Sections(lines: List<String>) = lines.map { Section(it) }
@@ -359,7 +401,7 @@ class NoteNextFragment : BaseModelFragment<Note>() {
                     }
                 } else if (mark == Mark.NONE) {
                     // mark 为无标签, 可以折叠同缩进的 list 或 TD, 或任何缩进标签
-                    if (aMark.isList() || aMark == Mark.TD) {
+                    if (aMark.isList() || aMark == Mark.TD || aMark == Mark.QT) {
                         if (indent.length > aIndent.length) {
                             return true
                         }
