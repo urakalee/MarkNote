@@ -2,7 +2,11 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/action_fold"
-        android:title="@string/text_fold" />
+        android:id="@+id/action_move_to_first"
+        android:title="移动到第一个" />
+
+    <item
+        android:id="@+id/action_pop_and_append"
+        android:title="移动到上一级" />
 
 </menu>

@@ -18,11 +18,20 @@
 
     <me.shouheng.notepal.widget.themed.SupportTextView
         android:id="@+id/line"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_weight="1"
         android:layout_marginBottom="8dp"
-        android:layout_marginEnd="16dp"
+        android:layout_marginEnd="-8dp"
         android:layout_marginTop="8dp"
         tools:text="This is a line" />
+
+    <me.shouheng.notepal.widget.themed.SupportImageView
+        android:id="@+id/btnMore"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:src="@drawable/ic_more_vert_black" />
 
 </LinearLayout>

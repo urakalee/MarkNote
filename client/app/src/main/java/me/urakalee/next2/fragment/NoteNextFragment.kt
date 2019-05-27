@@ -60,7 +60,7 @@ class NoteNextFragment : BaseModelFragment<Note>() {
             val md5Map = HashMap<String, Pair<String, String?>>() // line -> (lineMd5, sectionMd5), 如果是 line, sectionMd5 为 null
             traverse(oldSections, false) { list, index ->
                 val section = list[index]
-                val line = section.toString()
+                val line = section.text
                 val lineMd5 = MD5Util.MD5(line)
                 val sectionMd5 = if (section.canExpand()) {
                     MD5Util.MD5(Section.joinSections(section.sections))
@@ -73,7 +73,7 @@ class NoteNextFragment : BaseModelFragment<Note>() {
             }
             traverse(sections, false) { list, index ->
                 val section = list[index]
-                val line = section.toString()
+                val line = section.text
                 // 新的一行, 可能是改/新增, 不处理
                 val pair = md5Map[line] ?: return@traverse
                 // 旧的一行, 但没有折叠, 不处理
@@ -114,16 +114,23 @@ class NoteNextFragment : BaseModelFragment<Note>() {
 
     //region menu
 
+    /**
+     * 支持的整理方式(基于段落 #):
+     * 1. TODO: 将想要收集的段落集中到本段开头
+     * 1. 新建一下一级, 将想要收集的段落集中到该级的上一级末尾, 剩下的可以折叠起来
+     */
     private fun popNextItemMenu(view: View, position: Int) {
         val contextNonNull = context ?: return
         val popupMenu = PopupMenu(contextNonNull, view)
         popupMenu.inflate(R.menu.note_menu_next_item)
         popupMenu.setOnMenuItemClickListener { item ->
             when (item.itemId) {
-                R.id.action_fold -> {
+                // 移动到同级的第一个
+                R.id.action_move_to_first -> {
                 }
-                R.id.action_delete -> {
-
+                // 移动到上级的最后一个
+                R.id.action_pop_and_append -> {
+                    popAndAppend(position)
                 }
             }
             true
@@ -132,8 +139,34 @@ class NoteNextFragment : BaseModelFragment<Note>() {
     }
 
     private fun configPopMenu(popupMenu: PopupMenu) {
-        popupMenu.menu.findItem(R.id.action_fold).isVisible = true
-        popupMenu.menu.findItem(R.id.action_delete).isVisible = true
+        popupMenu.menu.findItem(R.id.action_move_to_first).isVisible = true
+        popupMenu.menu.findItem(R.id.action_pop_and_append).isVisible = true
+    }
+
+    private fun popAndAppend(position: Int) {
+        // 找到上一级
+        // 理论上上一级会有多个子段落和当前 section 所在段落平级, 但目前的整理方案要求新建下一级, 所以暂时用简单的处理方式:
+        // 因为当前 section 所在段落可见, 所以上一级段落一定没有折叠
+        // 找到当前段落的开始, 将当前 section 移动到当前段落的上面
+        var curr = position - 1
+        val sections = adapter.sections
+        while (curr >= 0) {
+            val section = sections[curr]
+            val (testMarkSource, _, _) = DayOneStrategy.detectPrecedingMark(section.text)
+            val testMark = Mark.fromString(testMarkSource)
+            if (testMark == Mark.H) {
+                break
+            }
+            curr -= 1
+        }
+        // 追加到最后一个
+        if (curr >= 0) {
+            val section = sections.removeAt(position)
+            sections.add(curr, section)
+            adapter.notifyDataSetChanged()
+            delegate.getNote().content = Section.joinSections(adapter.sections)
+            delegate.setContentChanged(true)
+        }
     }
 
     //endregion
@@ -159,13 +192,13 @@ class NoteNextFragment : BaseModelFragment<Note>() {
             }
         }
 
-        override fun onItemLongClicked(itemView: View, position: Int) {
-//            popNextItemMenu(itemView, position)
-        }
-
         override fun onItemMoved() {
             delegate.getNote().content = Section.joinSections(adapter.sections)
             delegate.setContentChanged(true)
+        }
+
+        override fun onItemMoreClicked(itemView: View, position: Int) {
+            popNextItemMenu(itemView, position)
         }
     }
 
@@ -217,8 +250,8 @@ class NoteNextFragment : BaseModelFragment<Note>() {
                 delegate.onItemDoubleClicked(itemView, position)
             }
 
-            override fun onLongClicked(itemView: View, position: Int) {
-                delegate.onItemLongClicked(itemView, position)
+            override fun onMoreClicked(itemView: View, position: Int) {
+                delegate.onItemMoreClicked(itemView, position)
             }
         }
 
@@ -230,9 +263,9 @@ class NoteNextFragment : BaseModelFragment<Note>() {
 
             fun onItemDoubleClicked(itemView: View, position: Int)
 
-            fun onItemLongClicked(itemView: View, position: Int)
-
             fun onItemMoved()
+
+            fun onItemMoreClicked(itemView: View, position: Int)
         }
     }
 
@@ -240,6 +273,7 @@ class NoteNextFragment : BaseModelFragment<Note>() {
 
         private var folded: View = root.findViewById(R.id.folded)
         private var lineView: TextView = root.findViewById(R.id.line)
+        private var btnMore: View = root.findViewById(R.id.btnMore)
 
         private var firstClickTime: Long = 0
         private var doubleClickTimeout: Long = ViewConfiguration.getDoubleTapTimeout().toLong()
@@ -260,19 +294,20 @@ class NoteNextFragment : BaseModelFragment<Note>() {
                     }, doubleClickTimeout)
                 }
             }
-            root.setOnLongClickListener {
-                delegate.onLongClicked(it, position)
-                true
-            }
 
             folded.isInvisible = !section.canExpand()
-            lineView.text = section.toString()
+            lineView.text = section.text
+
+            btnMore.setOnClickListener {
+                delegate.onMoreClicked(it, position)
+            }
 
             // decorate blank-line
             val blankLine = section.isBlank()
             root.setBackgroundResource(
                 if (blankLine) R.color.note_next_bg_empty else android.R.color.transparent)
             lineView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, if (blankLine) 0f else 16f)
+            btnMore.visibility = if (blankLine) View.GONE else View.VISIBLE
         }
 
         lateinit var delegate: NextViewHolderDelegate
@@ -283,7 +318,7 @@ class NoteNextFragment : BaseModelFragment<Note>() {
 
             fun onDoubleClicked(itemView: View, position: Int)
 
-            fun onLongClicked(itemView: View, position: Int)
+            fun onMoreClicked(itemView: View, position: Int)
         }
     }
 
@@ -333,6 +368,13 @@ class NoteNextFragment : BaseModelFragment<Note>() {
      */
     private class Section(var line: String?) {
 
+        val text: String
+            get() = when {
+                line != null -> line!!
+                sections.isNotEmpty() -> sections[0].text
+                else -> throw IllegalArgumentException("Invalid section")
+            }
+
         var sections: MutableList<Section> = mutableListOf()
 
         constructor(sections: List<Section>) : this(null) {
@@ -346,14 +388,6 @@ class NoteNextFragment : BaseModelFragment<Note>() {
         fun canFold(): Boolean = isLine() && !isBlank()
 
         fun canExpand(): Boolean = !isLine()
-
-        override fun toString(): String {
-            return when {
-                line != null -> line!!
-                sections.isNotEmpty() -> sections[0].toString()
-                else -> throw IllegalArgumentException("Invalid section")
-            }
-        }
 
         override fun equals(other: Any?): Boolean {
             if (other !is Section) {
@@ -386,7 +420,7 @@ class NoteNextFragment : BaseModelFragment<Note>() {
 
             fun joinSections(sections: List<Section>): String {
                 return sections.joinToString("\n", transform = {
-                    if (it.isLine()) it.toString() else joinSections(it.sections)
+                    if (it.isLine()) it.text else joinSections(it.sections)
                 })
             }
 
@@ -397,50 +431,64 @@ class NoteNextFragment : BaseModelFragment<Note>() {
                 val section = sections[index]
                 if (!section.canFold()) return false
                 // 找到和 section 同级别的 section, 折叠
-                val (precedingMarkSource, indent, _) = DayOneStrategy.detectPrecedingMark(section.line!!)
-                val mark = Mark.fromString(precedingMarkSource)
+                val (testMarkSource, indent, _) = DayOneStrategy.detectPrecedingMark(section.line!!)
+                val testMark = Mark.fromString(testMarkSource)
                 var nextSectionStartIndex = index + 1
+                var untilEnd = false
                 for (i in nextSectionStartIndex until sections.size) {
                     val aSection = sections[i]
                     if (aSection.isBlank()) {
                         // pass
                     } else if (aSection.isLine()) {
-                        if (findNextSection(precedingMarkSource, indent, mark, aSection)) {
+                        // 找到一行, 属于同级
+                        if (findNextSection(testMarkSource, indent, testMark, aSection)) {
                             nextSectionStartIndex = i
                             break
                         }
                     } else {
+                        // 找到一个 section, 该 section 的第一行属于同级
                         var firstSection = aSection.sections[0]
                         while (firstSection.canExpand()) {
                             firstSection = firstSection.sections[0]
                         }
-                        if (findNextSection(precedingMarkSource, indent, mark, firstSection)) {
+                        if (findNextSection(testMarkSource, indent, testMark, firstSection)) {
                             nextSectionStartIndex = i
                             break
                         }
                     }
+                    if (i == sections.size - 1) {
+                        untilEnd = true
+                    }
                 }
-                if (nextSectionStartIndex == index + 1) return false
+                // 没找到, 但并不代表不能折叠, 但这个处理比较复杂
+                if (nextSectionStartIndex == index + 1) {
+                    if (testMark == Mark.H && untilEnd) {
+                        // 当 testMark 为 H 标签时, 找到了结尾认为可以折叠
+                        nextSectionStartIndex = sections.size
+                    } else {
+                        // TODO: Mark.L 系列标签, 如果找到了结尾, 且一直都是缩进的, 也认为可以折叠
+                        return false
+                    }
+                }
                 // 将折叠的元素新建 section, 放到 sections 里, index 对应的位置
                 val folded = sections.removeRange(index..nextSectionStartIndex)
                 sections.add(index, Section(folded))
                 return true
             }
 
-            private fun findNextSection(precedingMarkSource: String, indent: Indent, mark: Mark, aSection: Section): Boolean {
-                val (aPrecedingMarkSource, aIndent, _)
-                    = DayOneStrategy.detectPrecedingMark(aSection.line!!)
-                val aMark = Mark.fromString(aPrecedingMarkSource)
+            private fun findNextSection(markSource: String, indent: Indent, mark: Mark, aSection: Section): Boolean {
+                val (targetMarkSource, aIndent, _) = DayOneStrategy.detectPrecedingMark(aSection.line!!)
+                val targetMark = Mark.fromString(targetMarkSource)
                 if (mark == Mark.H) {
                     // mark 为 H 标签, 只在 H 标签之间折叠, 不考虑缩进
-                    if (aMark == Mark.H) {
-                        if (precedingMarkSource.length >= aPrecedingMarkSource.length) {
+                    if (targetMark == Mark.H) {
+                        if (markSource.length >= targetMarkSource.length) {
                             return true
                         }
                     }
                 } else if (mark == Mark.NONE) {
                     // mark 为无标签, 可以折叠同缩进的 list 或 TD, 或任何缩进标签
-                    if (aMark.isList() || aMark == Mark.TD || aMark == Mark.QT) {
+                    if (targetMark.isList() || targetMark == Mark.TD || targetMark == Mark.QT) {
                         if (indent.length > aIndent.length) {
                             return true
                         }
