@@ -163,6 +163,12 @@ class NoteNextFragment : BaseModelFragment<Note>() {
         if (curr >= 0) {
             val section = sections.removeAt(position)
             sections.add(curr, section)
+            // 如果刚刚移动的是一行, 且下一行是空行, 则一起移动
+            val nextLinePosition = position + 1
+            if (!section.canExpand() && nextLinePosition < sections.size && sections[nextLinePosition].isBlank()) {
+                val blankLine = sections.removeAt(nextLinePosition)
+                sections.add(curr + 1, blankLine)
+            }
             adapter.notifyDataSetChanged()
             delegate.getNote().content = Section.joinSections(adapter.sections)
             delegate.setContentChanged(true)
@@ -235,7 +241,7 @@ class NoteNextFragment : BaseModelFragment<Note>() {
 
         fun onMove(fromPosition: Int, toPosition: Int) {
             Collections.swap(sections, fromPosition, toPosition)
-            //通知数据移动
+            // 通知数据移动
             notifyItemMoved(fromPosition, toPosition)
             delegate.onItemMoved()
         }
