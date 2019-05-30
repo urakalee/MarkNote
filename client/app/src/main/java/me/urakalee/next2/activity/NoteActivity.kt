@@ -20,7 +20,11 @@ import me.urakalee.next2.fragment.NoteEditFragment
 import me.urakalee.next2.fragment.NoteNextFragment
 import me.urakalee.next2.fragment.NoteViewFragment
 import me.urakalee.next2.model.Note
-import me.urakalee.ranger.extension.*
+import me.urakalee.ranger.extension.getFromBundle
+import me.urakalee.ranger.extension.hasExtraInBundle
+import me.urakalee.ranger.extension.hideSoftKeyboard
+import me.urakalee.ranger.extension.makeFragmentTag
+import me.urakalee.ranger.extension.putToBundle
 import org.apache.commons.io.FileUtils
 import java.io.IOException
 
@@ -71,19 +75,19 @@ class NoteActivity : CommonActivity() {
     override fun onBackPressed() {
         if (contentChanged) {
             MaterialDialog.Builder(this)
-                    .title(R.string.text_tips)
-                    .content(R.string.text_save_or_discard)
-                    .positiveText(R.string.text_save)
-                    .negativeText(R.string.text_give_up)
-                    .onPositive { _, _ ->
-                        noteEditFragment?.saveOrUpdateData(getCurrentFragment() == noteEditFragment) {
-                            setResult()
-                        }
+                .title(R.string.text_tips)
+                .content(R.string.text_save_or_discard)
+                .positiveText(R.string.text_save)
+                .negativeText(R.string.text_give_up)
+                .onPositive { _, _ ->
+                    noteEditFragment?.saveOrUpdateData(getCurrentFragment() == noteEditFragment) {
+                        setResult()
                     }
-                    .onNegative { _, _ ->
-                        super.onBackPressed()
-                    }
-                    .show()
+                }
+                .onNegative { _, _ ->
+                    super.onBackPressed()
+                }
+                .show()
         } else {
             setResult()
         }
@@ -172,21 +176,25 @@ class NoteActivity : CommonActivity() {
     private fun configPager() {
         val isEdit = (intent.getStringExtra(Constants.EXTRA_START_TYPE) == Constants.VALUE_START_EDIT)
 
-        val noteEditFragmentIndex = 0
+        val firstIndex = 0 // empty fragment
+        val noteEditFragmentIndex = 1
         val noteEditFragmentTag = makeFragmentTag(pager.id, noteEditFragmentIndex)
-        val noteViewFragmentIndex = 1
+        val noteViewFragmentIndex = 2
         val noteViewFragmentTag = makeFragmentTag(pager.id, noteViewFragmentIndex)
-        val noteNextFragmentIndex = 2
+        val noteNextFragmentIndex = 3
         val noteNextFragmentTag = makeFragmentTag(pager.id, noteNextFragmentIndex)
+        val lastIndex = 4 // empty fragment
 
         getOrCreateNoteEditFragment(noteEditFragmentTag)
         getOrCreateNoteViewFragment(noteViewFragmentTag)
         getOrCreateNoteNextFragment(noteNextFragmentTag)
 
         val pageMap = listOf(
-                noteEditFragment!!,
-                noteViewFragment!!,
-                noteNextFragment!!
+            Fragment(),
+            noteEditFragment!!,
+            noteViewFragment!!,
+            noteNextFragment!!,
+            Fragment()
         )
         pagerAdapter = object : FragmentPagerAdapter(supportFragmentManager) {
 
@@ -204,7 +212,15 @@ class NoteActivity : CommonActivity() {
 
             override fun onPageScrollStateChanged(state: Int) {}
 
-            override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {}
+            override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
+                if (positionOffset == 0f) {
+                    if (position == 0) {
+                        pager.setCurrentItem(pageMap.size - 2, false)
+                    } else if (position == (pageMap.size - 1)) {
+                        pager.setCurrentItem(1, false)
+                    }
+                }
+            }
 
             override fun onPageSelected(position: Int) {
                 when (position) {
@@ -283,7 +299,7 @@ class NoteActivity : CommonActivity() {
         when (item?.itemId) {
             android.R.id.home -> {
                 if (contentChanged) noteEditFragment?.saveOrUpdateData(
-                        getCurrentFragment() == noteEditFragment, null)
+                    getCurrentFragment() == noteEditFragment, null)
                 else setResult()
             }
         }
