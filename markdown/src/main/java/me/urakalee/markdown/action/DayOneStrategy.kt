@@ -103,7 +103,12 @@ class DayOneStrategy : DefaultStrategy() {
         }
 
         fun removePrecedingMark(line: String): String {
-            return detectPrecedingMark(line).third
+            val (mark, _, content) = detectPrecedingMark(line)
+            return if (Mark.fromString(mark) != Mark.NONE) {
+                content
+            } else {
+                line
+            }
         }
 
         /**
@@ -116,15 +121,15 @@ class DayOneStrategy : DefaultStrategy() {
             val mark = line.substring(indent.length until endIndex - 1)
             val content = line.substring(endIndex)
             return TodoHandler.handleTodo(mark,
-                    {
-                        Triple(TodoHandler.UNCHECKED, indent, content)
-                    },
-                    {
-                        Triple(TodoHandler.CHECKED, indent, content)
-                    },
-                    {
-                        null
-                    })
+                {
+                    Triple(TodoHandler.UNCHECKED, indent, content)
+                },
+                {
+                    Triple(TodoHandler.CHECKED, indent, content)
+                },
+                {
+                    null
+                })
         }
 
     }
