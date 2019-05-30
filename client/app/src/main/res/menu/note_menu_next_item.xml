@@ -2,8 +2,8 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/action_move_to_first"
-        android:title="移动到第一个" />
+        android:id="@+id/action_edit_paragraph"
+        android:title="编辑本段" />
 
     <item
         android:id="@+id/action_pop_and_append"

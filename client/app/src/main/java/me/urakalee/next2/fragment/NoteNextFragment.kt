@@ -18,6 +18,7 @@ import me.shouheng.notepal.util.MD5Util
 import me.urakalee.markdown.Indent
 import me.urakalee.markdown.Mark
 import me.urakalee.markdown.action.DayOneStrategy
+import me.urakalee.next2.activity.NoteParagraphActivity
 import me.urakalee.next2.base.fragment.BaseModelFragment
 import me.urakalee.next2.model.Note
 import me.urakalee.ranger.extension.isInvisible
@@ -29,6 +30,10 @@ import kotlin.collections.HashMap
  * @author Uraka.Lee
  */
 class NoteNextFragment : BaseModelFragment<Note>() {
+
+    companion object {
+        const val REQUEST_EDIT_PARAGRAPH = 101
+    }
 
     private lateinit var adapter: NextAdapter
 
@@ -125,8 +130,9 @@ class NoteNextFragment : BaseModelFragment<Note>() {
         popupMenu.inflate(R.menu.note_menu_next_item)
         popupMenu.setOnMenuItemClickListener { item ->
             when (item.itemId) {
-                // 移动到同级的第一个
-                R.id.action_move_to_first -> {
+                // 编辑本段
+                R.id.action_edit_paragraph -> {
+                    editParagraph(position)
                 }
                 // 移动到上级的最后一个
                 R.id.action_pop_and_append -> {
@@ -135,12 +141,42 @@ class NoteNextFragment : BaseModelFragment<Note>() {
             }
             true
         }
+        configPopMenu(popupMenu, position)
         popupMenu.show()
     }
 
-    private fun configPopMenu(popupMenu: PopupMenu) {
-        popupMenu.menu.findItem(R.id.action_move_to_first).isVisible = true
+    private fun configPopMenu(popupMenu: PopupMenu, position: Int) {
+        val section = adapter.sections[position]
+        val (mark, _, _) = DayOneStrategy.detectPrecedingMark(section.text)
+        popupMenu.menu.findItem(R.id.action_edit_paragraph).isVisible =
+            delegate.supportEditParagraph && Mark.fromString(mark) == Mark.H
         popupMenu.menu.findItem(R.id.action_pop_and_append).isVisible = true
+    }
+
+    private fun editParagraph(position: Int) {
+        // 保存 note
+        delegate.saveIfNeed()
+        // 拷贝一份 note, 不带 content
+        val note = delegate.getNote()
+        val noteContent = note.content
+        note.content = null
+        // 打开 NoteParagraphActivity, 带起止行信息
+        val sections = adapter.sections
+        val section = sections[position]
+        var doFold = false
+        // 如果能折叠, 先折叠一下再算起止行信息
+        if (section.canFold()) {
+            Section.fold(sections, position)
+            doFold = true
+        }
+        val paragraph = Section.paragraph(sections, position)
+        NoteParagraphActivity.editNote(activity, note, paragraph.first, paragraph.second, REQUEST_EDIT_PARAGRAPH)
+        // 如果折叠了, 展开(恢复原状)
+        if (doFold) {
+            Section.expand(sections, position)
+        }
+        note.content = noteContent
+        // 返回时刷新(如果保存了)
     }
 
     private fun popAndAppend(position: Int) {
@@ -376,8 +412,15 @@ class NoteNextFragment : BaseModelFragment<Note>() {
 
         val text: String
             get() = when {
-                line != null -> line!!
+                isLine() -> line!!
                 sections.isNotEmpty() -> sections[0].text
+                else -> throw IllegalArgumentException("Invalid section")
+            }
+
+        val lines: Int
+            get() = when {
+                isLine() -> 1
+                sections.isNotEmpty() -> sections.sumBy { it.lines }
                 else -> throw IllegalArgumentException("Invalid section")
             }
 
@@ -521,6 +564,12 @@ class NoteNextFragment : BaseModelFragment<Note>() {
                 sections.removeAt(index)
                 sections.addAll(index, section.sections)
                 return true
+            }
+
+            fun paragraph(sections: List<Section>, index: Int): Pair<Int, Int> {
+                val lineStartIndex = sections.subList(0, index).sumBy { it.lines }
+                val paragraphSize = sections[index].lines
+                return Pair(lineStartIndex, paragraphSize)
             }
         }
     }

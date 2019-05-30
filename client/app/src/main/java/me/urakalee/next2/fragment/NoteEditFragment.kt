@@ -27,7 +27,12 @@ import me.shouheng.notepal.model.Attachment
 import me.shouheng.notepal.model.Category
 import me.shouheng.notepal.model.data.LoadStatus
 import me.shouheng.notepal.model.enums.ModelType
-import me.shouheng.notepal.util.*
+import me.shouheng.notepal.util.AttachmentHelper
+import me.shouheng.notepal.util.FileHelper
+import me.shouheng.notepal.util.LogUtils
+import me.shouheng.notepal.util.ModelHelper
+import me.shouheng.notepal.util.StringUtils
+import me.shouheng.notepal.util.ToastUtils
 import me.shouheng.notepal.util.preferences.UserPreferences
 import me.shouheng.notepal.viewmodel.AttachmentViewModel
 import me.shouheng.notepal.viewmodel.CategoryViewModel
@@ -121,48 +126,48 @@ class NoteEditFragment : BaseModelFragment<Note>() {
 
     private fun fetchCategories(note: Note) {
         categoryViewModel.getCategories(note)
-                ?.observe(this, Observer { listResource ->
-                    if (listResource == null) {
-                        ToastUtils.makeToast(R.string.text_failed_to_load_data)
-                        return@Observer
+            ?.observe(this, Observer { listResource ->
+                if (listResource == null) {
+                    ToastUtils.makeToast(R.string.text_failed_to_load_data)
+                    return@Observer
+                }
+                when (listResource.status) {
+                    LoadStatus.SUCCESS -> {
+                        categories = listResource.data
+                        addTagsToLayout(CategoryViewModel.getTagsName(listResource.data))
                     }
-                    when (listResource.status) {
-                        LoadStatus.SUCCESS -> {
-                            categories = listResource.data
-                            addTagsToLayout(CategoryViewModel.getTagsName(listResource.data))
-                        }
-                        else -> {
-                            // pass
-                        }
+                    else -> {
+                        // pass
                     }
-                })
+                }
+            })
     }
 
     private fun fetchAttachment(note: Note) {
         // 恢复现场，不需要重新加载数据
         if (!note.content.isNullOrEmpty()
-                && arguments?.getBoolean(KEY_ARGS_RESTORE) == true) {
+            && arguments?.getBoolean(KEY_ARGS_RESTORE) == true) {
             return
         }
 
         attachmentViewModel.readNoteContent(note)
-                ?.observe(this, Observer { contentResource ->
-                    if (contentResource == null) {
-                        ToastUtils.makeToast(R.string.text_failed_to_load_data)
-                        return@Observer
+            ?.observe(this, Observer { contentResource ->
+                if (contentResource == null) {
+                    ToastUtils.makeToast(R.string.text_failed_to_load_data)
+                    return@Observer
+                }
+                when (contentResource.status) {
+                    LoadStatus.SUCCESS -> {
+                        note.content = contentResource.data
+                        noteContent.tag = true
+                        noteContent.setText(note.content)
                     }
-                    when (contentResource.status) {
-                        LoadStatus.SUCCESS -> {
-                            note.content = contentResource.data
-                            noteContent.tag = true
-                            noteContent.setText(note.content)
-                        }
-                        LoadStatus.FAILED -> ToastUtils.makeToast(R.string.note_failed_to_read_file)
-                        else -> {
-                            // pass
-                        }
+                    LoadStatus.FAILED -> ToastUtils.makeToast(R.string.note_failed_to_read_file)
+                    else -> {
+                        // pass
                     }
-                })
+                }
+            })
     }
 
     // endregion
@@ -288,13 +293,13 @@ class NoteEditFragment : BaseModelFragment<Note>() {
     private fun showAttachmentPicker() {
         fragmentManager?.let {
             AttachmentPickerDialog.Builder(this)
-                    .setRecordVisible(false)
-                    .setVideoVisible(false)
-                    .setAddLinkVisible(true)
-                    .setFilesVisible(true)
-                    .setOnAddNetUriSelectedListener { this.addImageLink() }
-                    .build()
-                    .show(it, "Attachment picker")
+                .setRecordVisible(false)
+                .setVideoVisible(false)
+                .setAddLinkVisible(true)
+                .setFilesVisible(true)
+                .setOnAddNetUriSelectedListener { this.addImageLink() }
+                .build()
+                .show(it, "Attachment picker")
         }
     }
 
@@ -353,13 +358,13 @@ class NoteEditFragment : BaseModelFragment<Note>() {
         attachment.modelCode = note.code
         attachment.modelType = ModelType.NOTE
         attachmentViewModel.saveModel(attachment)
-                ?.observe(this, Observer { LogUtils.d(it) })
+            ?.observe(this, Observer { LogUtils.d(it) })
 
         var title = FileHelper.getNameFromUri(attachment.uri)
         title = if (title.isNullOrEmpty()) getString(R.string.text_attachment) else title
 
         if (Constants.MIME_TYPE_IMAGE.equals(attachment.mineType, true)
-                || Constants.MIME_TYPE_SKETCH.equals(attachment.mineType, true)) {
+            || Constants.MIME_TYPE_SKETCH.equals(attachment.mineType, true)) {
             noteContent.addLinkEffect(MarkdownFormat.ATTACHMENT, title, attachment.uri.toString())
         } else {
             noteContent.addLinkEffect(MarkdownFormat.LINK, title, attachment.uri.toString())
@@ -388,10 +393,15 @@ class NoteEditFragment : BaseModelFragment<Note>() {
     /**
      * @param inEditNote: 使用 NoteEditFragment 里 edit-text 中的内容; 如果在其他 fragment 里, 应该直接用 note 中的内容
      */
-    fun saveOrUpdateData(inEditNote: Boolean = true, afterPersist: ((Boolean) -> Unit)?) {
+    fun saveOrUpdateData(inEditNote: Boolean = true, afterPersist: ((Boolean) -> Unit) = {}) {
         beforeSaveOrUpdate(inEditNote) { writeAttachmentSuccess ->
             if (writeAttachmentSuccess) {
-                doPersist(afterPersist)
+                doPersist {
+                    delegate.afterPersist()
+                    afterPersist.invoke(it)
+                }
+            } else {
+                delegate.afterPersist()
             }
         }
     }
@@ -415,28 +425,29 @@ class NoteEditFragment : BaseModelFragment<Note>() {
             note.previewContent = ModelHelper.getNotePreview(note.content)
         }
 
+        delegate.beforePersist()
         attachmentViewModel.writeAttachment(note)
-                ?.observe(this, Observer { attachmentResource ->
-                    if (attachmentResource == null) {
+            ?.observe(this, Observer { attachmentResource ->
+                if (attachmentResource == null) {
+                    ToastUtils.makeToast(R.string.text_error_when_save)
+                    return@Observer
+                }
+                when (attachmentResource.status) {
+                    LoadStatus.SUCCESS -> {
+                        attachmentResource.data?.code?.let {
+                            note.attachmentCode = it
+                        }
+                        afterWriteAttachment?.invoke(true)
+                    }
+                    LoadStatus.FAILED -> {
                         ToastUtils.makeToast(R.string.text_error_when_save)
-                        return@Observer
+                        afterWriteAttachment?.invoke(false)
                     }
-                    when (attachmentResource.status) {
-                        LoadStatus.SUCCESS -> {
-                            attachmentResource.data?.code?.let {
-                                note.attachmentCode = it
-                            }
-                            afterWriteAttachment?.invoke(true)
-                        }
-                        LoadStatus.FAILED -> {
-                            ToastUtils.makeToast(R.string.text_error_when_save)
-                            afterWriteAttachment?.invoke(false)
-                        }
-                        else -> {
-                            // pass
-                        }
+                    else -> {
+                        // pass
                     }
-                })
+                }
+            })
     }
 
     /**
@@ -444,34 +455,34 @@ class NoteEditFragment : BaseModelFragment<Note>() {
      */
     private fun doPersist(handler: ((Boolean) -> Unit)?) {
         noteViewModel.saveModel(delegate.getNote())
-                ?.observe(this, Observer { resource ->
-                    if (resource == null) {
+            ?.observe(this, Observer { resource ->
+                if (resource == null) {
+                    ToastUtils.makeToast(R.string.text_error_when_save)
+                    return@Observer
+                }
+                when (resource.status) {
+                    LoadStatus.SUCCESS -> {
+                        ToastUtils.makeToast(R.string.text_save_successfully)
+                        delegate.setContentChanged(false)
+                        afterSaveOrUpdate()
+                        handler?.invoke(true)
+                    }
+                    LoadStatus.FAILED -> {
                         ToastUtils.makeToast(R.string.text_error_when_save)
-                        return@Observer
+                        handler?.invoke(false)
                     }
-                    when (resource.status) {
-                        LoadStatus.SUCCESS -> {
-                            ToastUtils.makeToast(R.string.text_save_successfully)
-                            delegate.setContentChanged(false)
-                            afterSaveOrUpdate()
-                            handler?.invoke(true)
-                        }
-                        LoadStatus.FAILED -> {
-                            ToastUtils.makeToast(R.string.text_error_when_save)
-                            handler?.invoke(false)
-                        }
-                        else -> {
-                            // pass
-                        }
+                    else -> {
+                        // pass
                     }
-                })
+                }
+            })
     }
 
     private fun afterSaveOrUpdate() {
         val action = delegate.getAction() ?: return
         if (action == Constants.ACTION_ADD_SKETCH
-                || action == Constants.ACTION_TAKE_PHOTO
-                || action == Constants.ACTION_ADD_FILES) {
+            || action == Constants.ACTION_TAKE_PHOTO
+            || action == Constants.ACTION_ADD_FILES) {
             sendNoteChangeBroadcast()
         }
     }
@@ -515,7 +526,7 @@ class NoteEditFragment : BaseModelFragment<Note>() {
         override fun afterTextChanged(s: Editable) {
             // Ignore the text change if the tag is true
             if (noteContent.tag != null
-                    || noteContent.tag is Boolean && noteContent.tag as Boolean) {
+                || noteContent.tag is Boolean && noteContent.tag as Boolean) {
                 noteContent.tag = null
             } else {
                 delegate.getNote().content = s.toString()
@@ -536,7 +547,15 @@ class NoteEditFragment : BaseModelFragment<Note>() {
 
         fun getAction(): String?
 
+        fun beforePersist()
+
+        fun afterPersist()
+
         fun setContentChanged(contentChanged: Boolean)
+
+        fun saveIfNeed()
+
+        val supportEditParagraph: Boolean
     }
 
     companion object {

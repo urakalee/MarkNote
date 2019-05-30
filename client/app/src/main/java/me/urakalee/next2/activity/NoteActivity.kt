@@ -31,13 +31,13 @@ import java.io.IOException
 /**
  * @author Uraka.Lee
  */
-class NoteActivity : CommonActivity() {
+open class NoteActivity : CommonActivity() {
 
     private lateinit var materialMenu: MaterialMenuDrawable
 
-    private var note: Note? = null
+    protected lateinit var note: Note
     /**
-     * Field remark that is the content changed.
+     * 标识内容是否被持久化
      */
     private var contentChanged: Boolean = false
         set(value) {
@@ -55,7 +55,7 @@ class NoteActivity : CommonActivity() {
             }
         }
     /**
-     * Have we ever saved or updated the content.
+     * 标识是否进行过持久化, 配合 contentChanged 用于判断是否需要刷新
      */
     private var savedOrUpdated: Boolean = false
     private val noteEdited: Boolean
@@ -81,7 +81,9 @@ class NoteActivity : CommonActivity() {
                 .negativeText(R.string.text_give_up)
                 .onPositive { _, _ ->
                     noteEditFragment?.saveOrUpdateData(getCurrentFragment() == noteEditFragment) {
-                        setResult()
+                        if (it) {
+                            ensurePersistAndFinish()
+                        }
                     }
                 }
                 .onNegative { _, _ ->
@@ -89,11 +91,14 @@ class NoteActivity : CommonActivity() {
                 }
                 .show()
         } else {
-            setResult()
+            ensurePersistAndFinish()
         }
     }
 
-    private fun setResult() {
+    private fun ensurePersistAndFinish() {
+        if (contentChanged) {
+            return
+        }
         // The model didn't change.
         if (!savedOrUpdated) {
             super.onBackPressed()
@@ -106,7 +111,7 @@ class NoteActivity : CommonActivity() {
         requestCode?.let { req ->
             val intent = Intent()
             intent.putExtra(Constants.EXTRA_REQUEST_CODE, req)
-            intent.putExtra(Constants.EXTRA_MODEL, note!!)
+            intent.putExtra(Constants.EXTRA_MODEL, note)
             var position: Int? = intent.getIntExtra(Constants.EXTRA_POSITION, -1)
             position = if (position == -1) null else position
             position?.let { pos ->
@@ -117,15 +122,35 @@ class NoteActivity : CommonActivity() {
         super.onBackPressed()
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        when (requestCode) {
+            NoteNextFragment.REQUEST_EDIT_PARAGRAPH -> {
+                if (resultCode == Activity.RESULT_OK) {
+                    if (loadNoteContent()) {
+                        noteEditFragment?.refreshData()
+                        noteViewFragment?.refreshData()
+                        noteNextFragment?.refreshData()
+                    } else {
+                        finish()
+                    }
+                }
+            }
+        }
+    }
+
     //endregion
     //region init
 
     override fun doCreateView(savedInstanceState: Bundle?) {
         if (savedInstanceState != null) {
-            note = savedInstanceState.get(BUNDLE_KEY_NOTE) as? Note
-        }
-
-        if (!handleIntent()) {
+            val tempNote = savedInstanceState.get(BUNDLE_KEY_NOTE) as? Note
+            if (tempNote == null) {
+                finish()
+                return
+            }
+            note = tempNote
+        } else if (!handleIntent()) {
             finish()
             return
         }
@@ -133,26 +158,31 @@ class NoteActivity : CommonActivity() {
         configPager()
     }
 
-    private fun handleIntent(): Boolean {
+    protected open fun handleIntent(): Boolean {
         if (intent.hasExtraInBundle(Constants.EXTRA_MODEL)) {
-            note = note ?: intent.getFromBundle(Constants.EXTRA_MODEL)
-            note?.let {
-                if (!it.isNewNote && it.content == null) {
-                    val noteFile = it.file
-                    try {
-                        it.content = FileUtils.readFileToString(noteFile, "utf-8")
-                    } catch (e: IOException) {
-                        LogUtils.d("IOException: $e")
-                        ToastUtils.makeToast(R.string.note_failed_to_read_file)
-                        return false
-                    }
+            note = intent.getFromBundle(Constants.EXTRA_MODEL) ?: return false
+            if (!note.isNewNote && note.content == null) {
+                if (!loadNoteContent()) {
+                    return false
                 }
-                return true
             }
+            return true
         }
         ToastUtils.makeToast(R.string.content_failed_to_parse_intent)
         LogUtils.d("Failed to resolve note intent : $intent")
         return false
+    }
+
+    private fun loadNoteContent(): Boolean {
+        val noteFile = note.file
+        try {
+            note.content = FileUtils.readFileToString(noteFile, "utf-8")
+        } catch (e: IOException) {
+            LogUtils.d("IOException: $e")
+            ToastUtils.makeToast(R.string.note_failed_to_read_file)
+            return false
+        }
+        return true
     }
 
     private fun configToolbar() {
@@ -273,7 +303,7 @@ class NoteActivity : CommonActivity() {
         fragment.delegate = object : NoteViewFragment.NoteViewFragmentDelegate {
 
             override fun getNote(): Note {
-                return note!!
+                return note
             }
         }
         noteViewFragment = fragment
@@ -298,9 +328,12 @@ class NoteActivity : CommonActivity() {
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when (item?.itemId) {
             android.R.id.home -> {
-                if (contentChanged) noteEditFragment?.saveOrUpdateData(
-                    getCurrentFragment() == noteEditFragment, null)
-                else setResult()
+                if (contentChanged) {
+                    noteEditFragment?.saveOrUpdateData(
+                        getCurrentFragment() == noteEditFragment)
+                } else {
+                    ensurePersistAndFinish()
+                }
             }
         }
         return super.onOptionsItemSelected(item)
@@ -312,11 +345,19 @@ class NoteActivity : CommonActivity() {
     private val editDelegate = object : NoteEditFragment.NoteEditFragmentDelegate {
 
         override fun getNote(): Note {
-            return note!!
+            return note
         }
 
         override fun getAction(): String? {
             return if (intent.action.isNullOrBlank()) null else intent.action
+        }
+
+        override fun beforePersist() {
+            this@NoteActivity.beforePersist()
+        }
+
+        override fun afterPersist() {
+            this@NoteActivity.afterPersist()
         }
 
         override fun setContentChanged(contentChanged: Boolean) {
@@ -325,7 +366,22 @@ class NoteActivity : CommonActivity() {
                 savedOrUpdated = true
             }
         }
+
+        override fun saveIfNeed() {
+            if (contentChanged) {
+                noteEditFragment?.saveOrUpdateData()
+            }
+        }
+
+        override val supportEditParagraph: Boolean
+            get() = this@NoteActivity.supportEditParagraph
     }
+
+    protected open fun beforePersist() {}
+
+    protected open fun afterPersist() {}
+
+    protected open val supportEditParagraph = true
 
     //endregion
 
