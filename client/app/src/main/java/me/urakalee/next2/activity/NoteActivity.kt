@@ -367,9 +367,11 @@ open class NoteActivity : CommonActivity() {
             }
         }
 
-        override fun saveIfNeed() {
+        override fun saveIfNeed(afterSave: ((Boolean) -> Unit)) {
             if (contentChanged) {
-                noteEditFragment?.saveOrUpdateData()
+                noteEditFragment?.saveOrUpdateData(getCurrentFragment() == noteEditFragment, afterSave)
+            } else {
+                afterSave.invoke(true)
             }
         }
 

@@ -130,11 +130,12 @@ class NoteNextFragment : BaseModelFragment<Note>() {
         popupMenu.inflate(R.menu.note_menu_next_item)
         popupMenu.setOnMenuItemClickListener { item ->
             when (item.itemId) {
-                // 编辑本段
                 R.id.action_edit_paragraph -> {
                     editParagraph(position)
                 }
-                // 移动到上级的最后一个
+                R.id.action_new_sub_paragraph -> {
+                    newSubParagraph(position)
+                }
                 R.id.action_pop_and_append -> {
                     popAndAppend(position)
                 }
@@ -150,33 +151,59 @@ class NoteNextFragment : BaseModelFragment<Note>() {
         val (mark, _, _) = DayOneStrategy.detectPrecedingMark(section.text)
         popupMenu.menu.findItem(R.id.action_edit_paragraph).isVisible =
             delegate.supportEditParagraph && Mark.fromString(mark) == Mark.H
+        popupMenu.menu.findItem(R.id.action_new_sub_paragraph).isVisible = Mark.fromString(mark) != Mark.H
         popupMenu.menu.findItem(R.id.action_pop_and_append).isVisible = true
     }
 
     private fun editParagraph(position: Int) {
         // 保存 note
-        delegate.saveIfNeed()
-        // 拷贝一份 note, 不带 content
-        val note = delegate.getNote()
-        val noteContent = note.content
-        note.content = null
-        // 打开 NoteParagraphActivity, 带起止行信息
+        delegate.saveIfNeed {
+            // 拷贝一份 note, 不带 content
+            val note = delegate.getNote()
+            val noteContent = note.content
+            note.content = null
+            // 打开 NoteParagraphActivity, 带起止行信息
+            val sections = adapter.sections
+            val section = sections[position]
+            var doFold = false
+            // 如果能折叠, 先折叠一下再算起止行信息
+            if (section.canFold()) {
+                Section.fold(sections, position)
+                doFold = true
+            }
+            val paragraph = Section.paragraph(sections, position)
+            NoteParagraphActivity.editNote(activity, note, paragraph.first, paragraph.second, REQUEST_EDIT_PARAGRAPH)
+            // 如果折叠了, 展开(恢复原状)
+            if (doFold) {
+                Section.expand(sections, position)
+            }
+            note.content = noteContent
+        }
+    }
+
+    private fun newSubParagraph(position: Int) {
+        var parentHeaderMark: String? = null
         val sections = adapter.sections
-        val section = sections[position]
-        var doFold = false
-        // 如果能折叠, 先折叠一下再算起止行信息
-        if (section.canFold()) {
-            Section.fold(sections, position)
-            doFold = true
+        var curr = position - 1
+        while (curr >= 0) {
+            val section = sections[curr]
+            val (markSource, _, _) = DayOneStrategy.detectPrecedingMark(section.text)
+            val testMark = Mark.fromString(markSource)
+            if (testMark == Mark.H) {
+                parentHeaderMark = markSource
+                break
+            }
+            curr -= 1
         }
-        val paragraph = Section.paragraph(sections, position)
-        NoteParagraphActivity.editNote(activity, note, paragraph.first, paragraph.second, REQUEST_EDIT_PARAGRAPH)
-        // 如果折叠了, 展开(恢复原状)
-        if (doFold) {
-            Section.expand(sections, position)
+        val subHeaderLine = if (parentHeaderMark == null) {
+            Mark.H.defaultMark
+        } else {
+            "$parentHeaderMark#"
         }
-        note.content = noteContent
-        // 返回时刷新(如果保存了)
+        sections.add(position, Section("$subHeaderLine 新段落"))
+        adapter.notifyDataSetChanged()
+        delegate.getNote().content = Section.joinSections(sections)
+        delegate.setContentChanged(true)
     }
 
     private fun popAndAppend(position: Int) {
@@ -184,8 +211,8 @@ class NoteNextFragment : BaseModelFragment<Note>() {
         // 理论上上一级会有多个子段落和当前 section 所在段落平级, 但目前的整理方案要求新建下一级, 所以暂时用简单的处理方式:
         // 因为当前 section 所在段落可见, 所以上一级段落一定没有折叠
         // 找到当前段落的开始, 将当前 section 移动到当前段落的上面
-        var curr = position - 1
         val sections = adapter.sections
+        var curr = position - 1
         while (curr >= 0) {
             val section = sections[curr]
             val (testMarkSource, _, _) = DayOneStrategy.detectPrecedingMark(section.text)
@@ -206,7 +233,7 @@ class NoteNextFragment : BaseModelFragment<Note>() {
                 sections.add(curr + 1, blankLine)
             }
             adapter.notifyDataSetChanged()
-            delegate.getNote().content = Section.joinSections(adapter.sections)
+            delegate.getNote().content = Section.joinSections(sections)
             delegate.setContentChanged(true)
         }
     }

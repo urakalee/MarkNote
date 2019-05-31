@@ -149,7 +149,7 @@ class NoteEditFragment : BaseModelFragment<Note>() {
             && arguments?.getBoolean(KEY_ARGS_RESTORE) == true) {
             return
         }
-
+        /*
         attachmentViewModel.readNoteContent(note)
             ?.observe(this, Observer { contentResource ->
                 if (contentResource == null) {
@@ -168,6 +168,7 @@ class NoteEditFragment : BaseModelFragment<Note>() {
                     }
                 }
             })
+        */
     }
 
     // endregion
@@ -393,7 +394,7 @@ class NoteEditFragment : BaseModelFragment<Note>() {
     /**
      * @param inEditNote: 使用 NoteEditFragment 里 edit-text 中的内容; 如果在其他 fragment 里, 应该直接用 note 中的内容
      */
-    fun saveOrUpdateData(inEditNote: Boolean = true, afterPersist: ((Boolean) -> Unit) = {}) {
+    fun saveOrUpdateData(inEditNote: Boolean, afterPersist: ((Boolean) -> Unit) = {}) {
         beforeSaveOrUpdate(inEditNote) { writeAttachmentSuccess ->
             if (writeAttachmentSuccess) {
                 doPersist {
@@ -553,7 +554,7 @@ class NoteEditFragment : BaseModelFragment<Note>() {
 
         fun setContentChanged(contentChanged: Boolean)
 
-        fun saveIfNeed()
+        fun saveIfNeed(afterSave: ((Boolean) -> Unit))
 
         val supportEditParagraph: Boolean
     }
